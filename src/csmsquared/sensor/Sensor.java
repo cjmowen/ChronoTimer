@@ -4,11 +4,33 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 public class Sensor {
-	// TODO: The sensor needs a way to be activated/deactivated
 	
 	// A Vector containing all associated listeners
 	private transient Vector<SensorListener> listeners;
 	
+	private boolean isActive;
+	
+	
+	public Sensor(){
+		isActive = false;
+	}
+	
+	/**
+	 * Sets whether or not the sensor is active. If the sensor is not active,
+	 * it cannot fire events.
+	 * @param isActive if true, the sensor will be active
+	 */
+	public void setActive(boolean isActive){
+		this.isActive = isActive;
+	}
+	
+	/**
+	 * Checks is the sensor is active
+	 * @return true if the sensor is active
+	 */
+	public boolean isActive(){
+		return isActive;
+	}
 	
 	/**
 	 * Add a listener to the sensor

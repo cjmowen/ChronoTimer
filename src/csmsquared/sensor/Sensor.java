@@ -1,17 +1,18 @@
 package csmsquared.sensor;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 public class Sensor {
 	
-	// A Vector containing all associated listeners
-	private transient Vector<SensorListener> listeners;
-	
+	private List<SensorListener> listeners;
 	private boolean isActive;
 	
 	
 	public Sensor(){
+		listeners = new ArrayList<SensorListener>();
 		isActive = false;
 	}
 	
@@ -36,10 +37,8 @@ public class Sensor {
 	 * Add a listener to the sensor
 	 * @param l the listener to be added
 	 */
-	synchronized public void addSensorListener(SensorListener l){
-		if(listeners == null)
-			listeners = new Vector<SensorListener>();
-		listeners.addElement(l);
+	public void addSensorListener(SensorListener l){
+		listeners.add(l);
 	}
 	
 	/**
@@ -47,9 +46,7 @@ public class Sensor {
 	 * @param l the listener to be removed
 	 */
 	synchronized public void removeSensorListener(SensorListener l){
-		if(listeners == null)
-			listeners = new Vector<SensorListener>();
-		listeners.removeElement(l);
+		listeners.remove(l);
 	}
 	
 	/**
@@ -60,26 +57,14 @@ public class Sensor {
 	}
 	
 	/**
-	 * Fire a SensorTrippedEvent to all registered listeners
-	 * Based on code from http://www.jguru.com/faq/view.jsp?EID=98547
+	 * Notify all registered listeners of the SensorTripped event
 	 */
-	@SuppressWarnings("unchecked")
-	protected void fireSensorTripped(){
+	private void fireSensorTripped(){
 		if(listeners != null && !listeners.isEmpty()){
-			// Create the event
-			SensorTrippedEvent event = new SensorTrippedEvent(this);
-			
-			// Copy the listener list in case anyone else adds or removes listeners
-			Vector<SensorListener> targets;
-			synchronized (this){
-				targets = (Vector<SensorListener>) listeners.clone();
-			}
 			
 			// Call sensorTripped() on all SensorListeners associated with this Sensor
-			Enumeration<SensorListener> e = targets.elements();
-			while(e.hasMoreElements()){
-				SensorListener l = (SensorListener) e.nextElement();
-				l.sensorTripped(event);
+			for(SensorListener l : listeners){
+				l.sensorTripped();
 			}
 		}
 	}

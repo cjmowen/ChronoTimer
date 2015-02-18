@@ -11,7 +11,6 @@ import javax.swing.JTextField;
 
 import csmsquared.sensor.Sensor;
 import csmsquared.sensor.SensorListener;
-import csmsquared.sensor.SensorTrippedEvent;
 
 public class TestSensor extends JFrame{
 	
@@ -37,7 +36,7 @@ public class TestSensor extends JFrame{
 		sensor1.addSensorListener(new SensorListener(){
 
 			@Override
-			public void sensorTripped(SensorTrippedEvent e) {
+			public void sensorTripped() {
 				// TODO Auto-generated method stub
 				box1.setText("Sensor 1 fired");
 			}
@@ -48,7 +47,7 @@ public class TestSensor extends JFrame{
 		sensor2.addSensorListener(new SensorListener(){
 
 			@Override
-			public void sensorTripped(SensorTrippedEvent e) {
+			public void sensorTripped() {
 				// TODO Auto-generated method stub
 				box1.setText("Sensor 2 fired");
 			}

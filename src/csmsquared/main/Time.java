@@ -3,14 +3,7 @@ import java.lang.Math;
 
 public class Time 
 {
-	public static void main(String[] args)
-	{
-		long temp = System.currentTimeMillis();
-		System.out.println(temp);
-		String current = toString(temp);
-		System.out.println(current);		
-		System.out.println(toMillis(current));
-	}
+
 	
 	public static long toMillis(String time)
 	{

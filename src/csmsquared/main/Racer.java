@@ -26,7 +26,7 @@ public class Racer
 	}
 	public String toString()
 	{
-		return Time.toString(elapsedTime());
+		return id + " " + Time.toString(elapsedTime());
 	}
 	public int getId()
 	{

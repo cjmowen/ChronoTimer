@@ -1,5 +1,13 @@
 package csmsquared.main;
 
+import java.util.ArrayList;
+import java.util.Queue;
+
 public class ChronoTimer {
-	// TODO: Whatever the fuck it is that this thing does
+	private ArrayList<Run> runs;
+//	private ArrayList<Channel> channels;
+	private Queue<Integer> competitorQueue;
+	
+	private int currentCompetitor;
+	private long currentStartTime;
 }

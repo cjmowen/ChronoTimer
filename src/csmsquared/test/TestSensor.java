@@ -1,4 +1,4 @@
-package csmsquared.sensor;
+package csmsquared.test;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -8,6 +8,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
+
+import csmsquared.sensor.Sensor;
+import csmsquared.sensor.SensorListener;
 
 public class TestSensor extends JFrame{
 	
@@ -33,7 +36,7 @@ public class TestSensor extends JFrame{
 		sensor1.addSensorListener(new SensorListener(){
 
 			@Override
-			public void sensorTripped(SensorTrippedEvent e) {
+			public void sensorTripped() {
 				// TODO Auto-generated method stub
 				box1.setText("Sensor 1 fired");
 			}
@@ -44,7 +47,7 @@ public class TestSensor extends JFrame{
 		sensor2.addSensorListener(new SensorListener(){
 
 			@Override
-			public void sensorTripped(SensorTrippedEvent e) {
+			public void sensorTripped() {
 				// TODO Auto-generated method stub
 				box1.setText("Sensor 2 fired");
 			}

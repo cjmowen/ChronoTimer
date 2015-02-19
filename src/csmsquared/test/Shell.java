@@ -24,8 +24,9 @@ public class Shell {
 		while(running){
 			System.out.print(INPUT_LINE_INDICATOR);
 			args = in.nextLine().split(" ");
+			args[0] = args[0].toUpperCase();
 			
-			switch(args[0].toUpperCase()){
+			switch(args[0]){
 			case "EXIT":
 				// Exits the simulator
 				running = false;

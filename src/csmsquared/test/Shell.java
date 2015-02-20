@@ -100,18 +100,21 @@ public class Shell {
 		case "NEWRUN":
 			// Creates a new run
 			// TODO: Command 'NEWRUN'
+			chrono.newRun();
 			
 			break;
 			
 		case "ENDRUN":
 			// Ends the current run
 			// TODO: Command 'ENDRUN'
+			chrono.endRun();
 			
 			break;
 			
 		case "PRINT":
 			// Prints the specified run to stdout
 			// TODO: Command 'PRINT'
+			chrono.print(Integer.parseInt(args[1]));
 			
 			break;
 			
@@ -125,6 +128,7 @@ public class Shell {
 			// Sets the specified competitor number as the next competitor to start
 			// TODO: Command 'NUM'
 			
+			chrono.num(Integer.parseInt(args[1]));
 			break;
 			
 		case "CLR":
@@ -148,13 +152,13 @@ public class Shell {
 		case "START":
 			// Start trigger channel 1
 			// TODO: Command 'START'
-			
+			chrono.start();
 			break;
 			
 		case "FINISH":
 			// Finish trigger channel 2
 			// TODO: Command 'FINISH'
-			
+			chrono.stop();
 			break;
 			
 		case "TRIG":

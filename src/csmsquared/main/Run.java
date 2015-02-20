@@ -36,7 +36,12 @@ public class Run {
 	 */
 	public boolean hasRacer(Racer r)
 	{
-		return (racers.contains(r));
+		for(int i=0; i < effectiveSize ; i++)
+		{
+			if(racers.get(i).getId()==r.getId())
+				return true;
+		}
+		return false;
 	}
 	
 	/**

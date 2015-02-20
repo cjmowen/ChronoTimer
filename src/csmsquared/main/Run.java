@@ -10,11 +10,12 @@ import java.util.List;
 public class Run {
 	private static final int INITIAL_CAPACITY = 10;
 	
-	private List<RunTime> times;
-	
+	private List<Racer> racers;
+	private int effectiveSize;
 	
 	public Run(){
-		times = new ArrayList<RunTime>(INITIAL_CAPACITY);
+		racers = new ArrayList<Racer>(INITIAL_CAPACITY);
+		effectiveSize  =0;
 	}
 	
 	/**
@@ -22,8 +23,20 @@ public class Run {
 	 * @param competitor
 	 * @param time the time the competitor completed the run in
 	 */
-	public void addTime(int competitor, long time){
-		times.add(new RunTime(competitor, time));
+	public void addRacer(Racer r){
+		racers.add(r);
+		effectiveSize++;
+	}
+	
+	
+	/**
+	 * Check if the racer exists in the Run or not.
+	 * @param r
+	 * @return status of players existense.
+	 */
+	public boolean hasRacer(Racer r)
+	{
+		return (racers.contains(r));
 	}
 	
 	/**
@@ -32,45 +45,17 @@ public class Run {
 	 * @return the competitor's run time or -1 if not found
 	 */
 	public long getTime(int competitor){
-		for(RunTime t : times){
-			if(t.getCompetitor() == competitor)
-				return t.getTime();
+		
+		
+		for(int i=0; i < effectiveSize;i++)
+		{
+			if(racers.get(i).getId()==competitor) return racers.get(i).elapsedTime(); 
 		}
+		
 		
 		return -1;
+		
 	}
 	
-	
-	/**
-	 * Stores the run time for a single competitor
-	 */
-	protected class RunTime{
-		private static final int MAX_COMPETITOR_NUMBER = 99999;
-		
-		int competitor;
-		long time;
-		
-		/**
-		 * Creates an entry for a competitor's time
-		 * @param competitor the competitor's id in the range [0, 9999]
-		 * @param time the time they completed the run in (must be >0)
-		 */
-		protected RunTime(int competitor, long time){
-			if(competitor > MAX_COMPETITOR_NUMBER || competitor < 0) 
-				throw new IllegalArgumentException("Competitor number must be in the range [0, " + MAX_COMPETITOR_NUMBER + "]");
-			if(time < 0) 
-				throw new IllegalArgumentException("Run time must be non-negative");
-			
-			this.competitor = competitor;
-			this.time = time;
-		}
-		
-		int getCompetitor(){
-			return competitor;
-		}
-		
-		long getTime(){
-			return time;
-		}
-	}
+
 }

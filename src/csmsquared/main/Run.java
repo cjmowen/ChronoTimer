@@ -56,6 +56,18 @@ public class Run {
 		return -1;
 		
 	}
+	public String toString()
+	{
+		String result="";
+		
+		for(int i=0; i< effectiveSize; i++)
+		{
+			result += racers.get(i).toString()+"\n";
+		}
+		
+		return result;
+	}
+}
 	
 
-}
+

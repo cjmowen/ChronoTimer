@@ -56,15 +56,14 @@ public class Shell {
 	}
 	
 	/**
-	 * Executes the command passed via the String array args.
-	 * @param args
+	 * Executes the command passed
+	 * @param arg the array of command argument strings
 	 */
-	private void execute(String[] args){
-		switch(args[0]){
+	private void execute(String[] arg){
+		switch(arg[0]){
 		case "RESET":
 			// Resets the system to its initial state
-			// TODO: Command 'RESET'
-			
+			chrono = new ChronoTimer();
 			break;
 			
 		case "TIME":
@@ -112,10 +111,25 @@ public class Shell {
 			break;
 			
 		case "PRINT":
-			// Prints the specified run to stdout
-			// TODO: Command 'PRINT'
-			chrono.print(Integer.parseInt(args[1]));
-			
+			// Prints the specified run to stdout\
+			// Checks if the run number argument exists
+			if(arg.length >= 2){
+				// Checks that it is a valid number
+				if(isNum(arg[1])){
+					try {
+						chrono.print(Integer.parseInt(arg[1]));
+					} catch (IllegalArgumentException e) {
+						System.out.println("IAE thrown");
+						System.out.println(e.getMessage());
+					}
+				}
+				else{
+					System.out.println(arg[1] + " is not a recognized run number");
+				}
+			}
+			else{
+				System.out.println("No run specified");
+			}
 			break;
 			
 		case "EXPORT":
@@ -126,9 +140,18 @@ public class Shell {
 			
 		case "NUM":
 			// Sets the specified competitor number as the next competitor to start
-			// TODO: Command 'NUM'
+			if(args.length > 1 && isNum(args[1])){
+				try{
+					chrono.num(Integer.parseInt(args[1]));
+				} catch (IllegalArgumentException e){
+					System.out.println("[IAE thrown]");
+					System.out.println(e.getMessage());
+				}
+			}
+			else{
+				System.out.println("Enter a valid competitor number");
+			}
 			
-			chrono.num(Integer.parseInt(args[1]));
 			break;
 			
 		case "CLR":
@@ -152,13 +175,25 @@ public class Shell {
 		case "START":
 			// Start trigger channel 1
 			// TODO: Command 'START'
-			chrono.start();
+			try {
+				chrono.start();
+			} catch (IllegalStateException e) {
+				System.out.println("[ISE thrown]");
+				System.out.println(e.getMessage());
+			}
+
 			break;
 			
 		case "FINISH":
 			// Finish trigger channel 2
-			// TODO: Command 'FINISH'
-			chrono.stop();
+			// TODO: Command 'FINISH'\
+			try {
+				chrono.stop();
+			} catch (IllegalStateException e) {
+				System.out.println("[ISE thrown]");
+				System.out.println(e.getMessage());
+			}
+
 			break;
 			
 		case "TRIG":
@@ -167,8 +202,17 @@ public class Shell {
 			
 			break;
 		default:
-			System.out.println("Unknown command: " + args[0].toUpperCase());
+			System.out.println("Unknown command: " + arg[0].toUpperCase());
 		}
+	}
+	
+	private boolean isNum(String str){
+		for(int i = 0; i < str.length(); ++i){
+			if(!Character.isDigit(str.charAt(i)))
+				return false;
+		}
+		
+		return true;
 	}
 	
 	private boolean isChronoOn(){

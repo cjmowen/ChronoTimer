@@ -35,6 +35,13 @@ public class Channel {
 	}
 	
 	/**
+	 * Toggles the active state of the Channel
+	 */
+	public void toggle(){
+		isActive = !isActive;
+	}
+	
+	/**
 	 * Connects the given Sensor to the Channel
 	 * @param sensor the Sensor to be connected to the Channel
 	 */
@@ -83,7 +90,7 @@ public class Channel {
 			
 			// Call sensorTripped() on all SensorListeners associated with this Sensor
 			for(ChannelListener l : listeners){
-				l.onSignalReceived();
+				l.onSignalReceived(new ChannelEvent(this));
 			}
 		}
 	}

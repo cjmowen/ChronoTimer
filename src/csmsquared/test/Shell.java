@@ -1,8 +1,11 @@
 package csmsquared.test;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
 import csmsquared.main.Time;
+import csmsquared.sensor.Sensor;
 
 
 public class Shell {
@@ -10,11 +13,15 @@ public class Shell {
 	private static final String SYSTEM_OFF_ALERT = "ChronoTimer system is OFF";
 	
 	private ChronoTimer chrono;
+	private List<Sensor> sensors;
+	
 	private String[] args;
 	
 	public Shell(){
 		// The ChronoTimer is considered off if it is null
 		chrono = null;
+		
+		sensors = new ArrayList<Sensor>(ChronoTimer.NUM_CHANNELS);
 	}
 	
 	public void run() {
@@ -78,12 +85,38 @@ public class Shell {
 		case "TOG":
 			// Toggles the state of a specified channel
 			// TODO: Command 'TOG'
+			if(isNum(arg[1])){
+				try{
+					chrono.toggle(Integer.parseInt(arg[1]));
+				} catch(IndexOutOfBoundsException e){
+					System.out.println("[IOBE thrown]");
+					System.out.println(e.getMessage());
+				}
+			}
+			else{
+				System.out.println(arg[1] + " is not a valid channel");
+			}
 			
 			break;
 			
 		case "CONN":
 			// Connects a specified sensor type to a specified channel
 			// TODO: Command 'CONN'
+			if(isNum(arg[1])){
+				try{
+					int index = Integer.parseInt(arg[1]);
+					Sensor sensor = new Sensor();
+					try{
+						sensors.add(index - 1, sensor);
+					} catch(Exception e){
+						System.out.println("sensor problem");
+					}
+					chrono.connect(index, sensor);
+				} catch(IndexOutOfBoundsException e){
+					System.out.println("[IOBE thrown]");
+					System.out.println(e.getMessage());
+				}
+			}
 			
 			break;
 			
@@ -177,9 +210,9 @@ public class Shell {
 			
 		case "START":
 			// Start trigger channel 1
-			// TODO: Command 'START'
+			// TEST: Command 'START'
 			try {
-				chrono.start();
+				sensors.get(0).trip();
 			} catch (IllegalStateException e) {
 				System.out.println("[ISE thrown]");
 				System.out.println(e.getMessage());
@@ -189,9 +222,9 @@ public class Shell {
 			
 		case "FINISH":
 			// Finish trigger channel 2
-			// TODO: Command 'FINISH'\
+			// TEST: Command 'FINISH'
 			try {
-				chrono.stop();
+				sensors.get(1).trip();
 			} catch (IllegalStateException e) {
 				System.out.println("[ISE thrown]");
 				System.out.println(e.getMessage());

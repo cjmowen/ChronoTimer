@@ -1,5 +1,5 @@
 package csmsquared.channel;
 
 public interface ChannelListener {
-	public void onSignalReceived();
+	public void onSignalReceived(ChannelEvent e);
 }

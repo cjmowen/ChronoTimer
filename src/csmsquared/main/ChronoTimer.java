@@ -6,15 +6,18 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 
 import csmsquared.channel.Channel;
+import csmsquared.channel.ChannelEvent;
+import csmsquared.channel.ChannelListener;
+import csmsquared.sensor.Sensor;
 
 
 public class ChronoTimer
 {
-	private static int NUM_CHANNELS = 2; // The number of channels
+	public static int NUM_CHANNELS = 2; // The number of channels
 	
 	private ArrayList<Channel> channels;
 	private LinkedList<Run> runs;
-	private Queue<Racer> racerQueue;
+	private Queue<Racer> racerQueue; // Implemented as a LinkedList since it provides the methods to be used as a queue
 	
 	private boolean runExists;    // True if a run is currently going on
 	private Racer currentRacer;   // The racer that is currently being timed
@@ -25,7 +28,28 @@ public class ChronoTimer
 	 */
 	public ChronoTimer()
 	{
+		// Create and fill the channel array
 		channels = new ArrayList<Channel>(NUM_CHANNELS);
+		for(int i = 0; i < NUM_CHANNELS; ++i){
+			Channel c = new Channel();
+			c.addChannelListener(new ChannelListener() {
+				
+				@Override
+				public void onSignalReceived(ChannelEvent e) {
+					// Get the index of the channel that received the signal
+					int channel = channels.indexOf(e.getChannel()) + 1;
+					
+					// If the index of the channel signaled is odd, start timing
+					if(channel % 2 == 1) start();
+					
+					// If the index of the channel signaled is even, stop timing
+					else stop();
+				}
+			});
+			
+			channels.add(i, c);
+		}
+		
 		runs = new LinkedList<Run>();
 		racerQueue = new LinkedList<Racer>();
 		
@@ -96,17 +120,44 @@ public class ChronoTimer
 		
 		currentRacer = null;
 	}
+	
+	
 	/**
 	 * Print will print out all the racer's list in given run.
 	 * Format : racerId H:M:S
 	 * @param Run - Integer Given RUN
 	 */
-	
-	
 	public void print(int Run)
 	{
 		Run = Run-1;
 		if(Run >= runs.size() || Run < 0) throw new NoSuchElementException("There No Run # "+(Run+1)+" found");
 		System.out.print(runs.get(Run).toString());
+	}
+	
+	
+	/**
+	 * Connects a given sensor to the specified channel
+	 * @param channel the channel to connect the sensor to
+	 * @param sensor the sensor to connect
+	 */
+	public void connect(int channel, Sensor sensor){
+		--channel; // The index of a channel is one less than its number (Channel 1 is at index 0)
+		
+		if(channel < 0 || channel > NUM_CHANNELS) throw new IndexOutOfBoundsException("Channel " + channel + " does not exist");
+		
+		channels.get(channel).connectSensor(sensor);
+	}
+	
+	
+	/**
+	 * Toggles the specified channel on/off
+	 * @param channel the channel to toggle
+	 */
+	public void toggle(int channel){
+		--channel; // The index of a channel is one less than its number (Channel 1 is at index 0)
+		
+		if(channel < 0 || channel > NUM_CHANNELS) throw new IndexOutOfBoundsException("Channel " + channel + " does not exist");
+		
+		channels.get(channel).toggle();
 	}
 }

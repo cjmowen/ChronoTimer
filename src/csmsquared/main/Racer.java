@@ -15,11 +15,13 @@ public class Racer
 	
 	public void start()
 	{
-		startTime = System.currentTimeMillis();
+		//startTime = System.currentTimeMillis();
+		startTime = Time.getTime();
 	}
 	public void end()
 	{
-		endTime = System.currentTimeMillis();
+		//endTime = System.currentTimeMillis();
+		endTime =Time.getTime();
 	}
 	public long elapsedTime()
 	{

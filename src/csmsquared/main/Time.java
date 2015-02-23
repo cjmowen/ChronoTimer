@@ -3,6 +3,17 @@ import java.lang.Math;
 
 public class Time 
 {
+	private static long currentTime = -1;
+	
+	public static void setTime(String time){
+		currentTime = toMillis(time);
+	}
+	
+	public static long getTime(){
+		if(currentTime < 0) return System.currentTimeMillis();
+		return currentTime;
+	}
+	
 
 	
 	public static long toMillis(String time)

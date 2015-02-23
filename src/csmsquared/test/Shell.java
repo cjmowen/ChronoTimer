@@ -2,6 +2,7 @@ package csmsquared.test;
 import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
+import csmsquared.main.Time;
 
 
 public class Shell {
@@ -67,6 +68,8 @@ public class Shell {
 			break;
 			
 		case "TIME":
+			Time.setTime(arg[1]);
+			
 			// Sets the current time
 			// TODO: Command 'TIME'
 			

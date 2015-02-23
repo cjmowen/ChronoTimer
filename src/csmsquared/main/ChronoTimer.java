@@ -39,10 +39,10 @@ public class ChronoTimer
 					// Get the index of the channel that received the signal
 					int channel = channels.indexOf(e.getChannel()) + 1;
 					
-					// If the index of the channel signaled is odd, start timing
+					// Odd channels start timing
 					if(channel % 2 == 1) start();
 					
-					// If the index of the channel signaled is even, stop timing
+					// Even channels end timing
 					else stop();
 				}
 			});
@@ -126,6 +126,7 @@ public class ChronoTimer
 	 * Print will print out all the racer's list in given run.
 	 * Format : racerId H:M:S
 	 * @param Run - Integer Given RUN
+	 * @exception NoSuchElementException if the run does not exist
 	 */
 	public void print(int Run)
 	{
@@ -139,25 +140,41 @@ public class ChronoTimer
 	 * Connects a given sensor to the specified channel
 	 * @param channel the channel to connect the sensor to
 	 * @param sensor the sensor to connect
+	 * @exception NoSuchElementException if the channel does not exist
 	 */
 	public void connect(int channel, Sensor sensor){
 		--channel; // The index of a channel is one less than its number (Channel 1 is at index 0)
-		
-		if(channel < 0 || channel > NUM_CHANNELS) throw new IndexOutOfBoundsException("Channel " + channel + " does not exist");
+		checkChannel(channel);
 		
 		channels.get(channel).connectSensor(sensor);
+	}
+	
+	/**
+	 * Disconnects the sensor connected to the specified channel
+	 * @param channel the channel to disconnect the sensor from
+	 */
+	public void disconnect(int channel){
+		--channel;
+		checkChannel(channel);
+		
+		channels.get(channel).disconnectSensor();
 	}
 	
 	
 	/**
 	 * Toggles the specified channel on/off
 	 * @param channel the channel to toggle
+	 * @exception NoSuchElementException if the channel does not exist
 	 */
 	public void toggle(int channel){
 		--channel; // The index of a channel is one less than its number (Channel 1 is at index 0)
-		
-		if(channel < 0 || channel > NUM_CHANNELS) throw new IndexOutOfBoundsException("Channel " + channel + " does not exist");
+		checkChannel(channel);
 		
 		channels.get(channel).toggle();
+	}
+	
+	
+	private void checkChannel(int channel){
+		if(channel < 0 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist");
 	}
 }

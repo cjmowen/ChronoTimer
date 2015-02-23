@@ -57,6 +57,11 @@ public class Channel {
 		});
 	}
 	
+	
+	public void disconnectSensor(){
+		this.sensor = null;
+	}
+	
 	/**
 	 * Manually signal the Channel as though a connected Sensor sent a signal.
 	 * This notifies all ChannelListeners.

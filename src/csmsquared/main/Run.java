@@ -22,6 +22,14 @@ public class Run {
 	 * @param time the time the competitor completed the run in
 	 */
 	public void addRacer(Racer r){
+		for(int i = 0; i<racers.size(); i++){
+			if(racers.get(i).getId() == r.getId()){
+				if(racers.get(i).elapsedTime() > r.elapsedTime()){
+					racers.set(i, r);
+				}
+				return;
+			}
+		}
 		racers.add(r);
 	}
 	

@@ -6,7 +6,12 @@ public class Time
 	private static long currentTime = -1;
 	
 	public static void setTime(String time){
+		if(time.equalsIgnoreCase("reset")){
+			currentTime = -1;
+		}
+		else{
 		currentTime = toMillis(time);
+		}
 	}
 	
 	public static long getTime(){

@@ -1,6 +1,7 @@
 package csmsquared.test;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
@@ -89,7 +90,6 @@ public class Shell {
 				try{
 					chrono.toggle(Integer.parseInt(arg[1]));
 				} catch(IndexOutOfBoundsException e){
-					System.out.println("[IOBE thrown]");
 					System.out.println(e.getMessage());
 				}
 			}
@@ -109,11 +109,10 @@ public class Shell {
 					try{
 						sensors.add(index - 1, sensor);
 					} catch(Exception e){
-						System.out.println("sensor problem");
+						System.out.println("No such sensor");
 					}
 					chrono.connect(index, sensor);
-				} catch(IndexOutOfBoundsException e){
-					System.out.println("[IOBE thrown]");
+				} catch(NoSuchElementException e){
 					System.out.println(e.getMessage());
 				}
 			}
@@ -123,7 +122,14 @@ public class Shell {
 		case "DISC":
 			// Disconnects a sensor from a specified channel
 			// TODO: Command 'DISC'
-			
+			if(isNum(arg[1])){
+				try{
+					int index = Integer.parseInt(arg[1]);
+					chrono.disconnect(index);
+				} catch(NoSuchElementException e){
+					System.out.println(e.getMessage());
+				}
+			}
 			break;
 			
 		case "EVENT":
@@ -135,14 +141,22 @@ public class Shell {
 		case "NEWRUN":
 			// Creates a new run
 			// TODO: Command 'NEWRUN'
-			chrono.newRun();
+			try{
+				chrono.newRun();
+			} catch(Exception e){
+				System.out.println(e.getMessage());
+			}
 			
 			break;
 			
 		case "ENDRUN":
 			// Ends the current run
 			// TODO: Command 'ENDRUN'
-			chrono.endRun();
+			try{
+				chrono.endRun();
+			} catch(Exception e){
+				System.out.println(e.getMessage());
+			}
 			
 			break;
 			
@@ -154,8 +168,7 @@ public class Shell {
 				if(isNum(arg[1])){
 					try {
 						chrono.print(Integer.parseInt(arg[1]));
-					} catch (IllegalArgumentException e) {
-						System.out.println("IAE thrown");
+					} catch (NoSuchElementException e) {
 						System.out.println(e.getMessage());
 					}
 				}
@@ -180,7 +193,6 @@ public class Shell {
 				try{
 					chrono.num(Integer.parseInt(args[1]));
 				} catch (IllegalArgumentException e){
-					System.out.println("[IAE thrown]");
 					System.out.println(e.getMessage());
 				}
 			}
@@ -214,7 +226,6 @@ public class Shell {
 			try {
 				sensors.get(0).trip();
 			} catch (IllegalStateException e) {
-				System.out.println("[ISE thrown]");
 				System.out.println(e.getMessage());
 			}
 
@@ -226,7 +237,6 @@ public class Shell {
 			try {
 				sensors.get(1).trip();
 			} catch (IllegalStateException e) {
-				System.out.println("[ISE thrown]");
 				System.out.println(e.getMessage());
 			}
 

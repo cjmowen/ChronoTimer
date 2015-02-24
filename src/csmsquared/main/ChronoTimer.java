@@ -152,6 +152,7 @@ public class ChronoTimer
 	/**
 	 * Disconnects the sensor connected to the specified channel
 	 * @param channel the channel to disconnect the sensor from
+	 * @exception NoSuchElementException if the channel does not exist
 	 */
 	public void disconnect(int channel){
 		--channel;

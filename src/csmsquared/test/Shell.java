@@ -76,16 +76,12 @@ public class Shell {
 			break;
 			
 		case "TIME":
-			Time.setTime(arg[1]);
-			
 			// Sets the current time
-			// TODO: Command 'TIME'
-			
+			Time.setTime(arg[1]);
 			break;
 			
 		case "TOG":
 			// Toggles the state of a specified channel
-			// TODO: Command 'TOG'
 			if(isNum(arg[1])){
 				try{
 					chrono.toggle(Integer.parseInt(arg[1]));
@@ -101,7 +97,8 @@ public class Shell {
 			
 		case "CONN":
 			// Connects a specified sensor type to a specified channel
-			// TODO: Command 'CONN'
+			// TODO: Pass the type of sensor being connected as arg[1]
+			// and the channel number as arg[2]
 			if(isNum(arg[1])){
 				try{
 					int index = Integer.parseInt(arg[1]);
@@ -121,7 +118,6 @@ public class Shell {
 			
 		case "DISC":
 			// Disconnects a sensor from a specified channel
-			// TODO: Command 'DISC'
 			if(isNum(arg[1])){
 				try{
 					int index = Integer.parseInt(arg[1]);
@@ -140,7 +136,6 @@ public class Shell {
 			
 		case "NEWRUN":
 			// Creates a new run
-			// TODO: Command 'NEWRUN'
 			try{
 				chrono.newRun();
 			} catch(Exception e){
@@ -151,7 +146,6 @@ public class Shell {
 			
 		case "ENDRUN":
 			// Ends the current run
-			// TODO: Command 'ENDRUN'
 			try{
 				chrono.endRun();
 			} catch(Exception e){
@@ -222,7 +216,6 @@ public class Shell {
 			
 		case "START":
 			// Start trigger channel 1
-			// TEST: Command 'START'
 			try {
 				sensors.get(0).trip();
 			} catch (IllegalStateException e) {
@@ -233,7 +226,6 @@ public class Shell {
 			
 		case "FINISH":
 			// Finish trigger channel 2
-			// TEST: Command 'FINISH'
 			try {
 				sensors.get(1).trip();
 			} catch (IllegalStateException e) {

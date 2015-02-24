@@ -37,7 +37,6 @@ public class TestSensor extends JFrame{
 
 			@Override
 			public void sensorTripped() {
-				// TODO Auto-generated method stub
 				box1.setText("Sensor 1 fired");
 			}
 			
@@ -48,7 +47,6 @@ public class TestSensor extends JFrame{
 
 			@Override
 			public void sensorTripped() {
-				// TODO Auto-generated method stub
 				box1.setText("Sensor 2 fired");
 			}
 			

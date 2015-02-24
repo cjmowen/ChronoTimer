@@ -51,6 +51,10 @@ public class ChronoTimer
 		}
 		
 		runs = new LinkedList<Run>();
+		// TODO: Start the first run
+		// automatically when the ChronoTimer
+		// is first created
+		
 		racerQueue = new LinkedList<Racer>();
 		
 		runExists = false;

@@ -284,14 +284,6 @@ public class Shell {
 
 			break;
 			
-		case "DNF":
-			// The racer did not finish
-			try{
-				chrono.didNotFinish();
-			} catch(IllegalStateException e){
-				System.out.println(e.getMessage());
-			}
-			
 		case "TRIG":
 			// Triggers the specified channel
 			// TODO: Command 'TRIG'

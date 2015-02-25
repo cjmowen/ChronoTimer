@@ -100,8 +100,11 @@ public class ChronoTimer
 	public void start()
 	{
 		if(!runExists) throw new IllegalStateException("Must start the Run");
-		if(currentRacer != null) throw new IllegalStateException("Must Stop previous racer");
 		if(racerQueue.isEmpty()) throw new IllegalStateException("There are no racer in the queue");
+		
+		if(currentRacer != null){
+			didNotFinish();
+		}
 		
 		currentRacer = racerQueue.poll();
 		currentRacer.start();
@@ -120,17 +123,6 @@ public class ChronoTimer
 		currentRacer.end();
 		runs.peekLast().addRacer(currentRacer);
 		
-		currentRacer = null;
-	}
-	
-	/**
-	 * Marks the current racer as having not finished the race.
-	 * @exception IllegalStateException if there in no racer being timed
-	 */
-	public void didNotFinish(){
-		if(currentRacer == null) throw new IllegalStateException("There is no racer currently being timed");
-		
-		runs.peekLast().addRacer(currentRacer);
 		currentRacer = null;
 	}
 	
@@ -197,5 +189,10 @@ public class ChronoTimer
 	
 	private void checkChannel(int channel){
 		if(channel < 0 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist");
+	}
+	
+	private void didNotFinish(){
+		runs.peekLast().addRacer(currentRacer);
+		currentRacer = null;
 	}
 }

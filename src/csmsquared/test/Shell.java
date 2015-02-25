@@ -171,7 +171,7 @@ public class Shell {
 				}
 			}
 			else{
-				System.out.println("No run specified");
+				chrono.print();
 			}
 			break;
 			

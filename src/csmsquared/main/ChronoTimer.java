@@ -51,13 +51,9 @@ public class ChronoTimer
 		}
 		
 		runs = new LinkedList<Run>();
-		// TODO: Start the first run
-		// automatically when the ChronoTimer
-		// is first created
+		newRun();
 		
 		racerQueue = new LinkedList<Racer>();
-		
-		runExists = false;
 	}
 	
 	
@@ -130,7 +126,7 @@ public class ChronoTimer
 	 * format HH:MM:SS.ss
 	 */
 	public void print(){
-		print(runs.size() - 1);
+		print(runs.size());
 	}
 	
 	/**

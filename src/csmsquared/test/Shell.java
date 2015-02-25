@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
+import csmsquared.main.Printer;
 import csmsquared.main.Time;
 import csmsquared.sensor.EyeSensor;
 import csmsquared.sensor.GateSensor;
@@ -282,14 +283,6 @@ public class Shell {
 			}
 
 			break;
-			
-		case "DNF":
-			// The racer did not finish
-			try{
-				chrono.didNotFinish();
-			} catch(IllegalStateException e){
-				System.out.println(e.getMessage());
-			}
 			
 		case "TRIG":
 			// Triggers the specified channel

@@ -10,7 +10,7 @@ public class Time
 			currentTime = -1;
 		}
 		else{
-		currentTime = toMillis(time);
+			currentTime = toMillis(time);
 		}
 	}
 	
@@ -24,19 +24,36 @@ public class Time
 	public static long toMillis(String time)
 	{
 		long result = 0;
-		int semicolon =  time.indexOf(':');
+		int hourcolon = time.indexOf(':');
+		int semicolon =  time.lastIndexOf(':');
 		int period = time.indexOf('.');
 		
-		String mins = time.substring(0, time.indexOf(':'));
+		String hou = time.substring(0, time.indexOf(':'));
+		long hours = Integer.parseInt(hou);
+
+		String mins = time.substring(hourcolon+1, time.lastIndexOf(':'));
 		long minutes = Integer.parseInt(mins);
 		
-		String secs = time.substring(semicolon+1, period);
-		long seconds = Integer.parseInt(secs);
+		String secs;
+		long seconds;
+		String digs;
+		long digits;
 		
-		String digs = time.substring(period+1);
-		long digits = Integer.parseInt(digs);
+		if(period != -1){
+			secs = time.substring(semicolon+1, period);
+			seconds = Integer.parseInt(secs);
 		
-		result = (minutes*60000) + (seconds*1000) + (digits * 10);
+			digs = time.substring(period+1);
+			digits = Integer.parseInt(digs);
+		
+		}
+		else{
+			secs = time.substring(semicolon+1);
+			seconds = Integer.parseInt(secs);
+			digits = 0;
+		}
+		
+		result = (hours*3600000) + (minutes*60000) + (seconds*1000) + (digits * 10);
 		
 		
 		
@@ -45,10 +62,11 @@ public class Time
 	public static String toString(long milliseconds)
 	{
 		String result;
+		long hours = milliseconds/3600000;
 		long minutes = milliseconds/60000;
 		long seconds = (milliseconds/1000)%60;
 		long digits = Math.round((milliseconds/10.0)%100);
-		result = minutes + ":" + seconds + "." + digits;
+		result = hours + ":" + minutes + ":" + seconds + "." + digits;
 		
 		return result;
 	}

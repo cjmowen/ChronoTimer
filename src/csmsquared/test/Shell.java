@@ -47,7 +47,7 @@ public class Shell {
 	 * Executes the command passed
 	 * @param arg the array of command argument strings
 	 */
-	private void execute(String[] arg){
+	public void execute(String[] arg){
 		
 		// Catch shell-related commands
 		switch(arg[0]){

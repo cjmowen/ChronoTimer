@@ -26,7 +26,11 @@ public class Printer {
 		}
 	}
 	
-	
+	/**
+	 * SetOutput opens up new File with given path and name of the file.
+	 * @param o : O is the name of the output file. 
+	 * @exception FileNotFoundException : Will occur if given file not found. Or permission is denied.
+	 */
 	public static void setOutput(String o){
 		// Set the output file to the specified output
 	output = o;

@@ -125,10 +125,17 @@ public class ChronoTimer
 		currentRacer = null;
 	}
 	
+	/**
+	 * Prints all of the times in the current run in the
+	 * format HH:MM:SS.ss
+	 */
+	public void print(){
+		print(runs.size() - 1);
+	}
 	
 	/**
-	 * Print will print out all the racer's list in given run.
-	 * Format : racerId H:M:S
+	 * Prints all the times listed in the given run.
+	 * Format : racerId HH:MM:SS.ss
 	 * @param Run - Integer Given RUN
 	 * @exception NoSuchElementException if the run does not exist
 	 */

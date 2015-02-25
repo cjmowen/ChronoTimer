@@ -218,7 +218,7 @@ public class Shell {
 			// Start trigger channel 1
 			try {
 				sensors.get(0).trip();
-			} catch (IllegalStateException e) {
+			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
 

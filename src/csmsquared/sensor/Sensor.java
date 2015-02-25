@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 public class Sensor {
-	// TODO: Handle different sensor types
+	
 	private List<SensorListener> listeners;
 	private boolean isActive;
 	

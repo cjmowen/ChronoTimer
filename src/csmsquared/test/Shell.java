@@ -232,6 +232,7 @@ public class Shell {
 			break;
 			
 		case "FINISH":
+		case "FIN":
 			// Finish timing
 			try {
 				sensors.get(1).trip();

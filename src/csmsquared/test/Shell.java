@@ -18,6 +18,8 @@ public class Shell {
 	
 	private String[] args;
 	
+	private boolean running;
+	
 	public Shell(){
 		// The ChronoTimer is considered off if it is null
 		chrono = null;
@@ -27,7 +29,7 @@ public class Shell {
 	
 	public void run() {
 		Scanner in = new Scanner(System.in);
-		boolean running = true;
+		running = true;
 		
 		// The running loop
 		while(running){
@@ -35,30 +37,7 @@ public class Shell {
 			args = in.nextLine().split(" ");
 			args[0] = args[0].toUpperCase();
 			
-			switch(args[0]){
-			case "EXIT":
-				// Exits the simulator
-				running = false;
-				break;
-				
-			case "ON":
-				// Turns the ChronoTimer system on
-				chrono = new ChronoTimer();
-				System.out.println("ChronoTimer 1009 is ON");
-				break;
-				
-			case "OFF":
-				// Turns the ChronoTimer system off (simulator remains on)
-				chrono = null;
-				System.out.println("ChronoTimer 1009 is OFF");
-				break;
-				
-			default:
-				if(!isChronoOn())
-					System.out.println(SYSTEM_OFF_ALERT);
-				else
-					execute(args);
-			}
+			execute(args);
 		}
 		
 		in.close();
@@ -69,6 +48,34 @@ public class Shell {
 	 * @param arg the array of command argument strings
 	 */
 	private void execute(String[] arg){
+		
+		// Catch shell-related commands
+		switch(arg[0]){
+		case "EXIT":
+			// Exits the simulator
+			running = false;
+			return;
+			
+		case "ON":
+			// Turns the ChronoTimer system on
+			chrono = new ChronoTimer();
+			System.out.println("ChronoTimer 1009 is ON");
+			return;
+			
+		case "OFF":
+			// Turns the ChronoTimer system off (simulator remains on)
+			chrono = null;
+			System.out.println("ChronoTimer 1009 is OFF");
+			return;
+			
+		default:
+			if(!isChronoOn()){
+				System.out.println(SYSTEM_OFF_ALERT);
+				return;
+			}
+		}
+		
+		// Catch ChronoTimer-related commands
 		switch(arg[0]){
 		case "RESET":
 			// Resets the system to its initial state

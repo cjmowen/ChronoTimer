@@ -6,6 +6,9 @@ import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
 import csmsquared.main.Time;
+import csmsquared.sensor.EyeSensor;
+import csmsquared.sensor.GateSensor;
+import csmsquared.sensor.PadSensor;
 import csmsquared.sensor.Sensor;
 
 
@@ -35,7 +38,6 @@ public class Shell {
 		while(running){
 			System.out.print(INPUT_LINE_INDICATOR);
 			args = in.nextLine().split(" ");
-			args[0] = args[0].toUpperCase();
 			
 			execute(args);
 		}
@@ -48,6 +50,10 @@ public class Shell {
 	 * @param arg the array of command argument strings
 	 */
 	public void execute(String[] arg){
+		
+		for(int i = 0; i < arg.length; ++i){
+			arg[i] = arg[i].toUpperCase();
+		}
 		
 		// Catch shell-related commands
 		switch(arg[0]){
@@ -104,22 +110,57 @@ public class Shell {
 			
 		case "CONN":
 			// Connects a specified sensor type to a specified channel
-			// TODO: Pass the type of sensor being connected as arg[1]
-			// and the channel number as arg[2]
-			if(isNum(arg[1])){
-				try{
-					int index = Integer.parseInt(arg[1]);
-					Sensor sensor = new Sensor();
-					try{
-						sensors.add(index - 1, sensor);
-					} catch(Exception e){
-						System.out.println("No such sensor");
-					}
-					chrono.connect(index, sensor);
-				} catch(NoSuchElementException e){
-					System.out.println(e.getMessage());
-				}
+
+			// Check that there are enough arguments
+			if(arg.length < 3)
+				System.out.println("Not enough arguments for command CONN");
+			
+			String sensorType = arg[1];
+			Sensor sensor;
+			int channel;
+			
+			// Check that the channel argument is a valid integer
+			if(!isNum(arg[2])){
+				System.out.println(arg[2] + " is not a valid integer");
+				break;
 			}
+			else{
+				channel = Integer.parseInt(arg[2]);
+			}
+			
+			// Check that channel is a valid channel number
+			if(channel < 1 || channel > ChronoTimer.NUM_CHANNELS){
+				System.out.println(channel + " is not a valid channel");
+				break;
+			}
+			
+			// Check the type of sensor
+			if(sensorType.equals("GATE")) sensor = new GateSensor();
+			else if(sensorType.equals("EYE")) sensor = new EyeSensor();
+			else if(sensorType.equals("PAD")) sensor = new PadSensor();
+			else{
+				System.out.println(sensorType + " is not a recognized type of sensor");
+				break;
+			}
+			
+			// Add the sensor
+			sensors.add(channel - 1, sensor);
+			chrono.connect(channel, sensor);
+			
+//			if(isNum(arg[1])){
+//				try{
+//					int index = Integer.parseInt(arg[1]);
+//					Sensor sensor = new Sensor();
+//					try{
+//						sensors.add(index - 1, sensor);
+//					} catch(Exception e){
+//						System.out.println("No such sensor");
+//					}
+//					chrono.connect(index, sensor);
+//				} catch(NoSuchElementException e){
+//					System.out.println(e.getMessage());
+//				}
+//			}
 			
 			break;
 			

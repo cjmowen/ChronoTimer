@@ -5,6 +5,10 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * Represents a sensor that can be connected to a ChronoTimer in order
+ * to sense when a racer starts or finishes.
+ */
 public class Sensor {
 	
 	private List<SensorListener> listeners;

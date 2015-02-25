@@ -87,6 +87,8 @@ public class ChronoTimer
 	public void endRun()
 	{
 		if(!runExists) throw new IllegalStateException("Must start new Run");
+		if(currentRacer != null) didNotFinish();
+		
 		runExists = false;
 	}
 	
@@ -118,6 +120,17 @@ public class ChronoTimer
 		currentRacer.end();
 		runs.peekLast().addRacer(currentRacer);
 		
+		currentRacer = null;
+	}
+	
+	/**
+	 * Marks the current racer as having not finished the race.
+	 * @exception IllegalStateException if there in no racer being timed
+	 */
+	public void didNotFinish(){
+		if(currentRacer == null) throw new IllegalStateException("There is no racer currently being timed");
+		
+		runs.peekLast().addRacer(currentRacer);
 		currentRacer = null;
 	}
 	

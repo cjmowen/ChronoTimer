@@ -222,7 +222,7 @@ public class Shell {
 			break;
 			
 		case "START":
-			// Start trigger channel 1
+			// Start timing
 			try {
 				sensors.get(0).trip();
 			} catch (Exception e) {
@@ -232,7 +232,7 @@ public class Shell {
 			break;
 			
 		case "FINISH":
-			// Finish trigger channel 2
+			// Finish timing
 			try {
 				sensors.get(1).trip();
 			} catch (IllegalStateException e) {
@@ -240,6 +240,14 @@ public class Shell {
 			}
 
 			break;
+			
+		case "DNF":
+			// The racer did not finish
+			try{
+				chrono.didNotFinish();
+			} catch(IllegalStateException e){
+				System.out.println(e.getMessage());
+			}
 			
 		case "TRIG":
 			// Triggers the specified channel

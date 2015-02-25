@@ -95,7 +95,7 @@ public class ChronoTimer
 	
 	/**
 	 * start will take one racer out of the Racer list and start its timing.
-	 * @exception IllegalStateException - If run has not started. If previous racer has not finished. And if There are no racer left in Racer List.
+	 * @exception IllegalStateException - If run has not started or if There are no racer left in Racer List.
 	 */
 	public void start()
 	{

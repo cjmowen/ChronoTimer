@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
-import csmsquared.main.Printer;
 import csmsquared.main.Time;
 import csmsquared.sensor.EyeSensor;
 import csmsquared.sensor.GateSensor;
@@ -94,6 +93,7 @@ public class Shell {
 			Time.setTime(arg[1]);
 			break;
 			
+		case "TOGGLE":
 		case "TOG":
 			// Toggles the state of a specified channel
 			if(isNum(arg[1])){
@@ -147,21 +147,6 @@ public class Shell {
 			// Add the sensor
 			sensors.add(channel - 1, sensor);
 			chrono.connect(channel, sensor);
-			
-//			if(isNum(arg[1])){
-//				try{
-//					int index = Integer.parseInt(arg[1]);
-//					Sensor sensor = new Sensor();
-//					try{
-//						sensors.add(index - 1, sensor);
-//					} catch(Exception e){
-//						System.out.println("No such sensor");
-//					}
-//					chrono.connect(index, sensor);
-//				} catch(NoSuchElementException e){
-//					System.out.println(e.getMessage());
-//				}
-//			}
 			
 			break;
 			
@@ -232,9 +217,9 @@ public class Shell {
 			
 		case "NUM":
 			// Sets the specified competitor number as the next competitor to start
-			if(args.length > 1 && isNum(args[1])){
+			if(arg.length > 1 && isNum(arg[1])){
 				try{
-					chrono.num(Integer.parseInt(args[1]));
+					chrono.num(Integer.parseInt(arg[1]));
 				} catch (IllegalArgumentException e){
 					System.out.println(e.getMessage());
 				}

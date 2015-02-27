@@ -10,6 +10,7 @@ public class Channel {
 	
 	private List<ChannelListener> listeners;
 	private Sensor sensor;
+	private SensorListener sensorListener; // Store the listener so that it can be removed
 	private boolean isActive;
 	
 	public Channel(){
@@ -47,18 +48,24 @@ public class Channel {
 	 */
 	public void connectSensor(Sensor sensor){
 		this.sensor = sensor;
-		sensor.addSensorListener(new SensorListener(){
+		sensorListener = new SensorListener(){
 
 			@Override
 			public void sensorTripped() {
 				signalReceived();
 			}
 			
-		});
+		};
+		
+		sensor.addSensorListener(sensorListener);
 	}
 	
-	
+	/**
+	 * Disconnects the Sensor from the Channel.
+	 */
 	public void disconnectSensor(){
+		// Sever the connection by removing the listener
+		sensor.removeSensorListener(sensorListener);
 		this.sensor = null;
 	}
 	

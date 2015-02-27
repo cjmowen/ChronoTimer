@@ -12,7 +12,6 @@ import csmsquared.main.Time;
 
 public class TestFromFile {
 	
-	
 	public static void main(String[] args){
 		
 		Printer.setOutput("output.txt");
@@ -45,8 +44,6 @@ public class TestFromFile {
 		} catch(FileNotFoundException ex) {
 			System.out.println(ex.getMessage());
 		}
-		
-	
 	}
 
 }

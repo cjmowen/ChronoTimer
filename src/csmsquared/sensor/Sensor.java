@@ -1,9 +1,7 @@
 package csmsquared.sensor;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Represents a sensor that can be connected to a ChronoTimer in order

@@ -66,13 +66,18 @@ public class Run {
 		return -1;
 		
 	}
+	
+	
 	public String toString()
 	{
+		// Windows doesn't recognize '\n' as a newline, so this
+		// is necessary to get it to appear in the file
+		String newline = System.getProperty("line.separator");
 		String result="";
 		
 		for(int i=0; i< racers.size(); i++)
 		{
-			result += racers.get(i).toString()+"\n";
+			result += racers.get(i).toString() + newline;
 		}
 		
 		return result;

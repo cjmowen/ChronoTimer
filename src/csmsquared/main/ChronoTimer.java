@@ -140,11 +140,12 @@ public class ChronoTimer
 	 * @param Run - Integer Given RUN
 	 * @exception NoSuchElementException if the run does not exist
 	 */
-	public void print(int Run)
+	public void print(int run)
 	{
-		Run = Run-1;
-		if(Run >= runs.size() || Run < 0) throw new NoSuchElementException("There No Run # "+(Run+1)+" found");
-		System.out.print(runs.get(Run).toString());
+		run = run-1;
+		if(run >= runs.size() || run < 0) throw new NoSuchElementException("There No Run # "+(run+1)+" found");
+//		System.out.print(runs.get(run).toString());
+		Printer.print(runs.get(run).toString());
 	}
 	
 	

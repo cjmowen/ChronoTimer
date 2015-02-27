@@ -20,7 +20,8 @@ public class Printer {
 		}
 		else{
 			// TODO: print to the output file
-			pw.write(str);
+			pw.print(str);
+//			pw.write(str);
 			pw.close();
 			
 		}

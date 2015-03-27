@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package csmsquared.main;
+
+import javax.swing.*;
+
 /**
  *
  * @author strattec
  */
-package csmsquared.main;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class ChronoTimerGUI extends javax.swing.JFrame {
     /**
      * Creates new form ChronoTimerGUI
@@ -27,8 +26,8 @@ public class ChronoTimerGUI extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-    	this.setTitle("Chrono Timer");
-        titleLabel = new javax.swing.JLabel();
+        jMenu1 = new JMenu();
+        titleLabel = new JLabel();
         addPlayerLbl = new javax.swing.JLabel();
         addPlayerText = new javax.swing.JTextField();
         addBtn = new javax.swing.JButton();
@@ -44,6 +43,13 @@ public class ChronoTimerGUI extends javax.swing.JFrame {
         stopBtn = new javax.swing.JButton();
         newRaceBtn = new javax.swing.JButton();
         endRace = new javax.swing.JButton();
+        printRunLabel = new javax.swing.JLabel();
+        printRunText = new javax.swing.JTextField();
+        printRunBtn = new javax.swing.JButton();
+        runPrintLabel = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        runPrintText = new javax.swing.JTextArea();
+        jMenu1.setText("jMenu1");
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         titleLabel.setText("ChronoTimer");
         titleLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -65,61 +71,74 @@ public class ChronoTimerGUI extends javax.swing.JFrame {
         raceTpeLbl.setText("RaceType:");
         startbtn.setText("Start");
         stopBtn.setText("Stop");
-        
-        addBtn.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-					
-				racersQueueText.setText(racersQueueText.getText()+"\n"+addPlayerText.getText());
-				addPlayerText.setText("");
-			}
-		});
-        
-       
+        stopBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopBtnActionPerformed(evt);
+            }
+        });
         newRaceBtn.setText("New Race");
         endRace.setText("End Race");
+        printRunLabel.setText("Run # : ");
+        printRunBtn.setText("print");
+        runPrintLabel.setText("RUN PRINT");
+        runPrintText.setColumns(20);
+        runPrintText.setRows(5);
+        jScrollPane3.setViewportView(runPrintText);
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(316, 316, 316)
-                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(68, 68, 68)
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(raceTpeLbl, javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(startbtn, javax.swing.GroupLayout.Alignment.TRAILING)))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .addComponent(addPlayerLbl)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(raceTypeCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(addPlayerText, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(68, 68, 68)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(newRaceBtn)
-                                    .addComponent(stopBtn)
-                                    .addComponent(endRace))))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(addBtn))
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(68, 68, 68)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(stopBtn)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                            .addGroup(layout.createSequentialGroup()
+                                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                    .addComponent(endRace)
+                                                                    .addComponent(printRunLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(printRunText, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                            .addComponent(newRaceBtn))
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(printRunBtn))))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addGap(68, 68, 68)
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                            .addComponent(raceTpeLbl, javax.swing.GroupLayout.Alignment.TRAILING)
+                                                            .addComponent(startbtn, javax.swing.GroupLayout.Alignment.TRAILING)))
+                                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                        .addContainerGap()
+                                                        .addComponent(addPlayerLbl)))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(raceTypeCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(addPlayerText, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addComponent(addBtn)))))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(29, 29, 29))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(runPrintLabel)
+                                .addGap(88, 88, 88)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(activityMonitorLbl)
@@ -127,28 +146,37 @@ public class ChronoTimerGUI extends javax.swing.JFrame {
                         .addComponent(racersQueueLbl)
                         .addGap(55, 55, 55)))
                 .addGap(175, 175, 175))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(314, 314, 314)
+                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
+                        .addGap(89, 89, 89)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(addPlayerLbl)
                             .addComponent(addPlayerText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(addBtn))
-                        .addGap(0, 20, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 1, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(racersQueueLbl)
                             .addComponent(activityMonitorLbl))))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(runPrintLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 496, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(9, 9, 9)
@@ -162,13 +190,32 @@ public class ChronoTimerGUI extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(newRaceBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(endRace)))
-                .addContainerGap(52, Short.MAX_VALUE))
+                        .addComponent(endRace)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(printRunText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(printRunBtn)
+                            .addComponent(printRunLabel))))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
-     
+        titleLabel.getAccessibleContext().setAccessibleName("chronoTimerLabel");
+        addPlayerLbl.getAccessibleContext().setAccessibleName("addPlayerLabel");
+        addPlayerText.getAccessibleContext().setAccessibleName("addPlayerTextField");
+        addBtn.getAccessibleContext().setAccessibleName("addPlayerButton");
+        racersQueueLbl.getAccessibleContext().setAccessibleName("racersQueue");
+        activityMonitorLbl.getAccessibleContext().setAccessibleName("activityMonitor");
+        raceTypeCB.getAccessibleContext().setAccessibleName("raceTypeComboBox");
+        raceTpeLbl.getAccessibleContext().setAccessibleName("RaceTypeLabel");
+        startbtn.getAccessibleContext().setAccessibleName("startButton");
+        stopBtn.getAccessibleContext().setAccessibleName("stopButton");
+        newRaceBtn.getAccessibleContext().setAccessibleName("newRaceBtn");
+        endRace.getAccessibleContext().setAccessibleName("endRace");
+        getAccessibleContext().setAccessibleName("addPlayerLabel");
         pack();
     }// </editor-fold>                        
-                                      
+    private void stopBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
+        // TODO add your handling code here:
+    }                                       
     /**
      * @param args the command line arguments
      */
@@ -202,33 +249,29 @@ public class ChronoTimerGUI extends javax.swing.JFrame {
             }
         });
     }
-    
-    
-    
     // Variables declaration - do not modify                     
     private javax.swing.JLabel activityMonitorLbl;
     private javax.swing.JTextArea activityMonitorText;
-    public javax.swing.JButton addBtn;
+    private javax.swing.JButton addBtn;
     private javax.swing.JLabel addPlayerLbl;
     private javax.swing.JTextField addPlayerText;
     private javax.swing.JButton endRace;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton newRaceBtn;
+    private javax.swing.JButton printRunBtn;
+    private javax.swing.JLabel printRunLabel;
+    private javax.swing.JTextField printRunText;
     private javax.swing.JLabel raceTpeLbl;
     private javax.swing.JComboBox raceTypeCB;
     private javax.swing.JLabel racersQueueLbl;
     private javax.swing.JTextArea racersQueueText;
+    private javax.swing.JLabel runPrintLabel;
+    private javax.swing.JTextArea runPrintText;
     private javax.swing.JButton startbtn;
     private javax.swing.JButton stopBtn;
     private javax.swing.JLabel titleLabel;
     // End of variables declaration                   
-
-    
-
-    
-
-
-
-
 }

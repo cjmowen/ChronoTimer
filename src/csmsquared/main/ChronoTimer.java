@@ -38,13 +38,13 @@ public class ChronoTimer
 				@Override
 				public void onSignalReceived(ChannelEvent e) {
 					// Get the index of the channel that received the signal
-					int channel = channels.indexOf(e.getChannel()) + 1;
+					int channelNumber = channels.indexOf(e.getChannel()) + 1;
 					
 					// Odd channels start timing
-					if(channel % 2 == 1) start();
+					if(channelNumber % 2 == 1) start(channelNumber / 2);	// channelNumber / 2 is the lane number
 					
 					// Even channels end timing
-					else stop();
+					else stop(channelNumber / 2);
 				}
 			});
 			
@@ -88,7 +88,7 @@ public class ChronoTimer
 	public void endRun() {
 		if(!runExists()) throw new IllegalStateException("Must start new Run");
 
-		// This implementation should be sufficient for all race types
+		// TEST: This implementation should be sufficient for all race types
 		for(Racer racer : currentRacers) {
 			if(racer != null) {
 				currentRun.addRacer(racer);	// If the racer has not yet finished, he is automatically counted as DNF
@@ -144,18 +144,19 @@ public class ChronoTimer
 	
 	
 	/**
-	 * stop will stop the the current Race. And it will also record players ending time and adds racer to a appropriate run.
-	 * @exception IllegalStateException if racer has not started yet.
+	 * Stops timing for the specified lane.
+	 * @param lane the lane to stop.
+	 * @exception IllegalArgumentException if the lane does not exist.
 	 */
 	public void stop(int lane) {
-		// TODO: Implement different race types
+		// TEST: This implementation should work for all race types
 		if(lane < 0 || lane >= NUM_CHANNELS / 2) throw new IllegalArgumentException("Lane " + lane + " does not exits.");
-		if(currentRacers[lane] == null) throw new IllegalStateException("Must start before you Stop");
+		if(currentRacers[lane] == null) return;
 		
 		currentRacers[lane].end();
-		currentRun.addRacer(currentRacer);
+		currentRun.addRacer(currentRacers[lane]);
 		
-		currentRacer = null;
+		currentRacers[lane] = null;
 	}
 	
 	
@@ -216,6 +217,7 @@ public class ChronoTimer
 		channels.get(channel).connectSensor(sensor);
 	}
 	
+	
 	/**
 	 * Disconnects the sensor connected to the specified channel
 	 * @param channel the channel to disconnect the sensor from
@@ -246,12 +248,6 @@ public class ChronoTimer
 		if(channel < 0 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist");
 	}
 	
-	@Deprecated // TODO: This method is unnecessary and needs to be removed
-	private void didNotFinish() {
-		// TODO: Implement different race types
-		currentRun.addRacer(currentRacer);
-		currentRacer = null;
-	}
 	
 	private boolean runExists() {
 		return currentRun != null;

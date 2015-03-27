@@ -13,21 +13,22 @@ import csmsquared.sensor.Sensor;
 
 public class ChronoTimer
 {
-	public static int NUM_CHANNELS = 2; // The number of channels
+	public static int NUM_CHANNELS = 12;	// The number of channels
 	
 	private ArrayList<Channel> channels;
 	private LinkedList<Run> runs;
-	private Queue<Racer> racerQueue; // Implemented as a LinkedList since it provides the methods to be used as a queue
+	private Queue<Racer> racerQueue;	// Implemented as a LinkedList since it provides the methods to be used as a queue
 	
-	private boolean runExists;    // True if a run is currently going on
-	private Racer currentRacer;   // The racer that is currently being timed
+	private RaceType raceType;	// Default race type is Individual
+//	private boolean runExists;	// True if a run is currently going on
+	private Run currentRun;		// Null if there is no current run
+	private Racer[] currentRacers;	// The racers currently being timed
 	
 	
 	/**
 	 * Initializes All the local variable.
 	 */
-	public ChronoTimer()
-	{
+	public ChronoTimer() {
 		// Create and fill the channel array
 		channels = new ArrayList<Channel>(NUM_CHANNELS);
 		for(int i = 0; i < NUM_CHANNELS; ++i){
@@ -52,8 +53,10 @@ public class ChronoTimer
 		
 		runs = new LinkedList<Run>();
 		newRun();
-		
 		racerQueue = new LinkedList<Racer>();
+		
+		raceType = RaceType.Individual;
+		currentRacers = new Racer[NUM_CHANNELS / 2];
 	}
 	
 	
@@ -61,8 +64,7 @@ public class ChronoTimer
 	 * Adds Racer to Racer List.
 	 * @param r : r is Integer Racer ID and it will be added to Racer's List.
 	 */
-	public void num(int r)
-	{
+	public void num(int r) {
 		racerQueue.add(new Racer(r));
 	}
 	
@@ -71,25 +73,29 @@ public class ChronoTimer
 	 * Creates a new run
 	 * @exception IllegalStateException - if Run is already ON.
 	 */
-	public void newRun()
-	{
-		if(runExists) throw new IllegalStateException("Must End the previous Run");
+	public void newRun() {
+		if(runExists()) throw new IllegalStateException("Must End the previous Run");
 		
-		runs.add(new Run());
-		runExists = true;
+		currentRun = new Run();
+		runs.add(currentRun);
 	}
 	
 	
 	/**
-	 * endRun will End the Run.
+	 * Ends the current run.
 	 * @exception IllegalStateException - Run must have started.
 	 */
-	public void endRun()
-	{
-		if(!runExists) throw new IllegalStateException("Must start new Run");
-		if(currentRacer != null) didNotFinish();
+	public void endRun() {
+		if(!runExists()) throw new IllegalStateException("Must start new Run");
+
+		// This implementation should be sufficient for all race types
+		for(Racer racer : currentRacers) {
+			if(racer != null) {
+				currentRun.addRacer(racer);	// If the racer has not yet finished, he is automatically counted as DNF
+			}
+		}
 		
-		runExists = false;
+		currentRun = null;
 	}
 	
 	
@@ -97,17 +103,42 @@ public class ChronoTimer
 	 * start will take one racer out of the Racer list and start its timing.
 	 * @exception IllegalStateException - If run has not started or if There are no racer left in Racer List.
 	 */
-	public void start()
-	{
-		if(!runExists) throw new IllegalStateException("Must start the Run");
-		if(racerQueue.isEmpty()) throw new IllegalStateException("There are no racer in the queue");
+	public void start(int lane) {
+		// TEST: Implement different race types
+		if(!runExists()) throw new IllegalStateException("Must start the Run.");
+		if(lane < 0 || lane >= currentRacers.length) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
+		if(racerQueue.isEmpty()) throw new IllegalStateException("There are no racer in the queue.");
 		
-		if(currentRacer != null){
-			didNotFinish();
+		switch (raceType) {
+		case Individual:
+			// Only lane 0 is used for individual events. Ignore all other channels.
+			if(lane == 0) {
+				Racer racer = currentRacers[0];
+				if(racer != null) currentRun.addRacer(racer);
+				
+				currentRacers[0] = racer = racerQueue.poll();
+				racer.start();
+			}
+			break;
+		case Group:
+			// Any start channel can trigger a group event to start
+			for(Racer racer : currentRacers) {
+				racer = racerQueue.poll();
+				if(racer == null) break;
+				
+				racer.start();
+			}
+			break;
+		case ParallelIndividual:
+			// Parallel individual race type not yet supported
+			break;
+		case ParallelGroup:
+			// Parallel group race type not yet supported
+			break;
+		default:
+			// TODO: fill in with some default behavior
+			break;
 		}
-		
-		currentRacer = racerQueue.poll();
-		currentRacer.start();
 		
 	}
 	
@@ -116,23 +147,47 @@ public class ChronoTimer
 	 * stop will stop the the current Race. And it will also record players ending time and adds racer to a appropriate run.
 	 * @exception IllegalStateException if racer has not started yet.
 	 */
-	public void stop()
-	{
-		if(currentRacer == null) throw new IllegalStateException("Must start before you Stop");
+	public void stop(int lane) {
+		// TODO: Implement different race types
+		if(lane < 0 || lane >= NUM_CHANNELS / 2) throw new IllegalArgumentException("Lane " + lane + " does not exits.");
+		if(currentRacers[lane] == null) throw new IllegalStateException("Must start before you Stop");
 		
-		currentRacer.end();
-		runs.peekLast().addRacer(currentRacer);
+		currentRacers[lane].end();
+		currentRun.addRacer(currentRacer);
 		
 		currentRacer = null;
 	}
 	
+	
 	/**
-	 * Prints all of the times in the current run in the
-	 * format HH:MM:SS.ss
+	 * Changes the type of race to be timed.
+	 * @param type the type of race.
+	 * @exception IllegalStateException if there is an ongoing run.
 	 */
-	public void print(){
+	public void setRaceType(RaceType type) {
+		if(runExists()) throw new IllegalStateException("Must end the current run before changing race type.");
+		
+		raceType = type;
+	}
+	
+	
+	/**
+	 * 
+	 * @return the current type of race being timed.
+	 */
+	public RaceType getRaceType() {
+		return raceType;
+	}
+	
+	
+	/**
+	 * Prints all of the times in the current/last run
+	 * in the format &lthours&gt:&ltminutes&gt:&ltseconds&gt.&ltcentiseconds&gt.
+	 */
+	public void print() {
 		print(runs.size());
 	}
+	
 	
 	/**
 	 * Prints all the times listed in the given run.
@@ -140,8 +195,7 @@ public class ChronoTimer
 	 * @param Run - Integer Given RUN
 	 * @exception NoSuchElementException if the run does not exist
 	 */
-	public void print(int run)
-	{
+	public void print(int run) {
 		run = run-1;
 		if(run >= runs.size() || run < 0) throw new NoSuchElementException("There No Run # "+(run+1)+" found");
 //		System.out.print(runs.get(run).toString());
@@ -155,7 +209,7 @@ public class ChronoTimer
 	 * @param sensor the sensor to connect
 	 * @exception NoSuchElementException if the channel does not exist
 	 */
-	public void connect(int channel, Sensor sensor){
+	public void connect(int channel, Sensor sensor) {
 		--channel; // The index of a channel is one less than its number (Channel 1 is at index 0)
 		checkChannel(channel);
 		
@@ -167,7 +221,7 @@ public class ChronoTimer
 	 * @param channel the channel to disconnect the sensor from
 	 * @exception NoSuchElementException if the channel does not exist
 	 */
-	public void disconnect(int channel){
+	public void disconnect(int channel) {
 		--channel;
 		checkChannel(channel);
 		
@@ -180,7 +234,7 @@ public class ChronoTimer
 	 * @param channel the channel to toggle
 	 * @exception NoSuchElementException if the channel does not exist
 	 */
-	public void toggle(int channel){
+	public void toggle(int channel) {
 		--channel; // The index of a channel is one less than its number (Channel 1 is at index 0)
 		checkChannel(channel);
 		
@@ -188,12 +242,18 @@ public class ChronoTimer
 	}
 	
 	
-	private void checkChannel(int channel){
+	private void checkChannel(int channel ) {
 		if(channel < 0 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist");
 	}
 	
-	private void didNotFinish(){
-		runs.peekLast().addRacer(currentRacer);
+	@Deprecated // TODO: This method is unnecessary and needs to be removed
+	private void didNotFinish() {
+		// TODO: Implement different race types
+		currentRun.addRacer(currentRacer);
 		currentRacer = null;
+	}
+	
+	private boolean runExists() {
+		return currentRun != null;
 	}
 }

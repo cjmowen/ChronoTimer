@@ -1,10 +1,9 @@
 package csmsquared.test;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
+import csmsquared.main.RaceType;
 import csmsquared.main.Time;
 import csmsquared.sensor.EyeSensor;
 import csmsquared.sensor.GateSensor;
@@ -17,7 +16,8 @@ public class Shell {
 	private static final String SYSTEM_OFF_ALERT = "ChronoTimer system is OFF";
 	
 	private ChronoTimer chrono;
-	private List<Sensor> sensors;
+//	private List<Sensor> sensors;
+	private Sensor[] sensors;
 	
 	private String[] args;
 	
@@ -27,7 +27,8 @@ public class Shell {
 		// The ChronoTimer is considered off if it is null
 		chrono = null;
 		
-		sensors = new ArrayList<Sensor>(ChronoTimer.NUM_CHANNELS);
+//		sensors = new ArrayList<Sensor>(ChronoTimer.NUM_CHANNELS);
+		sensors = new Sensor[ChronoTimer.NUM_CHANNELS];
 	}
 	
 	public void run() {
@@ -83,19 +84,16 @@ public class Shell {
 		
 		// Catch ChronoTimer-related commands
 		switch(arg[0]){
-		case "RESET":
-			// Resets the system to its initial state
+		case "RESET":	// Resets the system to its initial state
 			chrono = new ChronoTimer();
 			break;
 			
-		case "TIME":
-			// Sets the current time
+		case "TIME":	// Sets the current time
 			Time.setTime(arg[1]);
 			break;
 			
-		case "TOGGLE":
+		case "TOGGLE":	// Toggles the state of a specified channel
 		case "TOG":
-			// Toggles the state of a specified channel
 			if(isNum(arg[1])){
 				try{
 					chrono.toggle(Integer.parseInt(arg[1]));
@@ -109,9 +107,7 @@ public class Shell {
 			
 			break;
 			
-		case "CONN":
-			// Connects a specified sensor type to a specified channel
-
+		case "CONN":	// Connects a specified sensor type to a specified channel
 			// Check that there are enough arguments
 			if(arg.length < 3)
 				System.out.println("Not enough arguments for command CONN");
@@ -145,13 +141,13 @@ public class Shell {
 			}
 			
 			// Add the sensor
-			sensors.add(channel - 1, sensor);
+//			sensors.add(channel - 1, sensor);
+			sensors[channel] = sensor;
 			chrono.connect(channel, sensor);
 			
 			break;
 			
-		case "DISC":
-			// Disconnects a sensor from a specified channel
+		case "DISC":	// Disconnects a sensor from a specified channel
 			if(isNum(arg[1])){
 				try{
 					int index = Integer.parseInt(arg[1]);
@@ -162,14 +158,38 @@ public class Shell {
 			}
 			break;
 			
-		case "EVENT":
-			// Sets the event type (IND | PARIND | GRP | PARGRP)
-			// TODO: Command 'EVENT'
-			
+		case "EVENT":	// Sets the event type (IND | PARIND | GRP | PARGRP)
+			if(arg.length > 1) {
+				try {
+					String eventType = arg[1];
+					switch(eventType) {
+					case "IND":
+						chrono.setRaceType(RaceType.Individual);
+						break;
+					case "GRP":
+						chrono.setRaceType(RaceType.Group);
+						break;
+					case "PARIND":
+//						chrono.setRaceType(RaceType.ParallelIndividual);
+						System.out.println(eventType + " not yet supported");
+						break;
+					case "PARGRP":
+//						chrono.setRaceType(RaceType.ParallelGroup);
+						System.out.println(eventType + " not yet supported");
+						break;
+					default:
+						System.out.println(eventType + " is not a valid event type");
+					}
+				} catch (IllegalStateException e) {
+					System.out.println("Cannot change the event type of an ongoing run");
+				}
+			}
+			else {
+				System.out.println("Must specify an event type (IND | GRP | PARIND | PARGRP)");
+			}
 			break;
 			
-		case "NEWRUN":
-			// Creates a new run
+		case "NEWRUN":	// Creates a new run
 			try{
 				chrono.newRun();
 			} catch(Exception e){
@@ -178,8 +198,7 @@ public class Shell {
 			
 			break;
 			
-		case "ENDRUN":
-			// Ends the current run
+		case "ENDRUN":	// Ends the current run
 			try{
 				chrono.endRun();
 			} catch(Exception e){
@@ -188,10 +207,9 @@ public class Shell {
 			
 			break;
 			
-		case "PRINT":
-			// Prints the specified run to stdout\
+		case "PRINT":	// Prints the specified run
 			// Checks if the run number argument exists
-			if(arg.length >= 2){
+			if(arg.length > 1){
 				// Checks that it is a valid number
 				if(isNum(arg[1])){
 					try {
@@ -209,14 +227,12 @@ public class Shell {
 			}
 			break;
 			
-		case "EXPORT":
-			// Export the run to an XML file
+		case "EXPORT":	// Export the run to an XML file
 			// TODO: Command 'EXPORT'
 			
 			break;
 			
-		case "NUM":
-			// Sets the specified competitor number as the next competitor to start
+		case "NUM":	// Sets the specified competitor number as the next competitor to start
 			if(arg.length > 1 && isNum(arg[1])){
 				try{
 					chrono.num(Integer.parseInt(arg[1]));
@@ -230,49 +246,54 @@ public class Shell {
 			
 			break;
 			
-		case "CLR":
-			// Clears the specified competitor number as the next competitor
+		case "CLR":	// Clears the specified competitor number as the next competitor
 			// TODO: Command 'CLR'
 			
 			break;
 			
-		case "SWAP":
-			// Exchange the next two competitors to finish
+		case "SWAP":	// Exchange the next two competitors to finish
 			// TODO: Command 'SWAP'
 			
 			break;
 			
-		case "RCL":
-			// Recalls the last triggered event
+		case "RCL":	// Recalls the last triggered event
 			// TODO: Command 'RCL'
 			
 			break;
 			
-		case "START":
-			// Start timing
+		case "START":	// Triggers channel 0
 			try {
-				sensors.get(0).trip();
+				sensors[0].trip();
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				System.out.println("No sensor connected to channel 0");
 			}
 
 			break;
 			
-		case "FINISH":
+		case "FINISH":	// Triggers channel 1
 		case "FIN":
-			// Finish timing
 			try {
-				sensors.get(1).trip();
+				sensors[1].trip();
 			} catch (IllegalStateException e) {
-				System.out.println(e.getMessage());
+				System.out.println("No sensor connected to channel 1");
 			}
 
 			break;
 			
-		case "TRIG":
-			// Triggers the specified channel
-			// TODO: Command 'TRIG'
-			
+		case "TRIG":	// Triggers the specified channel
+			if(arg.length > 1) {
+				if(isNum(arg[1])) {
+					int channelNumber = Integer.parseInt(arg[1]);
+					try {
+						chrono.trigger(channelNumber);
+					} catch (IllegalArgumentException e) {
+						System.out.println(e.getMessage());
+					}
+				}
+				else {
+					System.out.println(arg[1] + " is not an integer.");
+				}
+			}
 			break;
 		default:
 			System.out.println("Unknown command: " + arg[0].toUpperCase());

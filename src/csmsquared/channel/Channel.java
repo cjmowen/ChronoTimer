@@ -73,7 +73,7 @@ public class Channel {
 	 * Manually signal the Channel as though a connected Sensor sent a signal.
 	 * This notifies all ChannelListeners.
 	 */
-	public void forceSignal(){
+	public void trigger(){
 		signalReceived();
 	}
 	

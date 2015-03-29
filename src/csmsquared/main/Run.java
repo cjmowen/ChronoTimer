@@ -11,9 +11,15 @@ public class Run {
 	private static final int INITIAL_CAPACITY = 10;
 	
 	private List<Racer> racers;
+	private RaceType raceType;
 	
-	public Run(){
+	/**
+	 * Constructor
+	 * @param type the type of race being measured in this run.
+	 */
+	public Run(RaceType type){
 		racers = new ArrayList<Racer>(INITIAL_CAPACITY);
+		raceType = type;
 	}
 	
 	/**
@@ -73,7 +79,7 @@ public class Run {
 		// Windows doesn't recognize '\n' as a newline, so this
 		// is necessary to get it to appear in the file
 		String newline = System.getProperty("line.separator");
-		String result="";
+		String result= raceType + newline;
 		
 		for(int i=0; i< racers.size(); i++)
 		{

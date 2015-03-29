@@ -74,9 +74,9 @@ public class ChronoTimer
 	 * @exception IllegalStateException - if Run is already ON.
 	 */
 	public void newRun() {
-		if(runExists()) throw new IllegalStateException("Must End the previous Run");
+		if(runExists()) throw new IllegalStateException("Must End the previous run.");
 		
-		currentRun = new Run();
+		currentRun = new Run(raceType);
 		runs.add(currentRun);
 	}
 	
@@ -86,7 +86,7 @@ public class ChronoTimer
 	 * @exception IllegalStateException - Run must have started.
 	 */
 	public void endRun() {
-		if(!runExists()) throw new IllegalStateException("Must start new Run");
+		if(!runExists()) throw new IllegalStateException("Must start new run.");
 
 		// TEST: This implementation should be sufficient for all race types
 		for(Racer racer : currentRacers) {
@@ -100,6 +100,13 @@ public class ChronoTimer
 	
 	
 	/**
+	 * Starts the first lane only.
+	 */
+	public void start() {
+		start(0);
+	}
+	
+	/**
 	 * start will take one racer out of the Racer list and start its timing.
 	 * @exception IllegalStateException - If run has not started or if There are no racer left in Racer List.
 	 */
@@ -107,7 +114,7 @@ public class ChronoTimer
 		// TEST: Implement different race types
 		if(!runExists()) throw new IllegalStateException("Must start the Run.");
 		if(lane < 0 || lane >= currentRacers.length) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
-		if(racerQueue.isEmpty()) throw new IllegalStateException("There are no racer in the queue.");
+		if(racerQueue.isEmpty()) throw new IllegalStateException("There are no racers in the queue.");
 		
 		switch (raceType) {
 		case Individual:
@@ -150,7 +157,7 @@ public class ChronoTimer
 	 */
 	public void stop(int lane) {
 		// TEST: This implementation should work for all race types
-		if(lane < 0 || lane >= NUM_CHANNELS / 2) throw new IllegalArgumentException("Lane " + lane + " does not exits.");
+		if(lane < 0 || lane >= NUM_CHANNELS / 2) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
 		if(currentRacers[lane] == null) return;
 		
 		currentRacers[lane].end();
@@ -198,7 +205,7 @@ public class ChronoTimer
 	 */
 	public void print(int run) {
 		run = run-1;
-		if(run >= runs.size() || run < 0) throw new NoSuchElementException("There No Run # "+(run+1)+" found");
+		if(run >= runs.size() || run < 0) throw new NoSuchElementException("Run " + (run+1) + " does not exist.");
 //		System.out.print(runs.get(run).toString());
 		Printer.print(runs.get(run).toString());
 	}
@@ -244,8 +251,14 @@ public class ChronoTimer
 	}
 	
 	
+	public void trigger(int channel) {
+		checkChannel(channel);
+		channels.get(channel).trigger();
+	}
+	
+	
 	private void checkChannel(int channel ) {
-		if(channel < 0 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist");
+		if(channel < 0 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist.");
 	}
 	
 	

@@ -91,7 +91,7 @@ public class ChronoTimer
 
 		// TEST: This implementation should be sufficient for all race types
 		for(Racer racer : currentRacers) {
-			if(racer != null) continue;
+			if(racer == null) continue;
 			currentRun.addRacer(racer);	// If the racer has not yet finished, he is automatically counted as DNF
 		}
 		

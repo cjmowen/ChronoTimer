@@ -267,4 +267,9 @@ public class ChronoTimer
 	private boolean runExists() {
 		return currentRun != null;
 	}
+	
+	public String getRacerQueue(){
+		
+		return racerQueue.toString();
+	}
 }

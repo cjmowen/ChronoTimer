@@ -51,7 +51,7 @@ public class ChronoTimerGUI extends JFrame {
 	public ChronoTimerGUI() {
 		setTitle("Chrono Timer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 613, 597);
+		setBounds(100, 100, 949, 597);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -63,27 +63,27 @@ public class ChronoTimerGUI extends JFrame {
 		
 		txtEnterId = new JTextField();
 		txtEnterId.setText("Enter ID");
-		txtEnterId.setBounds(95, 80, 50, 20);
+		txtEnterId.setBounds(113, 80, 50, 20);
 		contentPane.add(txtEnterId);
 		txtEnterId.setColumns(10);
 		
 		JButton btnNewButton = new JButton("ADD");
 			
-		btnNewButton.setBounds(150, 79, 60, 23);
+		btnNewButton.setBounds(187, 79, 60, 23);
 		contentPane.add(btnNewButton);
 		
 		lblChronoTimer = new JLabel("Chrono Timer");
 		lblChronoTimer.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblChronoTimer.setBounds(199, 30, 165, 38);
+		lblChronoTimer.setBounds(417, 11, 165, 38);
 		contentPane.add(lblChronoTimer);
 		
 		lblRaceType = new JLabel("Race Type :");
 		lblRaceType.setBounds(31, 126, 72, 14);
 		contentPane.add(lblRaceType);
 		
-		JComboBox raceType = new JComboBox();
-		raceType.setModel(new DefaultComboBoxModel(new String[] {"Single", "Group Race"}));
-		raceType.setBounds(95, 123, 60, 20);
+		final JComboBox raceType = new JComboBox();
+		raceType.setModel(new DefaultComboBoxModel(new String[] {"Individual", "Group", "ParallelIndividual", "ParallelGrouo"}));
+		raceType.setBounds(101, 123, 121, 20);
 		contentPane.add(raceType);
 		
 		JButton btnStart = new JButton("Start");
@@ -108,22 +108,23 @@ public class ChronoTimerGUI extends JFrame {
 		
 		final JTextArea ActivityMonitor = new JTextArea();
 		ActivityMonitor.setWrapStyleWord(true);
-		ActivityMonitor.setBounds(377, 121, 129, 235);
+		ActivityMonitor.setBounds(736, 121, 129, 412);
 		//ActivityMonitor.setEditable(false);
 		contentPane.add(ActivityMonitor);
 		
 		JLabel lblActivityMonitor = new JLabel("Activity Monitor");
-		lblActivityMonitor.setBounds(398, 96, 89, 14);
+		lblActivityMonitor.setBounds(760, 96, 89, 14);
 		contentPane.add(lblActivityMonitor);
 		
 		
-		JTextArea RacerList = new JTextArea();
+		final JTextArea RacerList = new JTextArea();
+		RacerList.setLineWrap(true);
 		RacerList.setWrapStyleWord(true);
-		RacerList.setBounds(285, 121, 82, 195);
+		RacerList.setBounds(506, 140, 103, 195);
 		contentPane.add(RacerList);
 		
 		JLabel lblRacerList = new JLabel("Racer List");
-		lblRacerList.setBounds(297, 96, 67, 14);
+		lblRacerList.setBounds(527, 115, 67, 14);
 		contentPane.add(lblRacerList);
 		
 		JLabel lblRun = new JLabel("RUN :");
@@ -131,23 +132,27 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(lblRun);
 		
 		JButton btnPrint = new JButton("Print");
-		btnPrint.setBounds(150, 353, 72, 23);
+		btnPrint.setBounds(175, 353, 72, 23);
 		contentPane.add(btnPrint);
 		
 		final JTextArea textAreaRun = new JTextArea();
 		textAreaRun.setEditable(false);
-		textAreaRun.setBounds(59, 438, 256, 120);
+		textAreaRun.setBounds(59, 438, 247, 109);
 		contentPane.add(textAreaRun);
 		
-		JLabel lblRun_1 = new JLabel("RUN");
-		lblRun_1.setBounds(57, 413, 46, 14);
+		JLabel lblRun_1 = new JLabel("RUN PRINT");
+		lblRun_1.setBounds(132, 413, 90, 14);
 		contentPane.add(lblRun_1);
 		
 		txtRun = new JTextField();
 		txtRun.setText("# Run");
-		txtRun.setBounds(77, 354, 86, 20);
+		txtRun.setBounds(77, 354, 60, 20);
 		contentPane.add(txtRun);
 		txtRun.setColumns(10);
+		
+		JButton btnSelect = new JButton("Select");
+		btnSelect.setBounds(243, 122, 72, 23);
+		contentPane.add(btnSelect);
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			
@@ -156,8 +161,10 @@ public class ChronoTimerGUI extends JFrame {
 				// TODO Auto-generated method stub
 				try{
 				chrono.num(Integer.parseInt(txtEnterId.getText()));
-				ActivityMonitor.setText(ActivityMonitor.getText()+"\n Player Added : "+txtEnterId.getText());
-				
+//				RacerList.setText(RacerList.getText()+"\n"+txtEnterId.getText());
+//				ActivityMonitor.setText(ActivityMonitor.getText()+"\n Player Added : "+txtEnterId.getText());
+//				
+				RacerList.setText(chrono.getRacerQueue());
 				}
 				catch(Exception ex)
 				{
@@ -172,6 +179,8 @@ public class ChronoTimerGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				chrono.newRun();
+				ActivityMonitor.setText(ActivityMonitor.getText()+"\n New run Started");
+				
 				
 			}
 		});
@@ -181,6 +190,7 @@ public class ChronoTimerGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				chrono.endRun();
+				ActivityMonitor.setText(ActivityMonitor.getText()+"\n Run Ended");
 				
 			}
 		});
@@ -189,8 +199,9 @@ public class ChronoTimerGUI extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				chrono.start(1);
-				
+				chrono.start();
+				RacerList.setText(chrono.getRacerQueue());
+				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# Racer Started");
 			}
 		});
 		
@@ -199,7 +210,10 @@ public class ChronoTimerGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				chrono.stop(1);
+				chrono.stop(0);
+				RacerList.setText(chrono.getRacerQueue());
+				
+				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# Racer Stopped");	
 				
 			}
 		});
@@ -210,13 +224,32 @@ public class ChronoTimerGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				try{
-				chrono.print(Integer.parseInt(txtRun.getText()));
-				textAreaRun.setText(textAreaRun.getText()+"\n");
+				
+				textAreaRun.setText(chrono.print(Integer.parseInt(txtRun.getText())));
 				}
 				catch(Exception ee)
 				{
 					JOptionPane.showMessageDialog(null, ee.getMessage());
 				}
+			}
+		});
+		
+		btnSelect.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+raceType.getSelectedItem().toString()+" RaceType Selected");
+					
+				if(raceType.getSelectedItem().toString().equals("Individual"))				
+					chrono.setRaceType(RaceType.Individual);
+				else if(raceType.getSelectedItem().toString().equals("Group"))				
+					chrono.setRaceType(RaceType.Group);
+				else if(raceType.getSelectedItem().toString().equals("ParallelIndvidual"))				
+					chrono.setRaceType(RaceType.ParallelIndividual);
+				else chrono.setRaceType(RaceType.ParallelGroup);
+				
+				
 			}
 		});
 		

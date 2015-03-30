@@ -190,22 +190,26 @@ public class ChronoTimer
 	/**
 	 * Prints all of the times in the current/last run
 	 * in the format &lthours&gt:&ltminutes&gt:&ltseconds&gt.&ltcentiseconds&gt.
+	 * @return a string representing the run
 	 */
-	public void print() {
-		print(runs.size());
+	public String print() {
+		return print(runs.size());
 	}
 	
 	
 	/**
 	 * Prints all the times listed in the given run.
 	 * Format : racerId HH:MM:SS.ss
-	 * @param Run - Integer Given RUN
+	 * @param run the run to print
+	 * @return a string representing the run
 	 * @exception NoSuchElementException if the run does not exist
 	 */
-	public void print(int run) {
+	public String print(int run) {
 		run = run-1;
 		if(run >= runs.size() || run < 0) throw new NoSuchElementException("Run " + (run+1) + " does not exist.");
-		Printer.print(runs.get(run).toString());
+		String runString = runs.get(run).toString();
+		Printer.print(runString);
+		return runString;
 	}
 	
 	

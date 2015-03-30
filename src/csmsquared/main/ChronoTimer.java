@@ -20,7 +20,6 @@ public class ChronoTimer
 	private Queue<Racer> racerQueue;	// Implemented as a LinkedList since it provides the methods to be used as a queue
 	
 	private RaceType raceType;	// Default race type is Individual
-//	private boolean runExists;	// True if a run is currently going on
 	private Run currentRun;		// Null if there is no current run
 	private Racer[] currentRacers;	// The racers currently being timed
 	
@@ -206,7 +205,6 @@ public class ChronoTimer
 	public void print(int run) {
 		run = run-1;
 		if(run >= runs.size() || run < 0) throw new NoSuchElementException("Run " + (run+1) + " does not exist.");
-//		System.out.print(runs.get(run).toString());
 		Printer.print(runs.get(run).toString());
 	}
 	

@@ -278,6 +278,7 @@ public class ChronoTimer
 	public String print(int run) {
 		run = run-1;
 		if(run >= runs.size() || run < 0) throw new NoSuchElementException("Run " + (run+1) + " does not exist.");
+		
 		String runString = runs.get(run).toString();
 		Printer.print(runString);
 		return runString;

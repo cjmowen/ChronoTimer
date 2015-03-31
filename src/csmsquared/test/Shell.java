@@ -175,8 +175,7 @@ public class Shell {
 						chrono.setRaceType(RaceType.Group);
 						break;
 					case "PARIND":
-//						chrono.setRaceType(RaceType.ParallelIndividual);
-						System.out.println(eventType + " not yet supported");
+						chrono.setRaceType(RaceType.ParallelIndividual);
 						break;
 					case "PARGRP":
 //						chrono.setRaceType(RaceType.ParallelGroup);

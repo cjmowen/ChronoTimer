@@ -429,12 +429,23 @@ public class ChronoTimer
 		public void start(int lane) {
 			verifyStartConditions(lane);
 			
+			// XXX: The below code is very similar to the start method for IndividualRace.
+			//      Do we really need to have individual and parallel individual race types as separate things?
+			Racer racer = currentRacers[lane];
+			if(racer != null) {
+				racer.didNotFinish();
+				currentRun.addRacer(racer);
+			}
+			
+			currentRacers[lane] = racer = racerQueue.poll();
+			racer.start();
 		}
 
 		@Override
 		public void stop(int lane) {
 			verifyStopConditions(lane);
 			
+			genericStop(lane);
 		}
 	}
 	

@@ -37,30 +37,33 @@ public class ChronoTimer
 		// Create and fill the channel array
 		channels = new ArrayList<Channel>(NUM_CHANNELS);
 		for(int i = 0; i < NUM_CHANNELS; ++i){
-			Channel c = new Channel();
+			Channel c = new Channel(i + 1);
 			c.addChannelListener(new ChannelListener() {
 				
 				@Override
 				public void onSignalReceived(ChannelEvent e) {
 					// Get the index of the channel that received the signal
-					int channelNumber = channels.indexOf(e.getChannel()) + 1;
+					int channelNumber = e.getChannel();
+					int lane = (channelNumber + 1) / 2;	// Quick and dirty ceiling: (1+1)/2 = 2/2 = 1; (2+1)/2 = 3/2 = 1
 					
 					// Odd channels start timing
-					if(channelNumber % 2 == 1) start(channelNumber / 2);	// channelNumber / 2 is the lane number
+					if(channelNumber % 2 == 1) start(lane);	// channelNumber / 2 is the lane number
 					
 					// Even channels end timing
-					else stop(channelNumber / 2);
+					else stop(lane);
 				}
 			});
 			
 			channels.add(i, c);
 		}
 		
+		raceType = RaceType.Individual;
+		
 		runs = new LinkedList<Run>();
 		newRun();
+		
 		racerQueue = new LinkedList<Racer>();
 		
-		raceType = RaceType.Individual;
 		currentRacers = new Racer[NUM_CHANNELS / 2];
 	}
 	
@@ -94,11 +97,22 @@ public class ChronoTimer
 		if(!runExists()) throw new IllegalStateException("Must start new run.");
 
 		// TEST: This implementation should be sufficient for all race types
-		for(Racer racer : currentRacers) {
+		Racer racer;
+		for(int i = 0; i < currentRacers.length; ++i) {
+			racer = currentRacers[i];
 			if(racer == null) continue;
+			
 			racer.didNotFinish();
-			currentRun.addRacer(racer);	// If the racer has not yet finished, he is automatically counted as DNF
+			currentRun.addRacer(racer);
+			
+			currentRacers[i] = null;
 		}
+		
+//		for(Racer racer : currentRacers) {
+//			if(racer == null) continue;
+//			racer.didNotFinish();
+//			currentRun.addRacer(racer);	// If the racer has not yet finished, he is automatically counted as DNF
+//		}
 		
 		currentRun = null;
 		
@@ -119,6 +133,7 @@ public class ChronoTimer
 	 */
 	public void start(int lane) {
 		// TEST: Implement different race types
+		--lane;
 		if(!runExists()) throw new IllegalStateException("Must start the Run.");
 		if(lane < 0 || lane >= currentRacers.length) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
 		if(racerQueue.isEmpty()) throw new IllegalStateException("There are no racers in the queue.");
@@ -179,6 +194,7 @@ public class ChronoTimer
 	 */
 	public void stop(int lane) {
 		// TEST: This implementation should work for all race types
+		--lane;
 		if(lane < 0 || lane >= NUM_CHANNELS / 2) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
 		if(currentRacers[lane] == null) return;
 		

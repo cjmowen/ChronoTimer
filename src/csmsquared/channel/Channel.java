@@ -12,10 +12,12 @@ public class Channel {
 	private Sensor sensor;
 	private SensorListener sensorListener; // Store the listener so that it can be removed
 	private boolean isActive;
+	private int channelNumber;
 	
-	public Channel(){
+	public Channel(int channelNumber){
 		listeners = new ArrayList<ChannelListener>();
 		isActive = false;
+		this.channelNumber = channelNumber;
 	}
 	
 	/**
@@ -102,7 +104,7 @@ public class Channel {
 			
 			// Call sensorTripped() on all SensorListeners associated with this Sensor
 			for(ChannelListener l : listeners){
-				l.onSignalReceived(new ChannelEvent(this));
+				l.onSignalReceived(new ChannelEvent(channelNumber));
 			}
 		}
 	}

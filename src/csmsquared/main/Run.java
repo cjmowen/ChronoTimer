@@ -1,7 +1,6 @@
 package csmsquared.main;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class represents a single Run with the race times for multiple racers. Each
@@ -84,11 +83,15 @@ public class Run {
 		// Windows doesn't recognize '\n' as a newline, so this
 		// is necessary to get it to appear in the file
 		String newline = System.getProperty("line.separator");
-		String result= raceType + newline;
+		String result = raceType.toString() + newline;
 		
-		for(int i=0; i< racers.size(); i++)
-		{
-			result += racers.get(i).toString() + newline;
+//		for(int i=0; i < racers.size(); i++)
+//		{
+//			result += racers.get(i).toString() + newline;
+//		}
+		
+		for(Racer racer : racers) {
+			result += racer.toString() + newline;
 		}
 		
 		return result;

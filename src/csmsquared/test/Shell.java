@@ -202,7 +202,7 @@ public class Shell {
 		case "ENDRUN":	// Ends the current run
 			try{
 				chrono.endRun();
-			} catch(Exception e){
+			} catch(IllegalStateException e){
 				System.out.println(e.getMessage());
 			}
 			
@@ -265,10 +265,10 @@ public class Shell {
 		case "START":	// Triggers channel 1
 			try {
 				sensors[0].trip();
-			} catch (NoSuchElementException e) {
-				System.out.println(e.getMessage());
 			} catch (IllegalStateException e) {
-				System.out.println("No sensor connected to channel 1");
+				System.out.println(e.getMessage());
+			} catch (NullPointerException e) {
+				System.out.println(e.getMessage());
 			}
 
 			break;
@@ -277,7 +277,7 @@ public class Shell {
 		case "FIN":
 			try {
 				sensors[1].trip();
-			} catch (IllegalStateException e) {
+			} catch (NullPointerException e) {
 				System.out.println("No sensor connected to channel 1");
 			}
 
@@ -290,6 +290,8 @@ public class Shell {
 					try {
 						chrono.trigger(channelNumber);
 					} catch (IllegalArgumentException e) {
+						System.out.println(e.getMessage());
+					} catch (IllegalStateException e) {
 						System.out.println(e.getMessage());
 					}
 				}

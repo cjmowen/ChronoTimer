@@ -1,13 +1,13 @@
 package csmsquared.channel;
 
 public class ChannelEvent {
-	Channel origin;
+	int origin;
 	
-	public ChannelEvent(Channel origin){
+	public ChannelEvent(int origin){
 		this.origin = origin;
 	}
 	
-	public Channel getChannel(){
+	public int getChannel(){
 		return origin;
 	}
 }

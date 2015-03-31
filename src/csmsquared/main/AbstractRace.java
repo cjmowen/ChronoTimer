@@ -1,9 +1,9 @@
 package csmsquared.main;
 
-public abstract class Competition {
+public abstract class AbstractRace {
 	private final RaceType raceType;
 	
-	public Competition(RaceType raceType) {
+	public AbstractRace(RaceType raceType) {
 		this.raceType = raceType;
 	}
 	

@@ -23,7 +23,7 @@ public class ChronoTimer
 	private LinkedList<Run> runs;
 	private Queue<Racer> racerQueue;	// Implemented as a LinkedList since it provides the methods to be used as a queue
 		
-	Competition race;	// Default race type is Individual
+	AbstractRace race;	// Default race type is Individual
 	private Run currentRun;		// Null if there is no current run
 	private Racer[] currentRacers;	// The racers currently being timed
 	
@@ -361,7 +361,7 @@ public class ChronoTimer
 		notifyObservers(false);
 	}
 	
-	private class IndividualRace extends Competition {
+	private class IndividualRace extends AbstractRace {
 
 		public IndividualRace() {
 			super(RaceType.Individual);
@@ -390,7 +390,7 @@ public class ChronoTimer
 		}
 	}
 	
-	private class GroupRace extends Competition {
+	private class GroupRace extends AbstractRace {
 		
 		public GroupRace() {
 			super(RaceType.Group);
@@ -419,7 +419,7 @@ public class ChronoTimer
 		}
 	}
 	
-	private class ParallelIndividualRace extends Competition {
+	private class ParallelIndividualRace extends AbstractRace {
 
 		public ParallelIndividualRace() {
 			super(RaceType.ParallelIndividual);
@@ -438,7 +438,7 @@ public class ChronoTimer
 		}
 	}
 	
-	private class ParallelGroupRace extends Competition {
+	private class ParallelGroupRace extends AbstractRace {
 
 		public ParallelGroupRace() {
 			super(RaceType.ParallelGroup);

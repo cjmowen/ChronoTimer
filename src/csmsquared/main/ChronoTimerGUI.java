@@ -427,6 +427,7 @@ public class ChronoTimerGUI extends JFrame {
 					{
 						btnStart_1.setText("Stop");
 						chrono.trigger(1);
+						ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# player started ");
 					}	
 					else
 					{

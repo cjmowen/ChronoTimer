@@ -10,7 +10,7 @@ import java.util.List;
 public class Run {
 	private static final int INITIAL_CAPACITY = 10;
 	
-	private List<Racer> racers;
+	private ArrayList<Racer> racers;
 	private RaceType raceType;
 	
 	/**
@@ -53,6 +53,11 @@ public class Run {
 				return true;
 		}
 		return false;
+	}
+	
+	
+	public ArrayList<Racer> getRacers() {
+		return racers;
 	}
 	
 	/**

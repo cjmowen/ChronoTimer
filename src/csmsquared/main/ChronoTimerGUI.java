@@ -24,6 +24,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.ButtonGroup;
 
+import org.hamcrest.core.IsInstanceOf;
+
 
 public class ChronoTimerGUI extends JFrame {
 
@@ -34,6 +36,20 @@ public class ChronoTimerGUI extends JFrame {
 	private ChronoTimer chrono = new ChronoTimer();
 	private JTextField txtRun;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	final JButton btnStart_1;
+	final JButton btnStart_2;
+	final JButton btnStart_3;
+	final JButton btnStart_4;
+	final JButton btnStart_5;
+	final JButton btnStart_6;
+	JTextArea txtRacerStatus;
+	final JRadioButton radio1;
+	final JRadioButton radio2;
+	final JRadioButton radio3;
+	final JRadioButton radio4;
+	final JRadioButton radio5;
+	final JRadioButton radio6;
+	
 
 	/**
 	 * Launch the application.
@@ -57,7 +73,7 @@ public class ChronoTimerGUI extends JFrame {
 	public ChronoTimerGUI() {
 		setTitle("Chrono Timer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 949, 597);
+		setBounds(100, 100, 949, 825);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -101,12 +117,8 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(btnStop);
 		
 		JButton btnNewRun = new JButton("New Run");
-		btnNewRun.setBounds(41, 196, 89, 23);
+		btnNewRun.setBounds(226, 122, 89, 23);
 		contentPane.add(btnNewRun);
-		
-		JButton btnEndRun = new JButton("End Run");
-		btnEndRun.setBounds(133, 196, 89, 23);
-		contentPane.add(btnEndRun);
 		
 		JTextArea textArea = new JTextArea();
 		textArea.setBounds(490, 121, -94, 190);
@@ -156,56 +168,52 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(txtRun);
 		txtRun.setColumns(10);
 		
-		JButton btnSelect = new JButton("Select");
-		btnSelect.setBounds(243, 122, 72, 23);
-		contentPane.add(btnSelect);
-		
-		final JRadioButton radio1 = new JRadioButton("");
+		 radio1 = new JRadioButton("");
 		radio1.setBounds(175, 365, 31, 23);
 		contentPane.add(radio1);
 		
-		final JRadioButton radio2 = new JRadioButton("");
+		radio2 = new JRadioButton("");
 		radio2.setBounds(243, 365, 31, 23);
 		contentPane.add(radio2);
 		
-		final JRadioButton radio3 = new JRadioButton("");
+		radio3 = new JRadioButton("");
 		radio3.setBounds(329, 365, 31, 23);
 		contentPane.add(radio3);
 		
-		final JRadioButton radio4 = new JRadioButton("");
+		radio4 = new JRadioButton("");
 		radio4.setBounds(415, 365, 36, 23);
 		contentPane.add(radio4);
 		
-		final JRadioButton radio5 = new JRadioButton("");
+		radio5 = new JRadioButton("");
 		radio5.setBounds(482, 365, 36, 23);
 		contentPane.add(radio5);
 		
-		final JRadioButton radio6 = new JRadioButton("");
+		radio6 = new JRadioButton("");
 		radio6.setBounds(581, 365, 46, 23);
 		contentPane.add(radio6);
 		
-		final JButton btnStart_1 = new JButton("Start");
+		btnStart_1 = new JButton("Start");
 		
 		btnStart_1.setBounds(145, 335, 72, 23);
 		contentPane.add(btnStart_1);
 		
-		final JButton btnStart_2 = new JButton("Start");
+		 btnStart_2 = new JButton("Start");
 		btnStart_2.setBounds(227, 335, 71, 23);
 		contentPane.add(btnStart_2);
 		
-		final JButton btnStart_3 = new JButton("Start");
+		 btnStart_3 = new JButton("Start");
 		btnStart_3.setBounds(308, 335, 75, 23);
 		contentPane.add(btnStart_3);
 		
-		final JButton btnStart_4 = new JButton("Start");
+		btnStart_4 = new JButton("Start");
 		btnStart_4.setBounds(393, 335, 69, 23);
 		contentPane.add(btnStart_4);
 		
-		final JButton btnStart_5 = new JButton("Start");
+		 btnStart_5 = new JButton("Start");
 		btnStart_5.setBounds(472, 335, 74, 23);
 		contentPane.add(btnStart_5);
 		
-		final JButton btnStart_6 = new JButton("Start");
+		btnStart_6 = new JButton("Start");
 		btnStart_6.setBounds(567, 335, 72, 23);
 		contentPane.add(btnStart_6);
 		
@@ -224,9 +232,7 @@ public class ChronoTimerGUI extends JFrame {
 				// TODO Auto-generated method stub
 				try{
 				chrono.num(Integer.parseInt(txtEnterId.getText()));
-//				RacerList.setText(RacerList.getText()+"\n"+txtEnterId.getText());
-//				ActivityMonitor.setText(ActivityMonitor.getText()+"\n Player Added : "+txtEnterId.getText());
-//				
+				
 				LinkedList<Integer> queue = chrono.getRacersInQueue();
 				String result ="";
 				for(Integer i : queue)
@@ -236,6 +242,11 @@ public class ChronoTimerGUI extends JFrame {
 				}
 				RacerList.setText(result);
 				}
+				
+				
+				
+				
+				
 				catch(IllegalArgumentException ex)
 				{
 					JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -249,6 +260,16 @@ public class ChronoTimerGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try{
+					
+					if(raceType.getSelectedItem().toString().equals("Individual"))				
+						chrono.setRaceType(RaceType.Individual);
+					else if(raceType.getSelectedItem().toString().equals("Group"))				
+						chrono.setRaceType(RaceType.Group);
+					else if(raceType.getSelectedItem().toString().equals("ParallelIndvidual"))				
+						chrono.setRaceType(RaceType.ParallelIndividual);
+					else chrono.setRaceType(RaceType.ParallelGroup);
+					
+					
 					chrono.newRun();
 					LinkedList<Integer> queue = chrono.getRacersInQueue();
 					String result ="";
@@ -258,42 +279,27 @@ public class ChronoTimerGUI extends JFrame {
 						
 					}
 					RacerList.setText(result);
-					
+					txtRacerStatus.setText(refresh());
 				ActivityMonitor.setText(ActivityMonitor.getText()+"\n New run Started");
 				}catch(IllegalStateException ex)
 				{
-//					chrono.endRun();
-//					chrono.newRun();
-//					//System.out.println(ex.getMessage());
+					chrono.endRun();
 					
-					JOptionPane.showMessageDialog(null, ex.getMessage());
-				}
-				
-				
-				
-			}
-		});
-		
-		btnEndRun.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try{
-				chrono.endRun();
-				LinkedList<Integer> queue = chrono.getRacersInQueue();
-				String result ="";
-				for(Integer i : queue)
-				{
-					result +=(i.toString()+"\n");
+					if(raceType.getSelectedItem().toString().equals("Individual"))				
+						chrono.setRaceType(RaceType.Individual);
+					else if(raceType.getSelectedItem().toString().equals("Group"))				
+						chrono.setRaceType(RaceType.Group);
+					else if(raceType.getSelectedItem().toString().equals("ParallelIndvidual"))				
+						chrono.setRaceType(RaceType.ParallelIndividual);
+					else chrono.setRaceType(RaceType.ParallelGroup);
+//					
+					chrono.newRun();
 					
+					//JOptionPane.showMessageDialog(null, ex.getMessage());
 				}
-				RacerList.setText(result);
 				
-				ActivityMonitor.setText(ActivityMonitor.getText()+"\n Run Ended");
-				}catch(IllegalStateException ex)
-				{
-					JOptionPane.showMessageDialog(null, ex.getMessage());
-				}
+				
+				
 			}
 		});
 		
@@ -315,6 +321,7 @@ public class ChronoTimerGUI extends JFrame {
 				
 				
 				LinkedList<String> racersStarted = chrono.getCurrentRacers();
+				txtRacerStatus.setText(refresh());
 				for(String r: racersStarted)
 				{
 					ActivityMonitor.setText(ActivityMonitor.getText() + "\n" + r);
@@ -333,7 +340,7 @@ public class ChronoTimerGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				try{
-				chrono.stop(0);
+				chrono.stop();
 				
 				LinkedList<Integer> queue = chrono.getRacersInQueue();
 				String result ="";
@@ -347,6 +354,7 @@ public class ChronoTimerGUI extends JFrame {
 				
 				
 				LinkedList<String> racersStarted = chrono.getFinishedRacers();
+				txtRacerStatus.setText(refresh());
 				for(String r: racersStarted)
 				{
 					ActivityMonitor.setText(ActivityMonitor.getText() + "\n" + r);
@@ -375,260 +383,110 @@ public class ChronoTimerGUI extends JFrame {
 			}
 		});
 		
-		btnSelect.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		
+		radio1.addActionListener(new actionRadioListner(1));
+		radio1.addActionListener(new actionRadioListner(2));
+		radio1.addActionListener(new actionRadioListner(3));
+		radio1.addActionListener(new actionRadioListner(4));
+		radio1.addActionListener(new actionRadioListner(5));
+		radio1.addActionListener(new actionRadioListner(6));
+
+		
+		btnStart_1.addActionListener(new actionButtonListener(1, radio1));
+		btnStart_2.addActionListener(new actionButtonListener(2, radio2));
+		btnStart_3.addActionListener(new actionButtonListener(3, radio3));
+		btnStart_4.addActionListener(new actionButtonListener(4, radio4));
+		btnStart_5.addActionListener(new actionButtonListener(5, radio5));
+		btnStart_6.addActionListener(new actionButtonListener(6, radio6));
+		
+		JLabel lblRacerStatus = new JLabel("RACER STATUS");
+		lblRacerStatus.setBounds(548, 488, 91, 14);
+		contentPane.add(lblRacerStatus);
+		
+		txtRacerStatus = new JTextArea();
+		txtRacerStatus.setBounds(516, 513, 172, 230);
+		contentPane.add(txtRacerStatus);
+
+
+		
+		
+	}
+	private class actionRadioListner implements ActionListener
+	{
+		int radio;
+		public actionRadioListner(int radio) {
 				
-				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+raceType.getSelectedItem().toString()+" RaceType Selected");
-				try{	
-				if(raceType.getSelectedItem().toString().equals("Individual"))				
-					chrono.setRaceType(RaceType.Individual);
-				else if(raceType.getSelectedItem().toString().equals("Group"))				
-					chrono.setRaceType(RaceType.Group);
-				else if(raceType.getSelectedItem().toString().equals("ParallelIndvidual"))				
-					chrono.setRaceType(RaceType.ParallelIndividual);
-				else chrono.setRaceType(RaceType.ParallelGroup);
-				}catch(IllegalStateException ex)
+			this.radio = radio;
+			// TODO Auto-generated constructor stub
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			txtRacerStatus.setText(refresh());
+			chrono.toggle(radio*2);
+			chrono.toggle(radio*2-1);
+			
+		}
+		
+	}
+	private class actionButtonListener implements ActionListener{
+
+		int btnNumber;
+		JRadioButton radio;
+		
+		public actionButtonListener(int btnNumber,JRadioButton radio) {
+			this.btnNumber = btnNumber;
+			this.radio = radio;
+		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			if(radio.isSelected()){
+			
+				txtRacerStatus.setText(refresh());
+				
+			if(e.getSource() instanceof JButton){
+				
+				JButton btn = (JButton) e.getSource();
+				if(btn.getText().equals("Start"))
 				{
-					System.out.println(ex.getMessage() + "in btnSelect listener");
+					btn.setText("Stop");
+					chrono.trigger(btnNumber*2-1);
 				}
-				
+				else
+				{
+					btn.setText("Start");
+					chrono.trigger(btnNumber*2);
+				}
 			}
-		});
-		
-		radio1.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chrono.toggle(1);
-				chrono.toggle(2);
-				
-			}
-		});
-		
-
-		radio1.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chrono.toggle(1);
-				chrono.toggle(2);
-				
-			}
-		});
-		
-
-		radio2.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chrono.toggle(3);
-				chrono.toggle(4);
-				
-			}
-		});
-		
-
-		radio3.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chrono.toggle(5);
-				chrono.toggle(6);
-				
-			}
-		});
-		
-
-		radio4.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chrono.toggle(7);
-				chrono.toggle(8);
-				
-			}
-		});
-		
-
-		radio5.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chrono.toggle(9);
-				chrono.toggle(10);
-				
-			}
-		});
-		
-
-		radio6.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chrono.toggle(11);
-				chrono.toggle(12);
-				
-			}
-		});
-		
-		
-		btnStart_1.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if(radio1.isSelected()){
-				
-					if(btnStart_1.getText().equals("Start"))
-					{
-						btnStart_1.setText("Stop");
-						chrono.trigger(1);
-						ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# player started ");
-					}	
-					else
-					{
-						btnStart_1.setText("Start");
-						chrono.trigger(2);
-						ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# player stopped ");
-					}
-					
-					
-					
-					
-					}
-			}
-		});
-		
-		btnStart_2.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if(radio2.isSelected()){
-				
-					if(btnStart_2.getText().equals("Start"))
-					{
-						btnStart_2.setText("Stop");
-						chrono.trigger(3);
-					}	
-					else
-					{
-						btnStart_2.setText("Start");
-						chrono.trigger(4);
-					}
-					
-					
-					
-					
-					}
-			}
-		});
-		
-btnStart_3.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				if(radio3.isSelected()){
-				
-					if(btnStart_3.getText().equals("Start"))
-					{
-						btnStart_3.setText("Stop");
-						chrono.trigger(5);
-					}	
-					else
-					{
-						btnStart_3.setText("Start");
-						chrono.trigger(6);
-					}
-					
-					
-					
-					
-					}
-			}
-		});
-
-btnStart_4.addActionListener(new ActionListener() {
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		if(radio4.isSelected()){
-		
-			if(btnStart_4.getText().equals("Start"))
-			{
-				btnStart_4.setText("Stop");
-				chrono.trigger(7);
-			}	
-			else
-			{
-				btnStart_4.setText("Start");
-				chrono.trigger(8);
 			}
 			
-			
-			
-			
-			}
+		}
+		
 	}
-});
-
-btnStart_5.addActionListener(new ActionListener() {
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
+	public String refresh(){
 		
-		if(radio5.isSelected()){
+		String result ="";
 		
-			if(btnStart_5.getText().equals("Start"))
-			{
-				btnStart_5.setText("Stop");
-				chrono.trigger(9);
-			}	
-			else
-			{
-				btnStart_5.setText("Start");
-				chrono.trigger(10);
-			}
-			
-			
-			
-			
-			}
-	}
-});
-
-btnStart_6.addActionListener(new ActionListener() {
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
+		result = "RUNNING : \n";
 		
-		if(radio6.isSelected()){
+		LinkedList<String> currentRacer = chrono.getCurrentRacers();
 		
-			if(btnStart_6.getText().equals("Start"))
-			{
-				btnStart_6.setText("Stop");
-				chrono.trigger(11);
-			}	
-			else
-			{
-				btnStart_6.setText("Start");
-				chrono.trigger(12);
-			}
-			
-			
-			
-			
-			}
-	}
-});
-
-
-
+		for(String str:currentRacer){
+			result+= str+"\n";
+		}
 		
+		result += "\n FINISHED \n";
+		
+LinkedList<String> finishedRacer = chrono.getFinishedRacers();
+		
+		for(String str:finishedRacer){
+			result+= str+"\n";
+		}
+		
+		
+		return result;
 		
 	}
 }

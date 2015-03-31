@@ -1,6 +1,8 @@
 package csmsquared.main;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
@@ -89,9 +91,8 @@ public class ChronoTimer
 
 		// TEST: This implementation should be sufficient for all race types
 		for(Racer racer : currentRacers) {
-			if(racer != null) {
-				currentRun.addRacer(racer);	// If the racer has not yet finished, he is automatically counted as DNF
-			}
+			if(racer == null) continue;
+			currentRun.addRacer(racer);	// If the racer has not yet finished, he is automatically counted as DNF
 		}
 		
 		currentRun = null;
@@ -150,6 +151,14 @@ public class ChronoTimer
 	
 	
 	/**
+	 * Stops timing for the first lane.
+	 */
+	public void stop() {
+		stop(0);
+	}
+	
+	
+	/**
 	 * Stops timing for the specified lane.
 	 * @param lane the lane to stop.
 	 * @exception IllegalArgumentException if the lane does not exist.
@@ -184,6 +193,21 @@ public class ChronoTimer
 	 */
 	public RaceType getRaceType() {
 		return raceType;
+	}
+	
+	
+	/**
+	 * Returns a list of key-value pairs for all racers currently racing. 
+	 * @return A list of key-value pairs where the key is the racer's id, and the value is the racer's elapsed time.
+	 */
+	public ArrayList<SimpleEntry<Integer, String>> getCurrentRacers() {
+		ArrayList<SimpleEntry<Integer, String>> list = new ArrayList<SimpleEntry<Integer, String>>(6);
+		for(Racer racer : currentRacers) {
+			if(racer == null) continue;
+			list.add(new SimpleEntry<Integer, String>(racer.getId(), Time.toString(racer.getElapsedTime())));
+		}
+		
+		return list;
 	}
 	
 	

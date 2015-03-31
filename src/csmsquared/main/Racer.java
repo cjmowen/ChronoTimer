@@ -13,27 +13,52 @@ public class Racer
 		this.id = id;
 	}
 	
+	
 	public void start()
 	{
-		//startTime = System.currentTimeMillis();
 		startTime = Time.getTime();
 	}
+	
+	
 	public void end()
 	{
-		//endTime = System.currentTimeMillis();
-		endTime =Time.getTime();
+		endTime = Time.getTime();
 	}
-	public long elapsedTime()
+	
+	
+	public long getStartTime()
 	{
-		if(endTime <= 0) return -1;
-		long elapsedTime = endTime-startTime;
+		return startTime;
+	}
+	
+	
+	/**
+	 * Returns the racer's elapsed time.
+	 * @return the elapsed time, or -1 if the racer did not finish.
+	 */
+	public long getElapsedTime()
+	{
+		if(startTime <= 0) return 0;
+		
+		long elapsedTime;
+		if(endTime <= 0) {
+			elapsedTime = Time.getTime() - startTime;
+		}
+		else {
+			elapsedTime = endTime - startTime;
+		}
+		
 		return elapsedTime > 9999990 ? -1 : elapsedTime;
 	}
+	
+	
 	public String toString()
 	{
-		if (elapsedTime() == -1) return id + " DNF";
-		return id + " " + Time.toString(elapsedTime());
+		if (getElapsedTime() == -1) return id + " DNF";
+		return id + " " + Time.toString(getElapsedTime());
 	}
+	
+	
 	public int getId()
 	{
 		return id;

@@ -231,8 +231,16 @@ public class ChronoTimerGUI extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				chrono.newRun();
+				try{
+					chrono.newRun();
 				ActivityMonitor.setText(ActivityMonitor.getText()+"\n New run Started");
+				}catch(IllegalStateException ex)
+				{
+					chrono.endRun();
+					chrono.newRun();
+					//System.out.println(ex.getMessage());
+				}
+				
 				
 				
 			}
@@ -242,9 +250,13 @@ public class ChronoTimerGUI extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try{
 				chrono.endRun();
 				ActivityMonitor.setText(ActivityMonitor.getText()+"\n Run Ended");
-				
+				}catch(IllegalStateException ex)
+				{
+					
+				}
 			}
 		});
 		
@@ -252,9 +264,15 @@ public class ChronoTimerGUI extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				try{
 				chrono.start();
 				RacerList.setText(chrono.getRacerQueue());
 				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# Racer Started");
+				}catch(IllegalStateException ex)
+				{
+					chrono.stop();
+					chrono.start();
+				}
 			}
 		});
 		
@@ -263,11 +281,15 @@ public class ChronoTimerGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				try{
 				chrono.stop(0);
 				RacerList.setText(chrono.getRacerQueue());
 				
 				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# Racer Stopped");	
-				
+				}catch(IllegalStateException ex)
+				{
+					
+				}
 			}
 		});
 		
@@ -293,7 +315,7 @@ public class ChronoTimerGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+raceType.getSelectedItem().toString()+" RaceType Selected");
-					
+				try{	
 				if(raceType.getSelectedItem().toString().equals("Individual"))				
 					chrono.setRaceType(RaceType.Individual);
 				else if(raceType.getSelectedItem().toString().equals("Group"))				
@@ -301,7 +323,10 @@ public class ChronoTimerGUI extends JFrame {
 				else if(raceType.getSelectedItem().toString().equals("ParallelIndvidual"))				
 					chrono.setRaceType(RaceType.ParallelIndividual);
 				else chrono.setRaceType(RaceType.ParallelGroup);
-				
+				}catch(IllegalStateException ex)
+				{
+					System.out.println(ex.getMessage() + "in btnSelect listener");
+				}
 				
 			}
 		});

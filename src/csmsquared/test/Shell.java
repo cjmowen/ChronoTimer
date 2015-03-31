@@ -94,6 +94,10 @@ public class Shell {
 			
 		case "TOGGLE":	// Toggles the state of a specified channel
 		case "TOG":
+			if(arg.length < 2) {
+				System.out.println("Not enough arguments for command TOG");
+				break;
+			}
 			if(isNum(arg[1])){
 				try{
 					chrono.toggle(Integer.parseInt(arg[1]));
@@ -171,8 +175,7 @@ public class Shell {
 						chrono.setRaceType(RaceType.Group);
 						break;
 					case "PARIND":
-//						chrono.setRaceType(RaceType.ParallelIndividual);
-						System.out.println(eventType + " not yet supported");
+						chrono.setRaceType(RaceType.ParallelIndividual);
 						break;
 					case "PARGRP":
 //						chrono.setRaceType(RaceType.ParallelGroup);
@@ -277,6 +280,8 @@ public class Shell {
 		case "FIN":
 			try {
 				sensors[1].trip();
+			} catch (NoSuchElementException e) {
+				System.out.println(e.getMessage());
 			} catch (NullPointerException e) {
 				System.out.println("No sensor connected to channel 1");
 			}
@@ -289,7 +294,9 @@ public class Shell {
 					int channelNumber = Integer.parseInt(arg[1]);
 					try {
 						chrono.trigger(channelNumber);
-					} catch (IllegalArgumentException e) {
+					} catch (NoSuchElementException e) {
+						System.out.println(e.getMessage());
+					}catch (IllegalArgumentException e) {
 						System.out.println(e.getMessage());
 					} catch (IllegalStateException e) {
 						System.out.println(e.getMessage());

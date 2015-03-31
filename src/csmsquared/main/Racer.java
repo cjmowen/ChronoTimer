@@ -63,8 +63,8 @@ public class Racer
 	
 	public String toString()
 	{
-		if (getElapsedTime() == -1) return id + " DNF";
-		return "[" + id + "]" + ": " + Time.toString(getElapsedTime());
+		if (getElapsedTime() == -1) return "[" + id + "]:" + " DNF";
+		return "[" + id + "]: " + Time.toString(getElapsedTime());
 	}
 	
 	

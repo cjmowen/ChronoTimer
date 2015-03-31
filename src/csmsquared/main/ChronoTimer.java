@@ -1,8 +1,6 @@
 package csmsquared.main;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
@@ -197,14 +195,45 @@ public class ChronoTimer
 	
 	
 	/**
-	 * Returns a list of key-value pairs for all racers currently racing. 
-	 * @return A list of key-value pairs where the key is the racer's id, and the value is the racer's elapsed time.
+	 * Returns a list of IDs for the racers queued up to run.
+	 * @return the ArrayList of racer IDs
 	 */
-	public ArrayList<SimpleEntry<Integer, String>> getCurrentRacers() {
-		ArrayList<SimpleEntry<Integer, String>> list = new ArrayList<SimpleEntry<Integer, String>>(6);
+	public LinkedList<Integer> getRacersInQueue() {
+		LinkedList<Integer> list = new LinkedList<Integer>();
+		for(Racer racer : racerQueue) {
+			list.add(racer.getId());
+		}
+		
+		return list;
+	}
+	
+	
+	/**
+	 * Returns a list of strings showing the racers currently being timed
+	 * as well as their current times.
+	 * @return list of strings representing the run time of current racers.
+	 */
+	public LinkedList<String> getCurrentRacers() {
+		LinkedList<String> list = new LinkedList<String>();
 		for(Racer racer : currentRacers) {
 			if(racer == null) continue;
-			list.add(new SimpleEntry<Integer, String>(racer.getId(), Time.toString(racer.getElapsedTime())));
+			list.add(racer.toString() + " R");
+		}
+		
+		return list;
+	}
+	
+	
+	/**
+	 * Returns a list of strings representing the racers who have finished (or failed
+	 * to finish) the run.
+	 * @return list of strings representing finished racers.
+	 */
+	public LinkedList<String> getFinishedRacers() {
+		ArrayList<Racer> racers = currentRun.getRacers();
+		LinkedList<String> list = new LinkedList<String>();
+		for(Racer racer : racers) {
+			list.add(racer.toString());
 		}
 		
 		return list;
@@ -277,14 +306,18 @@ public class ChronoTimer
 	}
 	
 	
+	/**
+	 * Triggers the specified channel.
+	 * @param channel the channel
+	 */
 	public void trigger(int channel) {
 		checkChannel(channel);
-		channels.get(channel).trigger();
+		channels.get(--channel).trigger();
 	}
 	
 	
 	private void checkChannel(int channel ) {
-		if(channel < 0 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist.");
+		if(channel < 1 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist.");
 	}
 	
 	

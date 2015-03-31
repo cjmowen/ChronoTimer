@@ -18,6 +18,8 @@ import javax.swing.JTextArea;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.LinkedList;
+
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.ButtonGroup;
@@ -225,9 +227,16 @@ public class ChronoTimerGUI extends JFrame {
 //				RacerList.setText(RacerList.getText()+"\n"+txtEnterId.getText());
 //				ActivityMonitor.setText(ActivityMonitor.getText()+"\n Player Added : "+txtEnterId.getText());
 //				
-				RacerList.setText(chrono.getRacerQueue());
+				LinkedList<Integer> queue = chrono.getRacersInQueue();
+				
+				for(Integer i : queue)
+				{
+					RacerList.setText(RacerList.getText()+i.toString()+"\n");
+					
 				}
-				catch(Exception ex)
+				
+				}
+				catch(IllegalArgumentException ex)
 				{
 					JOptionPane.showMessageDialog(null, ex.getMessage());
 				}
@@ -244,9 +253,11 @@ public class ChronoTimerGUI extends JFrame {
 				ActivityMonitor.setText(ActivityMonitor.getText()+"\n New run Started");
 				}catch(IllegalStateException ex)
 				{
-					chrono.endRun();
-					chrono.newRun();
-					//System.out.println(ex.getMessage());
+//					chrono.endRun();
+//					chrono.newRun();
+//					//System.out.println(ex.getMessage());
+					
+					JOptionPane.showMessageDialog(null, ex.getMessage());
 				}
 				
 				
@@ -263,7 +274,7 @@ public class ChronoTimerGUI extends JFrame {
 				ActivityMonitor.setText(ActivityMonitor.getText()+"\n Run Ended");
 				}catch(IllegalStateException ex)
 				{
-					
+					JOptionPane.showMessageDialog(null, ex.getMessage());
 				}
 			}
 		});
@@ -275,8 +286,13 @@ public class ChronoTimerGUI extends JFrame {
 				try{
 				chrono.start();
 				RacerList.setText(chrono.getRacerQueue());
-				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# Racer Started");
-				}catch(IllegalStateException ex)
+				LinkedList<String> racersStarted = chrono.getCurrentRacers();
+				for(String r: racersStarted)
+				{
+					ActivityMonitor.setText(ActivityMonitor.getText() + "\n" + r);
+				}
+				
+				}catch(IllegalArgumentException/*StateException*/ ex)
 				{
 					chrono.stop();
 					chrono.start();
@@ -293,7 +309,14 @@ public class ChronoTimerGUI extends JFrame {
 				chrono.stop(0);
 				RacerList.setText(chrono.getRacerQueue());
 				
-				ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# Racer Stopped");	
+				
+				
+				LinkedList<String> racersStarted = chrono.getFinishedRacers();
+				for(String r: racersStarted)
+				{
+					ActivityMonitor.setText(ActivityMonitor.getText() + "\n" + r);
+				}
+					
 				}catch(IllegalStateException ex)
 				{
 					
@@ -433,6 +456,7 @@ public class ChronoTimerGUI extends JFrame {
 					{
 						btnStart_1.setText("Start");
 						chrono.trigger(2);
+						ActivityMonitor.setText(ActivityMonitor.getText()+"\n"+"# player stopped ");
 					}
 					
 					

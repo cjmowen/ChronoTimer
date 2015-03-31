@@ -22,7 +22,13 @@ public class Racer
 	
 	public void end()
 	{
+		if(endTime != 0) throw new IllegalStateException("The racer has already ended");
 		endTime = Time.getTime();
+	}
+	
+	
+	public void didNotFinish() {
+		endTime = -1;
 	}
 	
 	
@@ -41,7 +47,10 @@ public class Racer
 		if(startTime <= 0) return 0;
 		
 		long elapsedTime;
-		if(endTime <= 0) {
+		if(endTime == -1) {
+			return -1;
+		}
+		else if(endTime == 0) {
 			elapsedTime = Time.getTime() - startTime;
 		}
 		else {

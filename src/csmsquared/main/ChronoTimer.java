@@ -119,7 +119,10 @@ public class ChronoTimer
 			// Only lane 0 is used for individual events. Ignore all other channels.
 			if(lane == 0) {
 				Racer racer = currentRacers[0];
-				if(racer != null) currentRun.addRacer(racer);
+				if(racer != null){
+					racer.didNotFinish();
+					currentRun.addRacer(racer);
+				}
 				
 				currentRacers[0] = racer = racerQueue.poll();
 				racer.start();

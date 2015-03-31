@@ -97,7 +97,7 @@ public class Shell {
 			if(isNum(arg[1])){
 				try{
 					chrono.toggle(Integer.parseInt(arg[1]));
-				} catch(IndexOutOfBoundsException e){
+				} catch(NoSuchElementException e){
 					System.out.println(e.getMessage());
 				}
 			}
@@ -109,8 +109,10 @@ public class Shell {
 			
 		case "CONN":	// Connects a specified sensor type to a specified channel
 			// Check that there are enough arguments
-			if(arg.length < 3)
+			if(arg.length < 3) {
 				System.out.println("Not enough arguments for command CONN");
+				break;
+			}
 			
 			String sensorType = arg[1];
 			Sensor sensor;
@@ -141,8 +143,7 @@ public class Shell {
 			}
 			
 			// Add the sensor
-//			sensors.add(channel - 1, sensor);
-			sensors[channel] = sensor;
+			sensors[channel - 1] = sensor;
 			chrono.connect(channel, sensor);
 			
 			break;
@@ -261,11 +262,13 @@ public class Shell {
 			
 			break;
 			
-		case "START":	// Triggers channel 0
+		case "START":	// Triggers channel 1
 			try {
 				sensors[0].trip();
-			} catch (Exception e) {
-				System.out.println("No sensor connected to channel 0");
+			} catch (NoSuchElementException e) {
+				System.out.println(e.getMessage());
+			} catch (IllegalStateException e) {
+				System.out.println("No sensor connected to channel 1");
 			}
 
 			break;

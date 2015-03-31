@@ -2,12 +2,15 @@ package csmsquared.main;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
 import csmsquared.channel.Channel;
 import csmsquared.channel.ChannelEvent;
 import csmsquared.channel.ChannelListener;
+import csmsquared.chronoEvents.ChronoListener;
+import csmsquared.chronoEvents.LaneEvent;
 import csmsquared.sensor.Sensor;
 
 
@@ -15,6 +18,7 @@ public class ChronoTimer
 {
 	public static int NUM_CHANNELS = 12;	// The number of channels
 	
+	private List<ChronoListener> listeners;
 	private ArrayList<Channel> channels;
 	private LinkedList<Run> runs;
 	private Queue<Racer> racerQueue;	// Implemented as a LinkedList since it provides the methods to be used as a queue
@@ -28,6 +32,8 @@ public class ChronoTimer
 	 * Initializes All the local variable.
 	 */
 	public ChronoTimer() {
+		listeners = new ArrayList<ChronoListener>();
+		
 		// Create and fill the channel array
 		channels = new ArrayList<Channel>(NUM_CHANNELS);
 		for(int i = 0; i < NUM_CHANNELS; ++i){
@@ -95,6 +101,8 @@ public class ChronoTimer
 		}
 		
 		currentRun = null;
+		
+		notifyObservers(false);
 	}
 	
 	
@@ -137,6 +145,14 @@ public class ChronoTimer
 				
 				racer.start();
 			}
+			Racer racer;
+			for(int i = 0; i < currentRacers.length; ++i) {
+				racer = racerQueue.poll();
+				if(racer == null) break;	// No more racers to pull from the queue
+				
+				currentRacers[i] = racer;
+				racer.start();
+			}
 			break;
 		case ParallelIndividual:
 			// Parallel individual race type not yet supported
@@ -148,6 +164,8 @@ public class ChronoTimer
 			// TODO: fill in with some default behavior
 			break;
 		}
+		
+		notifyObservers(true);
 		
 	}
 	
@@ -174,6 +192,8 @@ public class ChronoTimer
 		currentRun.addRacer(currentRacers[lane]);
 		
 		currentRacers[lane] = null;
+		
+		notifyObservers(false);
 	}
 	
 	
@@ -237,7 +257,7 @@ public class ChronoTimer
 		ArrayList<Racer> racers = currentRun.getRacers();
 		LinkedList<String> list = new LinkedList<String>();
 		for(Racer racer : racers) {
-			list.add(racer.toString());
+			list.add(racer.toString() + " F");
 		}
 		
 		return list;
@@ -277,7 +297,7 @@ public class ChronoTimer
 	 * @exception NoSuchElementException if the channel does not exist
 	 */
 	public void connect(int channel, Sensor sensor) {
-		--channel; // The index of a channel is one less than its number (Channel 1 is at index 0)
+		--channel;
 		checkChannel(channel);
 		
 		channels.get(channel).connectSensor(sensor);
@@ -303,7 +323,7 @@ public class ChronoTimer
 	 * @exception NoSuchElementException if the channel does not exist
 	 */
 	public void toggle(int channel) {
-		--channel; // The index of a channel is one less than its number (Channel 1 is at index 0)
+		--channel;
 		checkChannel(channel);
 		
 		channels.get(channel).toggle();
@@ -315,13 +335,14 @@ public class ChronoTimer
 	 * @param channel the channel
 	 */
 	public void trigger(int channel) {
+		--channel;
 		checkChannel(channel);
-		channels.get(--channel).trigger();
+		channels.get(channel).trigger();
 	}
 	
 	
 	private void checkChannel(int channel ) {
-		if(channel < 1 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist.");
+		if(channel < 0 || channel >= NUM_CHANNELS) throw new NoSuchElementException("Channel " + ++channel + " does not exist.");
 	}
 	
 	
@@ -329,8 +350,10 @@ public class ChronoTimer
 		return currentRun != null;
 	}
 	
-	public String getRacerQueue(){
-		
-		return racerQueue.toString();
+	private void notifyObservers(boolean isStartEvent) {
+		LaneEvent event = new LaneEvent(isStartEvent);
+		for(ChronoListener listener : listeners) {
+			listener.onLaneEvent(event);
+		}
 	}
 }

@@ -18,6 +18,9 @@ import javax.swing.JTextArea;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.ButtonGroup;
 
 
 public class ChronoTimerGUI extends JFrame {
@@ -28,6 +31,7 @@ public class ChronoTimerGUI extends JFrame {
 	private JLabel lblRaceType;
 	private ChronoTimer chrono = new ChronoTimer();
 	private JTextField txtRun;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	/**
 	 * Launch the application.
@@ -91,15 +95,15 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(btnStart);
 		
 		JButton btnStop = new JButton("Stop");
-		btnStop.setBounds(41, 210, 89, 23);
+		btnStop.setBounds(133, 162, 89, 23);
 		contentPane.add(btnStop);
 		
 		JButton btnNewRun = new JButton("New Run");
-		btnNewRun.setBounds(41, 257, 89, 23);
+		btnNewRun.setBounds(41, 196, 89, 23);
 		contentPane.add(btnNewRun);
 		
 		JButton btnEndRun = new JButton("End Run");
-		btnEndRun.setBounds(41, 302, 89, 23);
+		btnEndRun.setBounds(133, 196, 89, 23);
 		contentPane.add(btnEndRun);
 		
 		JTextArea textArea = new JTextArea();
@@ -120,39 +124,88 @@ public class ChronoTimerGUI extends JFrame {
 		final JTextArea RacerList = new JTextArea();
 		RacerList.setLineWrap(true);
 		RacerList.setWrapStyleWord(true);
-		RacerList.setBounds(506, 140, 103, 195);
+		RacerList.setBounds(623, 126, 103, 195);
 		contentPane.add(RacerList);
 		
 		JLabel lblRacerList = new JLabel("Racer List");
-		lblRacerList.setBounds(527, 115, 67, 14);
+		lblRacerList.setBounds(641, 101, 67, 14);
 		contentPane.add(lblRacerList);
 		
 		JLabel lblRun = new JLabel("RUN :");
-		lblRun.setBounds(45, 357, 46, 14);
+		lblRun.setBounds(51, 230, 46, 14);
 		contentPane.add(lblRun);
 		
 		JButton btnPrint = new JButton("Print");
-		btnPrint.setBounds(175, 353, 72, 23);
+		btnPrint.setBounds(155, 230, 72, 23);
 		contentPane.add(btnPrint);
 		
 		final JTextArea textAreaRun = new JTextArea();
 		textAreaRun.setEditable(false);
-		textAreaRun.setBounds(59, 438, 247, 109);
+		textAreaRun.setBounds(366, 126, 247, 109);
 		contentPane.add(textAreaRun);
 		
 		JLabel lblRun_1 = new JLabel("RUN PRINT");
-		lblRun_1.setBounds(132, 413, 90, 14);
+		lblRun_1.setBounds(456, 101, 90, 14);
 		contentPane.add(lblRun_1);
 		
 		txtRun = new JTextField();
 		txtRun.setText("# Run");
-		txtRun.setBounds(77, 354, 60, 20);
+		txtRun.setBounds(85, 230, 60, 20);
 		contentPane.add(txtRun);
 		txtRun.setColumns(10);
 		
 		JButton btnSelect = new JButton("Select");
 		btnSelect.setBounds(243, 122, 72, 23);
 		contentPane.add(btnSelect);
+		
+		final JRadioButton radio1 = new JRadioButton("");
+		radio1.setBounds(54, 365, 31, 23);
+		contentPane.add(radio1);
+		
+		final JRadioButton radio2 = new JRadioButton("");
+		radio2.setBounds(132, 365, 31, 23);
+		contentPane.add(radio2);
+		
+		final JRadioButton radio3 = new JRadioButton("");
+		radio3.setBounds(191, 365, 31, 23);
+		contentPane.add(radio3);
+		
+		final JRadioButton radio4 = new JRadioButton("");
+		radio4.setBounds(248, 365, 36, 23);
+		contentPane.add(radio4);
+		
+		final JRadioButton radio5 = new JRadioButton("");
+		radio5.setBounds(306, 365, 36, 23);
+		contentPane.add(radio5);
+		
+		final JRadioButton radio6 = new JRadioButton("");
+		radio6.setBounds(373, 365, 46, 23);
+		contentPane.add(radio6);
+		
+		final JButton btnStart_1 = new JButton("Start");
+		
+		btnStart_1.setBounds(33, 335, 62, 23);
+		contentPane.add(btnStart_1);
+		
+		final JButton btnStart_2 = new JButton("Start");
+		btnStart_2.setBounds(101, 335, 60, 23);
+		contentPane.add(btnStart_2);
+		
+		final JButton btnStart_3 = new JButton("Start");
+		btnStart_3.setBounds(158, 335, 64, 23);
+		contentPane.add(btnStart_3);
+		
+		final JButton btnStart_4 = new JButton("Start");
+		btnStart_4.setBounds(226, 335, 58, 23);
+		contentPane.add(btnStart_4);
+		
+		final JButton btnStart_5 = new JButton("Start");
+		btnStart_5.setBounds(292, 335, 60, 23);
+		contentPane.add(btnStart_5);
+		
+		final JButton btnStart_6 = new JButton("Start");
+		btnStart_6.setBounds(359, 335, 60, 23);
+		contentPane.add(btnStart_6);
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			
@@ -252,6 +305,159 @@ public class ChronoTimerGUI extends JFrame {
 				
 			}
 		});
+		
+		btnStart_1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(radio1.isSelected()){
+				
+					if(btnStart_1.getText().equals("Start"))
+					{
+						btnStart_1.setText("Stop");
+						chrono.trigger(1);
+					}	
+					else
+					{
+						btnStart_1.setText("Start");
+						chrono.trigger(2);
+					}
+					
+					
+					
+					
+					}
+			}
+		});
+		
+		btnStart_2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(radio2.isSelected()){
+				
+					if(btnStart_2.getText().equals("Start"))
+					{
+						btnStart_2.setText("Stop");
+						chrono.trigger(3);
+					}	
+					else
+					{
+						btnStart_2.setText("Start");
+						chrono.trigger(4);
+					}
+					
+					
+					
+					
+					}
+			}
+		});
+		
+btnStart_3.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				if(radio3.isSelected()){
+				
+					if(btnStart_3.getText().equals("Start"))
+					{
+						btnStart_3.setText("Stop");
+						chrono.trigger(5);
+					}	
+					else
+					{
+						btnStart_3.setText("Start");
+						chrono.trigger(6);
+					}
+					
+					
+					
+					
+					}
+			}
+		});
+
+btnStart_4.addActionListener(new ActionListener() {
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		if(radio4.isSelected()){
+		
+			if(btnStart_4.getText().equals("Start"))
+			{
+				btnStart_4.setText("Stop");
+				chrono.trigger(7);
+			}	
+			else
+			{
+				btnStart_4.setText("Start");
+				chrono.trigger(8);
+			}
+			
+			
+			
+			
+			}
+	}
+});
+
+btnStart_5.addActionListener(new ActionListener() {
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		if(radio5.isSelected()){
+		
+			if(btnStart_5.getText().equals("Start"))
+			{
+				btnStart_5.setText("Stop");
+				chrono.trigger(9);
+			}	
+			else
+			{
+				btnStart_5.setText("Start");
+				chrono.trigger(10);
+			}
+			
+			
+			
+			
+			}
+	}
+});
+
+btnStart_6.addActionListener(new ActionListener() {
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		if(radio6.isSelected()){
+		
+			if(btnStart_6.getText().equals("Start"))
+			{
+				btnStart_6.setText("Stop");
+				chrono.trigger(11);
+			}	
+			else
+			{
+				btnStart_6.setText("Start");
+				chrono.trigger(12);
+			}
+			
+			
+			
+			
+			}
+	}
+});
+
+
+
 		
 		
 	}

@@ -7,7 +7,6 @@ public enum RaceType {
 	ParallelGroup;
 	
 	public String toString() {
-		// XXX: May not be needed or maybe should return spelled out name.
 		switch(this){
 			case Individual:
 				return "IND";

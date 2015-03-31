@@ -139,12 +139,6 @@ public class ChronoTimer
 			break;
 		case Group:
 			// Any start channel can trigger a group event to start
-			for(Racer racer : currentRacers) {
-				racer = racerQueue.poll();
-				if(racer == null) break;
-				
-				racer.start();
-			}
 			Racer racer;
 			for(int i = 0; i < currentRacers.length; ++i) {
 				racer = racerQueue.poll();

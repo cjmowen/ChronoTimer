@@ -124,7 +124,7 @@ public class ChronoTimer
 	 * Starts the first lane only.
 	 */
 	public void start() {
-		start(0);
+		start(1);
 	}
 	
 	/**
@@ -183,7 +183,7 @@ public class ChronoTimer
 	 * Stops timing for the first lane.
 	 */
 	public void stop() {
-		stop(0);
+		stop(1);
 	}
 	
 	

@@ -159,53 +159,61 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(btnSelect);
 		
 		final JRadioButton radio1 = new JRadioButton("");
-		radio1.setBounds(54, 365, 31, 23);
+		radio1.setBounds(175, 365, 31, 23);
 		contentPane.add(radio1);
 		
 		final JRadioButton radio2 = new JRadioButton("");
-		radio2.setBounds(132, 365, 31, 23);
+		radio2.setBounds(243, 365, 31, 23);
 		contentPane.add(radio2);
 		
 		final JRadioButton radio3 = new JRadioButton("");
-		radio3.setBounds(191, 365, 31, 23);
+		radio3.setBounds(329, 365, 31, 23);
 		contentPane.add(radio3);
 		
 		final JRadioButton radio4 = new JRadioButton("");
-		radio4.setBounds(248, 365, 36, 23);
+		radio4.setBounds(415, 365, 36, 23);
 		contentPane.add(radio4);
 		
 		final JRadioButton radio5 = new JRadioButton("");
-		radio5.setBounds(306, 365, 36, 23);
+		radio5.setBounds(482, 365, 36, 23);
 		contentPane.add(radio5);
 		
 		final JRadioButton radio6 = new JRadioButton("");
-		radio6.setBounds(373, 365, 46, 23);
+		radio6.setBounds(581, 365, 46, 23);
 		contentPane.add(radio6);
 		
 		final JButton btnStart_1 = new JButton("Start");
 		
-		btnStart_1.setBounds(33, 335, 62, 23);
+		btnStart_1.setBounds(145, 335, 72, 23);
 		contentPane.add(btnStart_1);
 		
 		final JButton btnStart_2 = new JButton("Start");
-		btnStart_2.setBounds(101, 335, 60, 23);
+		btnStart_2.setBounds(227, 335, 71, 23);
 		contentPane.add(btnStart_2);
 		
 		final JButton btnStart_3 = new JButton("Start");
-		btnStart_3.setBounds(158, 335, 64, 23);
+		btnStart_3.setBounds(308, 335, 75, 23);
 		contentPane.add(btnStart_3);
 		
 		final JButton btnStart_4 = new JButton("Start");
-		btnStart_4.setBounds(226, 335, 58, 23);
+		btnStart_4.setBounds(393, 335, 69, 23);
 		contentPane.add(btnStart_4);
 		
 		final JButton btnStart_5 = new JButton("Start");
-		btnStart_5.setBounds(292, 335, 60, 23);
+		btnStart_5.setBounds(472, 335, 74, 23);
 		contentPane.add(btnStart_5);
 		
 		final JButton btnStart_6 = new JButton("Start");
-		btnStart_6.setBounds(359, 335, 60, 23);
+		btnStart_6.setBounds(567, 335, 72, 23);
 		contentPane.add(btnStart_6);
+		
+		JLabel lblActivate = new JLabel("Activate/Deactivate :");
+		lblActivate.setBounds(10, 374, 120, 14);
+		contentPane.add(lblActivate);
+		
+		JLabel lblChannel = new JLabel("Channel :");
+		lblChannel.setBounds(70, 339, 60, 14);
+		contentPane.add(lblChannel);
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			
@@ -330,6 +338,83 @@ public class ChronoTimerGUI extends JFrame {
 				
 			}
 		});
+		
+		radio1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.toggle(1);
+				chrono.toggle(2);
+				
+			}
+		});
+		
+
+		radio1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.toggle(1);
+				chrono.toggle(2);
+				
+			}
+		});
+		
+
+		radio2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.toggle(3);
+				chrono.toggle(4);
+				
+			}
+		});
+		
+
+		radio3.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.toggle(5);
+				chrono.toggle(6);
+				
+			}
+		});
+		
+
+		radio4.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.toggle(7);
+				chrono.toggle(8);
+				
+			}
+		});
+		
+
+		radio5.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.toggle(9);
+				chrono.toggle(10);
+				
+			}
+		});
+		
+
+		radio6.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chrono.toggle(11);
+				chrono.toggle(12);
+				
+			}
+		});
+		
 		
 		btnStart_1.addActionListener(new ActionListener() {
 			

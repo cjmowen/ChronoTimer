@@ -108,10 +108,10 @@ public class ChronoTimer
 			currentRun.addRacer(racer);
 			
 			currentRacers[i] = null;
+			notifyObservers(i + 1, false);	// Notify observers that the person has ended
 		}
 		
 		currentRun = null;
-		notifyObservers(false);
 	}
 	
 	
@@ -127,7 +127,7 @@ public class ChronoTimer
 	 */
 	public void start(int lane) {		
 		race.start(lane);
-		notifyObservers(true);
+		notifyObservers(lane, true);
 	}
 	
 	
@@ -145,7 +145,7 @@ public class ChronoTimer
 	 */
 	public void stop(int lane) {
 		race.stop(lane);
-		notifyObservers(false);
+		notifyObservers(lane, false);
 	}
 	
 	
@@ -155,7 +155,8 @@ public class ChronoTimer
 	 * @exception IllegalStateException if there is an ongoing run.
 	 */
 	public void setRaceType(RaceType raceType) {
-		if(runExists()) throw new IllegalStateException("Must end the current run before changing race type.");
+//		if(runExists()) throw new IllegalStateException("Must end the current run before changing race type.");
+		if(currentRun != null && currentRun.hasRacers()) throw new IllegalStateException("Cannot change race types in the middle of a run.");
 		
 		switch(raceType) {
 		case Individual:
@@ -304,6 +305,24 @@ public class ChronoTimer
 	}
 	
 	
+	/**
+	 * Adds a listener to the ChronoTimer.
+	 * @param listener the listener to add.
+	 */
+	public void addActionListener(ChronoListener listener) {
+		listeners.add(listener);
+	}
+	
+	
+	/**
+	 * Removes the listener form ChronoTimer.
+	 * @param listener the listener to remove
+	 */
+	public void removeActionListener(ChronoListener listener) {
+		listeners.remove(listener);
+	}
+	
+	
 	private void checkChannel(int channel ) {
 		if(channel < 0 || channel >= NUM_CHANNELS) throw new NoSuchElementException("Channel " + ++channel + " does not exist.");
 	}
@@ -313,8 +332,8 @@ public class ChronoTimer
 		return currentRun != null;
 	}
 	
-	private void notifyObservers(boolean isStartEvent) {
-		LaneEvent event = new LaneEvent(isStartEvent);
+	private void notifyObservers(int lane, boolean isStartEvent) {
+		LaneEvent event = new LaneEvent(lane, isStartEvent);
 		for(ChronoListener listener : listeners) {
 			listener.onLaneEvent(event);
 		}
@@ -360,7 +379,15 @@ public class ChronoTimer
 		
 		currentRacers[lane] = null;
 		
-		notifyObservers(false);
+		notifyObservers(lane, false);
+	}
+	
+	private void startInLane(Racer racer, int lane) {
+		if(currentRacers[lane] != null) currentRacers[lane].didNotFinish();	// If there was an unfinished racer in the lane, mark them as DNF
+		
+		currentRacers[lane] = racer;	// Put the racer in the lane
+		currentRun.addRacer(racer);	// Add the racer to the run
+		racer.start();	// Start the racer
 	}
 	
 	private class IndividualRace extends AbstractRace {
@@ -372,16 +399,19 @@ public class ChronoTimer
 		public void start(int lane) {
 			verifyStartConditions(--lane);
 			
-			if(lane != 0) return;	// Only the first lane is used for an individual run
+			if(lane != 0 ||	// Only the first lane is used for an individual run
+					!channels.get(1).isActive()) return;	// Don't start a racer if there is no way to stop them
 			
-			Racer racer = currentRacers[0];
-			if(racer != null){
-				racer.didNotFinish();
-				currentRun.addRacer(racer);
-			}
+//			Racer racer = currentRacers[0];
+//			if(racer != null){
+//				racer.didNotFinish();
+//				currentRun.addRacer(racer);
+//			}
+//			
+//			currentRacers[0] = racer = racerQueue.poll();
+//			racer.start();
 			
-			currentRacers[0] = racer = racerQueue.poll();
-			racer.start();
+			startInLane(racerQueue.poll(), lane);	// We know that there is >= 1 racer in the queue because we passed the verifyStartConditions() method
 		}
 
 		public void stop(int lane) {
@@ -405,11 +435,16 @@ public class ChronoTimer
 			// Any start channel can kick off a group run
 			Racer racer;
 			for(int i = 0; i < currentRacers.length; ++i) {
+				lane = i * 2;
+				if(!channels.get(lane).isActive()) continue;	// Don't add racers to a lane without an active finish channel
+				
 				racer = racerQueue.poll();
 				if(racer == null) break;	// No more racers to pull from the queue
 				
-				currentRacers[i] = racer;
-				racer.start();
+//				currentRacers[i] = racer;
+//				racer.start();
+				
+				startInLane(racer, lane);
 			}
 		}
 
@@ -433,14 +468,16 @@ public class ChronoTimer
 			
 			// XXX: The below code is very similar to the start method for IndividualRace.
 			//      Do we really need to have individual and parallel individual race types as separate things?
-			Racer racer = currentRacers[lane];
-			if(racer != null) {
-				racer.didNotFinish();
-				currentRun.addRacer(racer);
-			}
+//			Racer racer = currentRacers[lane];
+//			if(racer != null) {
+//				racer.didNotFinish();
+//				currentRun.addRacer(racer);
+//			}
+//			
+//			currentRacers[lane] = racer = racerQueue.poll();
+//			racer.start();
 			
-			currentRacers[lane] = racer = racerQueue.poll();
-			racer.start();
+			startInLane(racerQueue.poll(), lane);
 		}
 
 		@Override

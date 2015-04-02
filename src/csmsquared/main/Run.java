@@ -22,6 +22,14 @@ public class Run {
 	}
 	
 	/**
+	 * Sets the race type of this run.
+	 * @param raceType
+	 */
+	public void setRaceType(RaceType raceType) {
+		this.raceType = raceType;
+	}
+	
+	/**
 	 * Add the competitor's run time
 	 * @param competitor
 	 * @param time the time the competitor completed the run in
@@ -52,6 +60,14 @@ public class Run {
 				return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Check if any racers have yet been recorded in the run.
+	 * @return - True if there are recorded racers, otherwise false.
+	 */
+	public boolean hasRacers() {
+		return !racers.isEmpty();
 	}
 	
 	

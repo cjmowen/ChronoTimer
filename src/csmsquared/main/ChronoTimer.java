@@ -32,6 +32,8 @@ public class ChronoTimer
 	 * Initializes All the local variable.
 	 */
 	public ChronoTimer() {
+		Time.setTime("RESET");	// Default to regular system time
+		
 		listeners = new ArrayList<ChronoListener>();
 		
 		// Create and fill the channel array
@@ -457,13 +459,15 @@ public class ChronoTimer
 		
 		@Override
 		public void start(int lane) {
-			verifyStartConditions(lane);
+			throw new UnsupportedOperationException("This race type not yet supported");
+//			verifyStartConditions(lane);
 			
 		}
 
 		@Override
 		public void stop(int lane) {
-			verifyStopConditions(lane);
+			throw new UnsupportedOperationException("This race type not yet supported");
+//			verifyStopConditions(lane);
 			
 		}
 	}

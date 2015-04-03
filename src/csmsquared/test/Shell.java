@@ -185,7 +185,7 @@ public class Shell {
 						System.out.println(eventType + " is not a valid event type");
 					}
 				} catch (IllegalStateException e) {
-					System.out.println("Cannot change the event type of an ongoing run");
+					System.out.println(e.getMessage());
 				}
 			}
 			else {

@@ -171,7 +171,11 @@ public class ChronoTimer
 		case ParallelGroup:
 			race = new ParallelGroupRace();
 			break;
+		default:
+			throw new IllegalArgumentException("Unsupported race type");
 		}
+		
+		currentRun.setRaceType(raceType);
 	}
 	
 	
@@ -288,9 +292,8 @@ public class ChronoTimer
 	 * @exception NoSuchElementException if the channel does not exist
 	 */
 	public void toggle(int channel) {
-		--channel;
 		checkChannel(channel);
-		channels.get(channel).toggle();
+		channels.get(channel - 1).toggle();
 	}
 	
 	
@@ -299,9 +302,8 @@ public class ChronoTimer
 	 * @param channel the channel
 	 */
 	public void trigger(int channel) {
-		--channel;
 		checkChannel(channel);
-		channels.get(channel).trigger();
+		channels.get(channel - 1).trigger();
 	}
 	
 	
@@ -324,7 +326,7 @@ public class ChronoTimer
 	
 	
 	private void checkChannel(int channel ) {
-		if(channel < 0 || channel >= NUM_CHANNELS) throw new NoSuchElementException("Channel " + ++channel + " does not exist.");
+		if(channel < 1 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist.");
 	}
 	
 	
@@ -351,7 +353,7 @@ public class ChronoTimer
 	 */
 	private void verifyStartConditions(int lane) {
 		if(!runExists()) throw new IllegalStateException("Must start the Run.");
-		if(lane < 0 || lane >= currentRacers.length) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
+		if(lane < 1 || lane > currentRacers.length) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
 		if(racerQueue.isEmpty()) throw new IllegalStateException("There are no racers in the queue.");
 	}
 	
@@ -364,8 +366,8 @@ public class ChronoTimer
 	 * @exception IllegalArgumentException - The method was passed a lane number outside the range [1, 12]
 	 */
 	private void verifyStopConditions(int lane) {
-		if(lane < 0 || lane >= NUM_CHANNELS / 2) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
-		if(currentRacers[lane] == null) throw new NoSuchElementException("There is no racer in lane " + (lane + 1));
+		if(lane < 1 || lane > NUM_CHANNELS / 2) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
+		if(currentRacers[lane - 1] == null) throw new NoSuchElementException("There is no racer in lane " + lane);
 	}
 	
 	/**
@@ -374,15 +376,12 @@ public class ChronoTimer
 	 * @param lane - The lane to stop
 	 */
 	private void genericStop(int lane) {
-		currentRacers[lane].end();
-		currentRun.addRacer(currentRacers[lane]);
-		
-		currentRacers[lane] = null;
-		
-		notifyObservers(lane, false);
+		currentRacers[--lane].end();	// End the racer
+		currentRacers[lane] = null;		// Remove the from the list of current racers
 	}
 	
 	private void startInLane(Racer racer, int lane) {
+		--lane;
 		if(currentRacers[lane] != null) currentRacers[lane].didNotFinish();	// If there was an unfinished racer in the lane, mark them as DNF
 		
 		currentRacers[lane] = racer;	// Put the racer in the lane
@@ -397,26 +396,17 @@ public class ChronoTimer
 		}
 		
 		public void start(int lane) {
-			verifyStartConditions(--lane);
+			verifyStartConditions(lane);
 			
-			if(lane != 0 ||	// Only the first lane is used for an individual run
+			if(lane != 1 ||	// Only the first lane is used for an individual run
 					!channels.get(1).isActive()) return;	// Don't start a racer if there is no way to stop them
-			
-//			Racer racer = currentRacers[0];
-//			if(racer != null){
-//				racer.didNotFinish();
-//				currentRun.addRacer(racer);
-//			}
-//			
-//			currentRacers[0] = racer = racerQueue.poll();
-//			racer.start();
 			
 			startInLane(racerQueue.poll(), lane);	// We know that there is >= 1 racer in the queue because we passed the verifyStartConditions() method
 		}
 
 		public void stop(int lane) {
-			verifyStopConditions(--lane);
-			if(lane != 0) return;	// Only the first lane is used in an individual run
+			verifyStopConditions(lane);
+			if(lane != 1) return;	// Only the first lane is used in an individual run
 			
 			genericStop(lane);
 		}
@@ -434,23 +424,18 @@ public class ChronoTimer
 			
 			// Any start channel can kick off a group run
 			Racer racer;
-			for(int i = 0; i < currentRacers.length; ++i) {
-				lane = i * 2;
-				if(!channels.get(lane).isActive()) continue;	// Don't add racers to a lane without an active finish channel
+			for(lane = 1; lane <= currentRacers.length; ++lane) {
+				if(!channels.get(lane * 2 - 1).isActive()) continue;	// Do not start a racer in a lane if there is no way to stop them (i.e. the finish channel is inactive)
 				
 				racer = racerQueue.poll();
-				if(racer == null) break;	// No more racers to pull from the queue
-				
-//				currentRacers[i] = racer;
-//				racer.start();
-				
+				if(racer == null) return;	// No more racers left in the queue
 				startInLane(racer, lane);
 			}
 		}
 
 		@Override
 		public void stop(int lane) {
-			verifyStopConditions(--lane);
+			verifyStopConditions(lane);
 			
 			genericStop(lane);
 		}
@@ -465,17 +450,6 @@ public class ChronoTimer
 		@Override
 		public void start(int lane) {
 			verifyStartConditions(lane);
-			
-			// XXX: The below code is very similar to the start method for IndividualRace.
-			//      Do we really need to have individual and parallel individual race types as separate things?
-//			Racer racer = currentRacers[lane];
-//			if(racer != null) {
-//				racer.didNotFinish();
-//				currentRun.addRacer(racer);
-//			}
-//			
-//			currentRacers[lane] = racer = racerQueue.poll();
-//			racer.start();
 			
 			startInLane(racerQueue.poll(), lane);
 		}

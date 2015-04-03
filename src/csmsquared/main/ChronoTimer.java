@@ -152,7 +152,8 @@ public class ChronoTimer
 	 * @exception IllegalStateException There is an ongoing run.
 	 */
 	public void setRaceType(RaceType raceType) {
-		if(runExists() && currentRun.hasRacers()) throw new IllegalStateException("Cannot change race types in the middle of a run.");
+		if(runExists() && currentRun.hasRacers())	// Don't change the race type if the race has already started
+			throw new IllegalStateException("Cannot change race types in the middle of a run.");
 		
 		switch(raceType) {
 		case Individual:
@@ -171,7 +172,7 @@ public class ChronoTimer
 			throw new IllegalArgumentException("Unsupported race type");
 		}
 		
-		currentRun.setRaceType(raceType);
+		if(currentRun != null) currentRun.setRaceType(raceType);	// If there is a current run, change its race type
 	}
 	
 	/**

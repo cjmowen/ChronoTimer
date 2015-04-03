@@ -17,7 +17,7 @@ public class TestFromFile {
 	
 	public static void main(String[] args){
 		
-		Printer.setOutput("output.txt");
+		Printer.setOutput("./TestData/output.txt");
 	
 		Shell shell = new Shell();
 		String x;

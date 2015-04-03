@@ -1,4 +1,5 @@
 package csmsquared.test;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -233,7 +234,20 @@ public class Shell {
 			
 		case "EXPORT":	// Export the run to an XML file
 			// TODO: Command 'EXPORT'
-			
+			if(arg.length < 2) {
+				System.out.println("Not enough arguments for command EXPORT");
+			}
+			else if(isNum(arg[1])) {
+				try {
+					chrono.export(Integer.parseInt(arg[1]));
+				} catch(NoSuchElementException | IOException e) {
+					System.out.println(e.getMessage());
+				}
+			}
+			else {
+				System.out.println(arg[1] + " is not a recognized run");
+			}
+
 			break;
 			
 		case "NUM":	// Sets the specified competitor number as the next competitor to start

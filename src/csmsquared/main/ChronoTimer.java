@@ -1,5 +1,8 @@
 package csmsquared.main;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -241,6 +244,21 @@ public class ChronoTimer
 		String runString = runs.get(run).toString();
 		Printer.print(runString);
 		return runString;
+	}
+	
+	/**
+	 * Export the data for the specified run to exportdata.txt. If exportdata.txt already exists,
+	 * append the run data to the existing file.
+	 * @param run The run to export.
+	 * @throws IOException
+	 */
+	public void export(int run) throws IOException {
+		if(run < 1 || run > runs.size()) throw new NoSuchElementException("Run " + run + " does not exist");
+		
+		PrintWriter pw = new PrintWriter(new FileWriter("exportdata.txt", true));	// Will append the output to exportdata.txt
+		pw.println(runs.get(run - 1));
+		
+		pw.close();
 	}
 	
 	/**

@@ -20,7 +20,7 @@ import csmsquared.sensor.Sensor;
 
 public class ChronoTimer
 {
-	public static int NUM_CHANNELS = 12;	// The number of channels
+	public static final int NUM_CHANNELS = 12;	// The number of channels
 	
 	private List<ChronoListener> listeners;
 	private ArrayList<Channel> channels;
@@ -31,10 +31,7 @@ public class ChronoTimer
 	private Run currentRun;		// Null if there is no current run
 	private Racer[] currentRacers;	// The racers currently being timed
 	
-	
-	/**
-	 * Initializes All the local variable.
-	 */
+
 	public ChronoTimer() {
 		Time.setTime("RESET");	// Default to regular system time
 		
@@ -73,19 +70,17 @@ public class ChronoTimer
 		currentRacers = new Racer[NUM_CHANNELS / 2];
 	}
 	
-	
 	/**
-	 * Adds Racer to Racer List.
-	 * @param r : r is Integer Racer ID and it will be added to Racer's List.
+	 * Add a racer with the specified ID to the queue of racers.
+	 * @param id The ID of the racer to add.
 	 */
-	public void num(int r) {
-		racerQueue.add(new Racer(r));
+	public void num(int id) {
+		racerQueue.add(new Racer(id));
 	}
 	
-	
 	/**
-	 * Creates a new run
-	 * @exception IllegalStateException - if Run is already ON.
+	 * Initialize a new run.
+	 * @exception IllegalStateException A run is already in progress.
 	 */
 	public void newRun() {
 		if(runExists()) throw new IllegalStateException("Must End the previous run.");
@@ -94,15 +89,13 @@ public class ChronoTimer
 		runs.add(currentRun);
 	}
 	
-	
 	/**
-	 * Ends the current run.
-	 * @exception IllegalStateException - Run must have started.
+	 * End the current run.
+	 * @exception IllegalStateException There is no run to end.
 	 */
 	public void endRun() {
 		if(!runExists()) throw new IllegalStateException("Must start new run.");
 
-		// TEST: This implementation should be sufficient for all race types
 		Racer racer;
 		for(int i = 0; i < currentRacers.length; ++i) {
 			racer = currentRacers[i];
@@ -118,49 +111,45 @@ public class ChronoTimer
 		currentRun = null;
 	}
 	
-	
 	/**
-	 * Starts the first lane only.
+	 * Start a racer in the first lane only.
 	 */
 	public void start() {
 		start(1);
 	}
 	
 	/**
-	 * Starts timing for the specified lane.
+	 * Start a racer in the specified lane.
+	 * @param lane The lane to start.
 	 */
 	public void start(int lane) {		
 		race.start(lane);
 		notifyObservers(lane, true);
 	}
 	
-	
 	/**
-	 * Stops timing for the first lane.
+	 * Stop the racer in the first lane only.
 	 */
 	public void stop() {
 		stop(1);
 	}
 	
-	
 	/**
-	 * Stops timing for the specified lane.
-	 * @param lane the lane to stop.
+	 * Stop the racer in the specified lane.
+	 * @param lane The lane to stop.
 	 */
 	public void stop(int lane) {
 		race.stop(lane);
 		notifyObservers(lane, false);
 	}
 	
-	
 	/**
-	 * Changes the type of race to be timed.
-	 * @param type the type of race.
-	 * @exception IllegalStateException if there is an ongoing run.
+	 * Set the type of event to the specified race type.
+	 * @param raceType The type of race.
+	 * @exception IllegalStateException There is an ongoing run.
 	 */
 	public void setRaceType(RaceType raceType) {
-//		if(runExists()) throw new IllegalStateException("Must end the current run before changing race type.");
-		if(currentRun != null && currentRun.hasRacers()) throw new IllegalStateException("Cannot change race types in the middle of a run.");
+		if(runExists() && currentRun.hasRacers()) throw new IllegalStateException("Cannot change race types in the middle of a run.");
 		
 		switch(raceType) {
 		case Individual:
@@ -182,19 +171,17 @@ public class ChronoTimer
 		currentRun.setRaceType(raceType);
 	}
 	
-	
 	/**
-	 * Returns the current competition type.
-	 * @return the current type of race being timed.
+	 * Get the current race type.
+	 * @return The current type of race.
 	 */
 	public RaceType getRaceType() {
 		return race.getRaceType();
 	}
 	
-	
 	/**
-	 * Returns a list of IDs for the racers queued up to run.
-	 * @return the ArrayList of racer IDs
+	 * Get a list of IDs for the racers queued to run.
+	 * @return The racer IDs.
 	 */
 	public LinkedList<Integer> getRacersInQueue() {
 		LinkedList<Integer> list = new LinkedList<Integer>();
@@ -205,11 +192,9 @@ public class ChronoTimer
 		return list;
 	}
 	
-	
 	/**
-	 * Returns a list of strings showing the racers currently being timed
-	 * as well as their current times.
-	 * @return list of strings representing the run time of current racers.
+	 * Get a list of actively competing racers as well as their current times.
+	 * @return A list of strings representing the current racers and their run times.
 	 */
 	public LinkedList<String> getCurrentRacers() {
 		LinkedList<String> list = new LinkedList<String>();
@@ -221,11 +206,9 @@ public class ChronoTimer
 		return list;
 	}
 	
-	
 	/**
-	 * Returns a list of strings representing the racers who have finished (or failed
-	 * to finish) the run.
-	 * @return list of strings representing finished racers.
+	 * Get a list of strings representing the racers who have finished (or failed to finish) the run.
+	 * @return A list of strings representing finished racers.
 	 */
 	public LinkedList<String> getFinishedRacers() {
 		ArrayList<Racer> racers = currentRun.getRacers();
@@ -237,23 +220,19 @@ public class ChronoTimer
 		return list;
 	}
 	
-	
 	/**
-	 * Prints all of the times in the current/last run
-	 * in the format &lthours&gt:&ltminutes&gt:&ltseconds&gt.&ltcentiseconds&gt.
-	 * @return a string representing the run
+	 * Print all of the times in the current/last run in the format &lthours&gt:&ltminutes&gt:&ltseconds&gt.&ltcentiseconds&gt.
+	 * @return A string representation of the run.
 	 */
 	public String print() {
 		return print(runs.size());
 	}
 	
-	
 	/**
-	 * Prints all the times listed in the given run.
-	 * Format : racerId HH:MM:SS.ss
-	 * @param run the run to print
-	 * @return a string representing the run
-	 * @exception NoSuchElementException if the run does not exist
+	 * Print all the times listed in the given run in the format &lthours&gt:&ltminutes&gt:&ltseconds&gt.&ltcentiseconds&gt.
+	 * @param run The run to print
+	 * @return A string representation of the run.
+	 * @exception NoSuchElementException The run does not exist.
 	 */
 	public String print(int run) {
 		run = run-1;
@@ -264,23 +243,21 @@ public class ChronoTimer
 		return runString;
 	}
 	
-	
 	/**
-	 * Connects a given sensor to the specified channel
-	 * @param channel the channel to connect the sensor to
-	 * @param sensor the sensor to connect
-	 * @exception NoSuchElementException if the channel does not exist
+	 * Connect the given sensor to the specified channel.
+	 * @param channel The channel to connect to.
+	 * @param sensor The sensor to connect.
+	 * @exception NoSuchElementException The channel does not exist.
 	 */
 	public void connect(int channel, Sensor sensor) {
 		checkChannel(channel);
 		channels.get(channel - 1).connectSensor(sensor);
 	}
 	
-	
 	/**
-	 * Disconnects the sensor connected to the specified channel
-	 * @param channel the channel to disconnect the sensor from
-	 * @exception NoSuchElementException if the channel does not exist
+	 * Disconnect the sensor connected to the specified channel.
+	 * @param channel The channel to disconnect from.
+	 * @exception NoSuchElementException The channel does not exist
 	 */
 	public void disconnect(int channel) {
 		--channel;
@@ -288,40 +265,46 @@ public class ChronoTimer
 		channels.get(channel).disconnectSensor();
 	}
 	
-	
 	/**
-	 * Toggles the specified channel on/off
-	 * @param channel the channel to toggle
-	 * @exception NoSuchElementException if the channel does not exist
+	 * Toggle the specified channel on/off.
+	 * @param channel The channel to toggle.
+	 * @exception NoSuchElementException If the channel does not exist.
 	 */
 	public void toggle(int channel) {
 		checkChannel(channel);
 		channels.get(channel - 1).toggle();
 	}
 	
+	/**
+	 * Check if the channel is active.
+	 * @param channel The channel to check.
+	 * @return True if the channel is active.
+	 */
+	public boolean isChannelActive(int channel) {
+		checkChannel(channel);
+		return channels.get(channel).isActive();
+	}
 	
 	/**
-	 * Triggers the specified channel.
-	 * @param channel the channel
+	 * Trigger the specified channel.
+	 * @param channel The channel to trigger.
 	 */
 	public void trigger(int channel) {
 		checkChannel(channel);
 		channels.get(channel - 1).trigger();
 	}
 	
-	
 	/**
-	 * Adds a listener to the ChronoTimer.
-	 * @param listener the listener to add.
+	 * Add a listener to the ChronoTimer.
+	 * @param listener The listener to add.
 	 */
 	public void addActionListener(ChronoListener listener) {
 		listeners.add(listener);
 	}
 	
-	
 	/**
-	 * Removes the listener form ChronoTimer.
-	 * @param listener the listener to remove
+	 * Remove the listener from ChronoTimer.
+	 * @param listener The listener to remove.
 	 */
 	public void removeActionListener(ChronoListener listener) {
 		listeners.remove(listener);
@@ -331,11 +314,12 @@ public class ChronoTimer
 	private void checkChannel(int channel ) {
 		if(channel < 1 || channel > NUM_CHANNELS) throw new NoSuchElementException("Channel " + channel + " does not exist.");
 	}
-	
-	
+
+
 	private boolean runExists() {
 		return currentRun != null;
 	}
+	
 	
 	private void notifyObservers(int lane, boolean isStartEvent) {
 		LaneEvent event = new LaneEvent(lane, isStartEvent);
@@ -345,14 +329,14 @@ public class ChronoTimer
 	}
 	
 	/**
-	 * This method checks the start conditions applicable to all race types.
-	 * It verifies that:
+	 * Check that the ChronoTimer is in a valid state to start.
+	 * Verify that:
 	 *    - There exists a current run
 	 *    - The lane in question exists
 	 *    - There exist racers in the queue
-	 * @param lane the lane to start
-	 * @exception IllegalStateException - No current run exists or there are no racers in the queue to run.
-	 * @exception IllegalArgumentException - The method was passed a lane number the range [1, 12]
+	 * @param lane The lane to start.
+	 * @exception IllegalStateException No current run exists or there are no racers in the queue to run.
+	 * @exception IllegalArgumentException The method was passed a lane number the range [1, 12].
 	 */
 	private void verifyStartConditions(int lane) {
 		if(!runExists()) throw new IllegalStateException("Must start the Run.");
@@ -361,12 +345,12 @@ public class ChronoTimer
 	}
 	
 	/**
-	 * This method checks the stop conditions applicable to all race types.
-	 * It verifies that:
+	 * Check that the ChronoTimer is in a valid state to stop.
+	 * Verify that:
 	 *    - The lane in question exists
 	 *    - There exists a racer in that lane
-	 * @param lane the lane to start
-	 * @exception IllegalArgumentException - The method was passed a lane number outside the range [1, 12]
+	 * @param lane The lane to start.
+	 * @exception IllegalArgumentException The method was passed a lane number outside the range [1, 12].
 	 */
 	private void verifyStopConditions(int lane) {
 		if(lane < 1 || lane > NUM_CHANNELS / 2) throw new IllegalArgumentException("Lane " + lane + " does not exist.");
@@ -374,24 +358,33 @@ public class ChronoTimer
 	}
 	
 	/**
-	 * Handles stopping in a way that is applicable to all race types.
+	 * Stop in a way that is applicable to all race types.
 	 * This method assumes verifyStopConditions(int) has already been called.
-	 * @param lane - The lane to stop
+	 * @param lane The lane to stop.
 	 */
 	private void genericStop(int lane) {
 		currentRacers[--lane].end();	// End the racer
 		currentRacers[lane] = null;		// Remove the from the list of current racers
 	}
 	
+	/**
+	 * Start a given racer in the specified lane. If a racer is already in that lane, mark them as DNF and
+	 * then start the specified racer.
+	 * @param racer The racer to start.
+	 * @param lane The lane the racer will compete in.
+	 */
 	private void startInLane(Racer racer, int lane) {
 		--lane;
 		if(currentRacers[lane] != null) currentRacers[lane].didNotFinish();	// If there was an unfinished racer in the lane, mark them as DNF
 		
 		currentRacers[lane] = racer;	// Put the racer in the lane
-		currentRun.addRacer(racer);	// Add the racer to the run
-		racer.start();	// Start the racer
+		currentRun.addRacer(racer);		// Add the racer to the run
+		racer.start();					// Start the racer
 	}
 	
+	/**
+	 * Represents a race where only one person is competing at a time.
+	 */
 	private class IndividualRace extends AbstractRace {
 
 		public IndividualRace() {
@@ -415,6 +408,9 @@ public class ChronoTimer
 		}
 	}
 	
+	/**
+	 * Represents a race where a group of people all start at once.
+	 */
 	private class GroupRace extends AbstractRace {
 		
 		public GroupRace() {
@@ -444,6 +440,9 @@ public class ChronoTimer
 		}
 	}
 	
+	/**
+	 * Represents a race where multiple people start at different times.
+	 */
 	private class ParallelIndividualRace extends AbstractRace {
 
 		public ParallelIndividualRace() {
@@ -465,6 +464,9 @@ public class ChronoTimer
 		}
 	}
 	
+	/**
+	 * I don't even know what this is supposed to represent.
+	 */
 	private class ParallelGroupRace extends AbstractRace {
 
 		public ParallelGroupRace() {

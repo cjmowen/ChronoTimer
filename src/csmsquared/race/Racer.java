@@ -1,4 +1,6 @@
-package csmsquared.main;
+package csmsquared.race;
+
+import csmsquared.main.Time;
 
 
 public class Racer 

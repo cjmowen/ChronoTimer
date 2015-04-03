@@ -1,4 +1,5 @@
-package csmsquared.main;
+package csmsquared.race;
+
 
 public abstract class AbstractRace {
 	private final RaceType raceType;

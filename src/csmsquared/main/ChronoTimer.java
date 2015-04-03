@@ -11,6 +11,10 @@ import csmsquared.channel.ChannelEvent;
 import csmsquared.channel.ChannelListener;
 import csmsquared.chronoEvents.ChronoListener;
 import csmsquared.chronoEvents.LaneEvent;
+import csmsquared.race.AbstractRace;
+import csmsquared.race.RaceType;
+import csmsquared.race.Racer;
+import csmsquared.race.Run;
 import csmsquared.sensor.Sensor;
 
 

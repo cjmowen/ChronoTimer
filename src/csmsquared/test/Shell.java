@@ -3,8 +3,8 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
-import csmsquared.main.RaceType;
 import csmsquared.main.Time;
+import csmsquared.race.RaceType;
 import csmsquared.sensor.EyeSensor;
 import csmsquared.sensor.GateSensor;
 import csmsquared.sensor.PadSensor;

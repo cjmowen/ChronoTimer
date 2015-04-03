@@ -1,4 +1,4 @@
-package csmsquared.main;
+package csmsquared.race;
 
 import java.util.ArrayList;
 

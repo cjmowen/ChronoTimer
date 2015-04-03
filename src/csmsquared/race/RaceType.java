@@ -1,4 +1,4 @@
-package csmsquared.main;
+package csmsquared.race;
 
 public enum RaceType {
 	Individual,

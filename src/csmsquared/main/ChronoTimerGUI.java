@@ -26,6 +26,8 @@ import javax.swing.ButtonGroup;
 
 import org.hamcrest.core.IsInstanceOf;
 
+import csmsquared.race.RaceType;
+
 
 public class ChronoTimerGUI extends JFrame {
 

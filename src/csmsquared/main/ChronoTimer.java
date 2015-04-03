@@ -272,9 +272,8 @@ public class ChronoTimer
 	 * @exception NoSuchElementException if the channel does not exist
 	 */
 	public void connect(int channel, Sensor sensor) {
-		--channel;
 		checkChannel(channel);
-		channels.get(channel).connectSensor(sensor);
+		channels.get(channel - 1).connectSensor(sensor);
 	}
 	
 	

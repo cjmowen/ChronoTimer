@@ -8,16 +8,16 @@ import java.util.List;
  * to sense when a racer starts or finishes.
  */
 public class Sensor {
-	
+
 	private List<SensorListener> listeners;
 	private boolean isActive;
-	
-	
+
+
 	public Sensor(){
 		listeners = new ArrayList<SensorListener>();
 		isActive = false;
 	}
-	
+
 	/**
 	 * Sets whether or not the sensor is active. If the sensor is not active,
 	 * it cannot fire events.
@@ -26,7 +26,7 @@ public class Sensor {
 	public void setActive(boolean isActive){
 		this.isActive = isActive;
 	}
-	
+
 	/**
 	 * Checks is the sensor is active
 	 * @return true if the sensor is active
@@ -34,7 +34,7 @@ public class Sensor {
 	public boolean isActive(){
 		return isActive;
 	}
-	
+
 	/**
 	 * Add a listener to the sensor
 	 * @param l the listener to be added
@@ -42,7 +42,7 @@ public class Sensor {
 	public void addSensorListener(SensorListener l){
 		listeners.add(l);
 	}
-	
+
 	/**
 	 * Remove a listener from the sensor
 	 * @param l the listener to be removed
@@ -50,20 +50,20 @@ public class Sensor {
 	synchronized public void removeSensorListener(SensorListener l){
 		listeners.remove(l);
 	}
-	
+
 	/**
 	 * Manually trip the sensor
 	 */
 	public void trip(){
 		fireSensorTripped();
 	}
-	
+
 	/**
 	 * Notify all registered listeners of the SensorTripped event
 	 */
 	private void fireSensorTripped(){
 		if(listeners != null && !listeners.isEmpty()){
-			
+
 			// Call sensorTripped() on all SensorListeners associated with this Sensor
 			for(SensorListener l : listeners){
 				l.sensorTripped();

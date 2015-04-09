@@ -14,11 +14,11 @@ import csmsquared.main.Time;
 
 
 public class TestFromFile {
-	
+
 	public static void main(String[] args){
-		
+
 		Printer.setOutput("./TestData/output.txt");
-	
+
 		Shell shell = new Shell();
 		String x;
 		try {
@@ -26,10 +26,10 @@ public class TestFromFile {
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			fileChooser.setCurrentDirectory(new File("./TestData"));
 			fileChooser.setDialogTitle("Select an input file");
-			
+
 			if(fileChooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) System.exit(0);
 			File inputFile  = fileChooser.getSelectedFile();
-			
+
 			FileReader fIn = new FileReader(inputFile);
 			BufferedReader buf = new BufferedReader(fIn);
 
@@ -38,7 +38,7 @@ public class TestFromFile {
 				while(x != null) {
 					// Split the timestamp and command
 					String [] arg = x.split("\t");
-					
+
 					// Set the time
 					Time.setTime(arg[0]);
 

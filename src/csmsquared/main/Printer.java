@@ -8,7 +8,7 @@ public class Printer {
 	// If output is null, print to stdout
 	private static String output = null;
 	private static PrintWriter pw;
-	
+
 	/**
 	 * Prints the given string to the printer's set output
 	 * @param str the string to print
@@ -20,12 +20,12 @@ public class Printer {
 		else{
 			// TODO: print to the output file
 			pw.print(str);
-//			pw.write(str);
+			//			pw.write(str);
 			pw.close();
-			
+
 		}
 	}
-	
+
 	/**
 	 * SetOutput opens up new File with given path and name of the file.
 	 * @param o : O is the name of the output file. 
@@ -33,15 +33,15 @@ public class Printer {
 	 */
 	public static void setOutput(String o){
 		// Set the output file to the specified output
-	output = o;
-	try {
-		 pw = new PrintWriter(new File(output));
-	} catch (FileNotFoundException e) {
-		System.out.print(e.getMessage());
+		output = o;
+		try {
+			pw = new PrintWriter(new File(output));
+		} catch (FileNotFoundException e) {
+			System.out.print(e.getMessage());
+		}
 	}
-	}
-	
-	
-	
-	
+
+
+
+
 }

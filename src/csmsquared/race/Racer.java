@@ -74,5 +74,21 @@ public class Racer
 	{
 		return id;
 	}
+	
+	public String getElapsedTimeAsString()
+	{
+		long time = getElapsedTime();
+		if(time < 0)
+		{
+			return "DNF";
+		}
+		else if(endTime ==0)
+		{
+			return Time.toString(time);
+		}
+		else{
+			return Time.toString(time) + " F";
+		}
+	}
 
 }

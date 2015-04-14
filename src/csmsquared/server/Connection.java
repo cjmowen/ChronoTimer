@@ -15,72 +15,77 @@ import csmsquared.race.Racer;
 import csmsquared.race.Run;
 
 public class Connection {
-	Run run;
-	String elapsedTime;
-	DataOutputStream out;
-	HttpURLConnection conn;
-	public Connection()
-	{	
-		try{
 
-		URL site = new URL("");
-		conn= (HttpURLConnection) site.openConnection();
-		out = new DataOutputStream(conn.getOutputStream());
-		
-
-		conn.setRequestMethod("POST");
-		conn.setDoOutput(true);
-		conn.setDoInput(true);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+	public static void main(String[] args)
+	{
+		Connection x = new Connection();
+		x.sendData(1);
+		x.sendData(2);
 
 	}
-
-
-	public void sendData(Run run)
+	
+	public void sendData(int num)
 	{
-		JsonObject value = new JsonObject();
-		value.addProperty("runNumber", 1);
+		HttpURLConnection conn;
+		DataOutputStream out;
 		
-		JsonArray arr = new JsonArray();
-		for(Racer racer : run.getRacers())
-		{
-			JsonObject r = new JsonObject();
-			r.addProperty("id", racer.getElapsedTime());
-			arr.add(r);
-		}
+		try{
+			URL site = new URL("http://chronotimerserver.appspot.com/data");
+			conn= (HttpURLConnection) site.openConnection();
+			conn.setDoOutput(true);
+			out = new DataOutputStream(conn.getOutputStream());
+			
+			
+			conn.setRequestMethod("POST");
+			
+			conn.setDoInput(true);
 		
-		value.add("racers", arr);
 		
-		String content =
-				"data= " + value.toString();
-		
-		try {
+			JsonObject value = new JsonObject();
+	//		value.addProperty("runNumber", run.getRunNumber());
+	//		
+	//		JsonArray arr = new JsonArray();
+	//		for(Racer racer : run.getRacers())
+	//		{
+	//			JsonObject r = new JsonObject();
+	//			r.addProperty("id", racer.getElapsedTime());
+	//			arr.add(r);
+	//		}
+	//		
+	//		value.add("racers", arr);
+			
+			value.addProperty("num", num);
+			
+			JsonArray jsonArr = new JsonArray();
+			for(int i = 0; i < 10; ++i) {
+				JsonObject tmp = new JsonObject();
+				tmp.addProperty("number", i);
+				
+				jsonArr.add(tmp);
+			}
+			
+			value.add("number_array", jsonArr);
+			
+			String content =
+					"data= " + 	value.toString();
+			
 			out.writeBytes(content);
 			out.flush();
 			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		
-		BufferedReader reader;
-		try {
-			reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String temp = reader.readLine();
-			if(!reader.equals(""))
-			{
-				System.out.println("bad input");
-				temp=reader.readLine();
-			}
 			
+			
+			BufferedReader reader;
+			reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			
+			String temp;
+			do
+			{
+				temp = reader.readLine();			
+			}while(temp == null || temp.equals(""));
+			System.out.println(temp);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
 	}
 	
 }

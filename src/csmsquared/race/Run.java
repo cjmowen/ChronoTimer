@@ -20,14 +20,16 @@ public class Run {
 
 	private ArrayList<Racer> racers;
 	private RaceType raceType;
+	private int runNum;
 	
 	/**
 	 * Constructor
 	 * @param type the type of race being measured in this run.
 	 */
-	public Run(RaceType type){
+	public Run(int num, RaceType type){
 		racers = new ArrayList<Racer>(INITIAL_CAPACITY);
 		raceType = type;
+		runNum = num;
 	}
 
 	/**
@@ -132,38 +134,24 @@ public class Run {
 			URL site = new URL("http://chronotimerserver.appspot.com/data");
 			conn= (HttpURLConnection) site.openConnection();
 			conn.setDoOutput(true);
-			out = new DataOutputStream(conn.getOutputStream());
-			
-			
-			conn.setRequestMethod("POST");
-			
 			conn.setDoInput(true);
-		
+			conn.setRequestMethod("POST");
+			out = new DataOutputStream(conn.getOutputStream());
+
 		
 			JsonObject value = new JsonObject();
-	//		value.addProperty("runNumber", run.getRunNumber());
-	//		
-	//		JsonArray arr = new JsonArray();
-	//		for(Racer racer : run.getRacers())
-	//		{
-	//			JsonObject r = new JsonObject();
-	//			r.addProperty("id", racer.getElapsedTime());
-	//			arr.add(r);
-	//		}
-	//		
-	//		value.add("racers", arr);
+			value.addProperty("runNumber", runNum);
 			
-			value.addProperty("num", num);
-			
-			JsonArray jsonArr = new JsonArray();
-			for(int i = 0; i < 10; ++i) {
-				JsonObject tmp = new JsonObject();
-				tmp.addProperty("number", i);
-				
-				jsonArr.add(tmp);
+			JsonArray arr = new JsonArray();
+			for(Racer racer : this.getRacers())
+			{
+				JsonObject r = new JsonObject();
+				r.addProperty("id", racer.getId());
+				r.addProperty("time", racer.getElapsedTimeAsString());
+				arr.add(r);
 			}
 			
-			value.add("number_array", jsonArr);
+			value.add("racers", arr);
 			
 			String content =
 					"data= " + 	value.toString();
@@ -180,7 +168,7 @@ public class Run {
 			do
 			{
 				temp = reader.readLine();			
-			}while(temp == null || temp.equals(""));
+			} while(temp == null || temp.equals(""));
 			System.out.println(temp);
 		} catch (IOException e) {
 			e.printStackTrace();

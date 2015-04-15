@@ -33,6 +33,7 @@ public class ChronoTimer
 	AbstractRace race;	// Default race type is Individual
 	private Run currentRun;		// Null if there is no current run
 	private Racer[] currentRacers;	// The racers currently being timed
+	
 
 
 	public ChronoTimer() {
@@ -88,7 +89,7 @@ public class ChronoTimer
 	public void newRun() {
 		if(runExists()) throw new IllegalStateException("Must End the previous run.");
 
-		currentRun = new Run(getRaceType());
+		currentRun = new Run(runs.size()+1 , getRaceType());
 		runs.add(currentRun);
 	}
 
@@ -110,7 +111,7 @@ public class ChronoTimer
 			currentRacers[i] = null;
 			notifyObservers(i + 1, false);	// Notify observers that the person has ended
 		}
-
+		currentRun.sendData();
 		currentRun = null;
 	}
 

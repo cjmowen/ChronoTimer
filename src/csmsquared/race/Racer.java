@@ -82,13 +82,11 @@ public class Racer
 		{
 			return "DNF";
 		}
-		else if(endTime ==0)
+		else
 		{
 			return Time.toString(time);
 		}
-		else{
-			return Time.toString(time) + " F";
-		}
+		
 	}
 
 }

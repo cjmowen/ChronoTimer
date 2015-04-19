@@ -179,11 +179,11 @@ public class Shell {
 						chrono.setRaceType(RaceType.ParallelIndividual);
 						break;
 					case "PARGRP":
-						//						chrono.setRaceType(RaceType.ParallelGroup);
-						System.out.println(eventType + " not yet supported");
+						chrono.setRaceType(RaceType.ParallelGroup);
 						break;
 					default:
-						System.out.println(eventType + " is not a valid event type");
+						System.out.println(eventType + " is not a valid event type\n" + 
+								"Must be of type IND, GRP, PARIND, or PARGRP.");
 					}
 				} catch (IllegalStateException e) {
 					System.out.println(e.getMessage());
@@ -233,7 +233,6 @@ public class Shell {
 			break;
 
 		case "EXPORT":	// Export the run to an XML file
-			// TODO: Command 'EXPORT'
 			if(arg.length < 2) {
 				System.out.println("Not enough arguments for command EXPORT");
 			}
@@ -277,6 +276,29 @@ public class Shell {
 		case "RCL":	// Recalls the last triggered event
 			// TODO: Command 'RCL'
 
+			break;
+			
+		case "CANCEL":	// Cancel the specified racer
+			int lane;
+			if(arg.length > 1) {
+				if(isNum(arg[0])) {
+					lane = Integer.parseInt(arg[0]);
+				}
+				else {
+					System.out.println(arg[0] + " is not a valid number");
+					break;
+				}
+			}
+			else {
+				lane = 1;
+			}
+			
+			try {
+				chrono.cancel(lane);
+			} catch(NoSuchElementException e) {
+				System.out.println(e.getMessage());
+			}
+			
 			break;
 
 		case "START":	// Triggers channel 1

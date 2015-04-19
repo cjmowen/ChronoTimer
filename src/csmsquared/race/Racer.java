@@ -38,6 +38,19 @@ public class Racer
 	{
 		return startTime;
 	}
+	
+	
+	public long getEndTime() 
+	{
+		return endTime;
+	}
+	
+	
+	public void cancel()
+	{
+		startTime = 0;
+		endTime = 0;
+	}
 
 
 	/**

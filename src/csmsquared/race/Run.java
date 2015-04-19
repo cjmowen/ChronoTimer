@@ -85,6 +85,11 @@ public class Run {
 	public ArrayList<Racer> getRacers() {
 		return racers;
 	}
+	
+	
+	public void remove(Racer racer) {
+		racers.remove(racer);
+	}
 
 	/**
 	 * Returns the run time for the specified competitor
@@ -118,7 +123,7 @@ public class Run {
 		//		}
 
 		for(Racer racer : racers) {
-			result += racer.toString() + newline;
+			result += racer.toString() + (racer.getEndTime() <= 0 ? newline : " F" + newline);
 		}
 
 		return result;

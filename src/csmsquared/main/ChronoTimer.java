@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Queue;
 
 import csmsquared.channel.Channel;
 import csmsquared.channel.ChannelEvent;
@@ -28,7 +27,7 @@ public class ChronoTimer
 	private List<ChronoListener> listeners;
 	private ArrayList<Channel> channels;
 	private LinkedList<Run> runs;
-	private Queue<Racer> racerQueue;	// Implemented as a LinkedList since it provides the methods to be used as a queue
+	private LinkedList<Racer> racerQueue;	// Implemented as a LinkedList since it provides the methods to be used as a queue
 
 	AbstractRace race;	// Default race type is Individual
 	private Run currentRun;		// Null if there is no current run
@@ -145,6 +144,22 @@ public class ChronoTimer
 	public void stop(int lane) {
 		race.stop(lane);
 		notifyObservers(lane, false);
+	}
+	
+	/**
+	 * Cancel the racer in the specified lane, and add them back to the front of the queue.
+	 * @param lane The racer to cancel.
+	 */
+	public void cancel(int lane) {
+		if(lane < 1 || lane > NUM_CHANNELS / 2) throw new NoSuchElementException("There is no lane " + lane);
+		
+		Racer cancelledRacer = currentRacers[lane - 1];
+		if(cancelledRacer == null) throw new NoSuchElementException("There is no racer in lane " + lane);
+		
+		currentRacers[lane - 1] = null;
+		currentRun.remove(cancelledRacer);
+		cancelledRacer.cancel();
+		racerQueue.push(cancelledRacer);
 	}
 
 	/**
@@ -495,16 +510,25 @@ public class ChronoTimer
 
 		@Override
 		public void start(int lane) {
-			throw new UnsupportedOperationException("This race type not yet supported");
-			//			verifyStartConditions(lane);
+			verifyStartConditions(lane);
 
+			Racer racer;
+			for(lane = 1; lane <= currentRacers.length; ++lane) {
+				if(currentRacers[lane - 1] != null ||			// If there is a racer in that lane already or
+						!channels.get(lane * 2 - 1).isActive())	// there is no active finish channel for that lane, don't do anything
+					continue;
+				
+				racer = racerQueue.poll();
+				if(racer == null) return;	// No more racers in the queue
+				startInLane(racer, lane);
+			}
 		}
 
 		@Override
 		public void stop(int lane) {
-			throw new UnsupportedOperationException("This race type not yet supported");
-			//			verifyStopConditions(lane);
+			verifyStopConditions(lane);
 
+			genericStop(lane);
 		}
 	}
 }

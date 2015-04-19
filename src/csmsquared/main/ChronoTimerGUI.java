@@ -1,33 +1,14 @@
 package csmsquared.main;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-
 import java.awt.Font;
-
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JTextArea;
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.rmi.server.ExportException;
+import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import javax.swing.JRadioButton;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.ButtonGroup;
-
-import org.hamcrest.core.IsInstanceOf;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import csmsquared.race.RaceType;
 
@@ -149,7 +130,7 @@ public class ChronoTimerGUI extends JFrame {
 
 		final JTextArea textAreaRun = new JTextArea();
 		textAreaRun.setEditable(false);
-		textAreaRun.setBounds(366, 126, 247, 109);
+		textAreaRun.setBounds(366, 121, 247, 109);
 		contentPane.add(textAreaRun);
 
 		JLabel lblRun_1 = new JLabel("RUN PRINT");
@@ -167,7 +148,7 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(radio1);
 
 		radio2 = new JRadioButton("");
-		radio2.setBounds(243, 365, 31, 23);
+		radio2.setBounds(251, 365, 31, 23);
 		contentPane.add(radio2);
 
 		radio3 = new JRadioButton("");
@@ -179,7 +160,7 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(radio4);
 
 		radio5 = new JRadioButton("");
-		radio5.setBounds(482, 365, 36, 23);
+		radio5.setBounds(496, 365, 36, 23);
 		contentPane.add(radio5);
 
 		radio6 = new JRadioButton("");
@@ -187,6 +168,7 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(radio6);
 
 		btnStartGroup = new JButton("START GROUP");
+		btnStartGroup.setEnabled(false);
 		btnStartGroup.setBounds(131, 275, 129, 23);
 		contentPane.add(btnStartGroup);
 
@@ -241,18 +223,18 @@ public class ChronoTimerGUI extends JFrame {
 		contentPane.add(lblRacerStatus);
 
 		txtRacerStatus = new JTextArea();
+		//scrolll.add(txtRacerStatus);
 		txtRacerStatus.setBounds(739, 121, 172, 230);
+	
 		contentPane.add(txtRacerStatus);
 
-		JLabel lblGroupRace = new JLabel("Group Race : ");
+		final JLabel lblGroupRace = new JLabel("Group Race : ");
 		lblGroupRace.setBounds(31, 279, 92, 14);
 		contentPane.add(lblGroupRace);
 		
 		btnOn = new JButton("ON");
 		btnOn.setBounds(101, 21, 89, 23);
 		contentPane.add(btnOn);
-
-		btnStartGroup.setEnabled(false);
 		setEditable(false);
 		
 		final JLabel lblRaceTypeMsg = new JLabel("");
@@ -277,12 +259,16 @@ public class ChronoTimerGUI extends JFrame {
 					setEditable(true);
 					btnOn.setText("OFF");
 					lblRaceTypeMsg.setText("Current RaceType : "+chrono.getRaceType().toString());
-				
+					lblRunNumber.setText("Current Run # "+ chrono.getRunNumber());
+					lblGroupRace.setVisible(false);
+					btnStartGroup.setVisible(false);
+					refreshState();
 				}
 				else{
 					setEditable(false);
 					btnOn.setText("ON");
 					lblRaceTypeMsg.setText("");
+					refreshState();
 					
 				}
 			}
@@ -325,11 +311,14 @@ public class ChronoTimerGUI extends JFrame {
 
 					}
 					RacerList.setText(result);
+					
+					refreshState();
+					
 				}
 
 
 
-
+				
 
 				catch(IllegalArgumentException ex)
 				{
@@ -357,6 +346,7 @@ public class ChronoTimerGUI extends JFrame {
 
 					}
 					RacerList.setText(result);
+					refreshState();
 				}
 
 
@@ -377,25 +367,35 @@ public class ChronoTimerGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try{
 
+					btnStartGroup.setVisible(false);
+					lblGroupRace.setVisible(false);
 					if(raceType.getSelectedItem().toString().equals("Individual"))	
 					{
 						chrono.setRaceType(RaceType.Individual);
 						
-						
+						setButtonState(1);
 					}else if(raceType.getSelectedItem().toString().equals("Group"))	{	
-
+						btnStartGroup.setVisible(true);
+						lblGroupRace.setVisible(true);
 
 						chrono.setRaceType(RaceType.Group);
 						btnStartGroup.setEnabled(true);
+						setButtonState(chrono.getRacersInQueue().size());
+						
+							
+						
 
 					}
 
-					else if(raceType.getSelectedItem().toString().equals("ParallelIndividual"))				
+					else if(raceType.getSelectedItem().toString().equals("ParallelIndividual"))		
+					{
 						chrono.setRaceType(RaceType.ParallelIndividual);
+						refreshState();
+					}
 					else chrono.setRaceType(RaceType.ParallelGroup);
 
 					lblRaceTypeMsg.setText("Current RaceType : "+chrono.getRaceType().toString());
-					lblRunNumber.setText("Current Run # ");;
+					lblRunNumber.setText("Current Run # "+ chrono.getRunNumber());;
 					chrono.newRun();
 
 					System.out.println(" After calling New Run");
@@ -415,25 +415,34 @@ public class ChronoTimerGUI extends JFrame {
 				{
 					chrono.endRun();
 
-					if(raceType.getSelectedItem().toString().equals("Individual"))				
+					if(raceType.getSelectedItem().toString().equals("Individual"))			
+					{
 						chrono.setRaceType(RaceType.Individual);
-
-
+						setButtonState(1);
+					}
 					else if(raceType.getSelectedItem().toString().equals("Group"))	{	
-
+						btnStartGroup.setVisible(true);
+						lblGroupRace.setVisible(true);
 
 						chrono.setRaceType(RaceType.Group);
 						btnStartGroup.setEnabled(true);
+						setButtonState(chrono.getRacersInQueue().size());
+						
+							
+						
 
 					}
 
-					else if(raceType.getSelectedItem().toString().equals("ParallelIndividual"))				
+					else if(raceType.getSelectedItem().toString().equals("ParallelIndividual"))		
+					{
 						chrono.setRaceType(RaceType.ParallelIndividual);
+						refreshState();
+					}
 					else chrono.setRaceType(RaceType.ParallelGroup);
 					//					
 					chrono.newRun();
 					lblRaceTypeMsg.setText("Current RaceType : "+chrono.getRaceType().toString());
-					
+					lblRunNumber.setText("Current Run # "+ chrono.getRunNumber());;
 
 					LinkedList<Integer> queue = chrono.getRacersInQueue();
 					String result ="";
@@ -490,6 +499,30 @@ public class ChronoTimerGUI extends JFrame {
 		btnStart_5.addActionListener(new actionButtonListener(5, radio5));
 		btnStart_6.addActionListener(new actionButtonListener(6, radio6));
 		
+		JLabel lblChannel_1 = new JLabel("Channel 1");
+		lblChannel_1.setBounds(160, 395, 62, 14);
+		contentPane.add(lblChannel_1);
+		
+		JLabel lblChannel_2 = new JLabel("Channel 2");
+		lblChannel_2.setBounds(238, 395, 60, 14);
+		contentPane.add(lblChannel_2);
+		
+		JLabel lblChannel_3 = new JLabel("Channel 3");
+		lblChannel_3.setBounds(314, 395, 60, 14);
+		contentPane.add(lblChannel_3);
+		
+		JLabel lblChannel_4 = new JLabel("Channel 4");
+		lblChannel_4.setBounds(404, 395, 58, 14);
+		contentPane.add(lblChannel_4);
+		
+		JLabel lblChannel_5 = new JLabel("Channel 5");
+		lblChannel_5.setBounds(490, 395, 56, 14);
+		contentPane.add(lblChannel_5);
+		
+		JLabel lblChannel_6 = new JLabel("Channel 6");
+		lblChannel_6.setBounds(581, 395, 58, 14);
+		contentPane.add(lblChannel_6);
+		
 		
 		
 
@@ -497,9 +530,13 @@ public class ChronoTimerGUI extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				
+				
 				int totalRunner = chrono.getRacersInQueue().size();
-
+				if(totalRunner==0)
+				{
+					JOptionPane.showMessageDialog(null, "No players in Racer Queue");
+				}
 
 				if(totalRunner == 1 )
 				{
@@ -511,6 +548,7 @@ public class ChronoTimerGUI extends JFrame {
 
 						chrono.trigger(1);
 						btnStart_1.setText("Stop");
+						btnStartGroup.setEnabled(false);
 					}
 				}
 				else if(totalRunner==2)
@@ -524,6 +562,7 @@ public class ChronoTimerGUI extends JFrame {
 						chrono.trigger(1);	
 						btnStart_1.setText("Stop");
 						btnStart_2.setText("Stop");
+						btnStartGroup.setEnabled(false);
 					}
 				}
 				else if(totalRunner==3)
@@ -538,6 +577,7 @@ public class ChronoTimerGUI extends JFrame {
 						btnStart_1.setText("Stop");
 						btnStart_2.setText("Stop");
 						btnStart_3.setText("Stop");
+						btnStartGroup.setEnabled(false);
 					}
 				}
 				else if(totalRunner==4)
@@ -555,6 +595,7 @@ public class ChronoTimerGUI extends JFrame {
 						btnStart_2.setText("Stop");
 						btnStart_3.setText("Stop");
 						btnStart_4.setText("Stop");
+						btnStartGroup.setEnabled(false);
 					}
 				}
 				else if(totalRunner==5)
@@ -571,9 +612,10 @@ public class ChronoTimerGUI extends JFrame {
 						btnStart_3.setText("Stop");
 						btnStart_4.setText("Stop");
 						btnStart_5.setText("Stop");
+						btnStartGroup.setEnabled(false);
 					}
 				}
-				else if(totalRunner==6)
+				else if(totalRunner>=6)
 				{
 					if(!radio6.isSelected() || !radio5.isSelected()|| !radio4.isSelected()  || !radio1.isSelected() || !radio2.isSelected() || !radio3.isSelected()){
 						JOptionPane.showMessageDialog(null, " Please Activate Channels");
@@ -585,11 +627,15 @@ public class ChronoTimerGUI extends JFrame {
 						btnStart_4.setText("Stop");
 						btnStart_5.setText("Stop");
 						btnStart_6.setText("Stop");
+						btnStartGroup.setEnabled(false);
 					}
 				}
-
+				
+				
 				//	JOptionPane.showMessageDialog(null, "You must activate the channles for Group Race to work !!");
 
+				
+				
 			}
 		});
 
@@ -625,7 +671,7 @@ public class ChronoTimerGUI extends JFrame {
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
+			
 			if(radio.isSelected()){
 
 				txtRacerStatus.setText(refresh());
@@ -633,11 +679,22 @@ public class ChronoTimerGUI extends JFrame {
 				if(e.getSource() instanceof JButton){
 
 					JButton btn = (JButton) e.getSource();
-					if(btn.getText().equals("Start"))
+					if(btn.getText().equals("Start") )
 					{
+						if(chrono.getRaceType().toString().equals("GRP"))
+						{
+							JOptionPane.showMessageDialog(null, "Please use \"Start Group\" button to start Group Race");
+							return;
+						}
 						btn.setText("Stop");
 						chrono.trigger(btnNumber*2-1);
 						txtRacerStatus.setText(refresh());
+						if(chrono.getCurrentRacers().size()==0)
+							if(chrono.getRaceType().toString().equals("GRP"))
+								btnStartGroup.setEnabled(true);
+					//	if(btnNumber==1) btnStart_1.setEnabled(false);
+						if(chrono.getCurrentRacers().size()==0)
+						refreshState();
 
 
 					}
@@ -646,9 +703,20 @@ public class ChronoTimerGUI extends JFrame {
 						btn.setText("Start");
 						chrono.trigger(btnNumber*2);
 						txtRacerStatus.setText(refresh());
+						if(chrono.getCurrentRacers().size()==0)
+							refreshState();
+						else
+							btn.setEnabled(false);
 					}
 				}
 			}
+			else
+			{
+				
+			
+				JOptionPane.showMessageDialog(null, "Please activate the channel "+ btnNumber);
+			}
+			
 
 		}
 
@@ -703,7 +771,6 @@ public class ChronoTimerGUI extends JFrame {
 		btnStart_6.setEnabled(state);
 		btnExport.setEnabled(state);
 		btnNewRun.setEnabled(state);
-		btnStartGroup.setEnabled(state);
 		radio1.setEnabled(state);
 		radio2.setEnabled(state);
 		radio3.setEnabled(state);
@@ -715,5 +782,155 @@ public class ChronoTimerGUI extends JFrame {
 		raceType.setEnabled(state);
 		txtExportRun.setEditable(state);
 		
+	}
+	
+	
+	public void setButtonState(int size)
+	{
+		if(size == 0)
+		{
+			if(raceType.getSelectedItem().toString().equals("Group"))
+				btnStartGroup.setEnabled(true);
+			btnStart_1.setEnabled(false);
+			btnStart_2.setEnabled(false);
+			btnStart_3.setEnabled(false);
+			btnStart_4.setEnabled(false);
+			btnStart_5.setEnabled(false);
+			btnStart_6.setEnabled(false);
+			
+			radio1.setEnabled(false);
+			radio2.setEnabled(false);
+			radio3.setEnabled(false);
+			radio4.setEnabled(false);
+			radio5.setEnabled(false);
+			radio6.setEnabled(false);
+			
+			
+		}
+		if(size==1)
+		{
+			if(raceType.getSelectedItem().toString().equals("Group"))
+				btnStartGroup.setEnabled(true);
+			btnStart_1.setEnabled(true);
+			btnStart_2.setEnabled(false);
+			btnStart_3.setEnabled(false);
+			btnStart_4.setEnabled(false);
+			btnStart_5.setEnabled(false);
+			btnStart_6.setEnabled(false);
+			
+			radio1.setEnabled(true);
+			radio2.setEnabled(false);
+			radio3.setEnabled(false);
+			radio4.setEnabled(false);
+			radio5.setEnabled(false);
+			radio6.setEnabled(false);
+			
+		}
+		if(size==2)
+		{
+			if(raceType.getSelectedItem().toString().equals("Group"))
+				btnStartGroup.setEnabled(true);
+			btnStart_1.setEnabled(true);
+			btnStart_2.setEnabled(true);
+			btnStart_3.setEnabled(false);
+			btnStart_4.setEnabled(false);
+			btnStart_5.setEnabled(false);
+			btnStart_6.setEnabled(false);
+			
+			radio1.setEnabled(true);
+			radio2.setEnabled(true);
+			radio3.setEnabled(false);
+			radio4.setEnabled(false);
+			radio5.setEnabled(false);
+			radio6.setEnabled(false);
+			
+		}
+		if(size==3)
+		{
+			if(raceType.getSelectedItem().toString().equals("Group"))
+				btnStartGroup.setEnabled(true);
+			btnStart_1.setEnabled(true);
+			btnStart_2.setEnabled(true);
+			btnStart_3.setEnabled(true);
+			btnStart_4.setEnabled(false);
+			btnStart_5.setEnabled(false);
+			btnStart_6.setEnabled(false);
+			
+			radio1.setEnabled(true);
+			radio2.setEnabled(true);
+			radio3.setEnabled(true);
+			radio4.setEnabled(false);
+			radio5.setEnabled(false);
+			radio6.setEnabled(false);
+			
+		}
+		if(size==4)
+		{if(raceType.getSelectedItem().toString().equals("Group"))
+			btnStartGroup.setEnabled(true);
+			btnStart_1.setEnabled(true);
+			btnStart_2.setEnabled(true);
+			btnStart_3.setEnabled(true);
+			btnStart_4.setEnabled(true);
+			btnStart_5.setEnabled(false);
+			btnStart_6.setEnabled(false);
+			
+			radio1.setEnabled(true);
+			radio2.setEnabled(true);
+			radio3.setEnabled(true);
+			radio4.setEnabled(true);
+			radio5.setEnabled(false);
+			radio6.setEnabled(false);
+			
+		}
+		if(size==5)
+		{
+			if(raceType.getSelectedItem().toString().equals("Group"))
+				btnStartGroup.setEnabled(true);
+			btnStart_1.setEnabled(true);
+			btnStart_2.setEnabled(true);
+			btnStart_3.setEnabled(true);
+			btnStart_4.setEnabled(true);
+			btnStart_5.setEnabled(true);
+			btnStart_6.setEnabled(false);
+			
+			radio1.setEnabled(true);
+			radio2.setEnabled(true);
+			radio3.setEnabled(true);
+			radio4.setEnabled(true);
+			radio5.setEnabled(true);
+			radio6.setEnabled(false);
+			
+		}
+		if(size>=6)
+		{
+			if(raceType.getSelectedItem().toString().equals("Group"))
+				btnStartGroup.setEnabled(true);
+			btnStart_1.setEnabled(true);
+			btnStart_2.setEnabled(true);
+			btnStart_3.setEnabled(true);
+			btnStart_4.setEnabled(true);
+			btnStart_5.setEnabled(true);
+			btnStart_6.setEnabled(true);
+			
+			radio1.setEnabled(true);
+			radio2.setEnabled(true);
+			radio3.setEnabled(true);
+			radio4.setEnabled(true);
+			radio5.setEnabled(true);
+			radio6.setEnabled(true);
+		}
+	}
+	public void refreshState()
+	{
+	
+		if(chrono.getRaceType().toString().equals("IND"))
+			if(chrono.getRacersInQueue().size()==0)
+				setButtonState(0);
+			else
+			setButtonState(1);
+		else if(chrono.getRaceType().toString().equals("GRP"))
+			setButtonState(chrono.getRacersInQueue().size());
+		else if(chrono.getRaceType().toString().equals("PARIND"))
+			setButtonState(chrono.getRacersInQueue().size());
 	}
 }

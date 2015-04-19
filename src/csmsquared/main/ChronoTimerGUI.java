@@ -717,6 +717,7 @@ public class ChronoTimerGUI extends JFrame {
 				JOptionPane.showMessageDialog(null, "Please activate the channel "+ btnNumber);
 			}
 			
+			
 
 		}
 

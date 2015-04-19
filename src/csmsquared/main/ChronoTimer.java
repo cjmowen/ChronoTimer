@@ -234,7 +234,16 @@ public class ChronoTimer
 		ArrayList<Racer> racers = currentRun.getRacers();
 		LinkedList<String> list = new LinkedList<String>();
 		for(Racer racer : racers) {
-			list.add(racer.toString() + " F");
+			boolean flag = false;
+			for(Racer current: currentRacers)
+			{
+				if(current!=null && racer!=null && racer.getId()== current.getId())
+				{
+					flag = true;
+				}
+			}
+			if(!flag)
+				list.add(racer.toString()+ " F");
 		}
 
 		return list;
@@ -415,6 +424,11 @@ public class ChronoTimer
 		currentRacers[lane] = racer;	// Put the racer in the lane
 		currentRun.addRacer(racer);		// Add the racer to the run
 		racer.start();					// Start the racer
+	}
+	
+	public int getRunNumber(){
+		
+		return runs.size();
 	}
 
 	/**

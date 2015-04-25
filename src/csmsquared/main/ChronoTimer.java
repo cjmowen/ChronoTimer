@@ -53,10 +53,18 @@ public class ChronoTimer
 					int laneNumber = (channelNumber + 1) / 2;	// Quick and dirty ceiling to get the lane number: (1+1)/2 = 2/2 = 1; (2+1)/2 = 3/2 = 1
 
 					// Odd channels start timing
-					if(channelNumber % 2 == 1) start(laneNumber);
+//					if(channelNumber % 2 == 1) start(laneNumber);
+					if(channelNumber % 2 == 1) {
+						race.start(laneNumber);
+						notifyObservers(laneNumber, true);
+					}
 
 					// Even channels end timing
-					else stop(laneNumber);
+//					else stop(laneNumber);
+					else {
+						race.stop(laneNumber);
+						notifyObservers(laneNumber, false);
+					}
 				}
 			});
 
@@ -126,8 +134,9 @@ public class ChronoTimer
 	 * @param lane The lane to start.
 	 */
 	public void start(int lane) {		
-		race.start(lane);
-		notifyObservers(lane, true);
+//		race.start(lane);
+//		notifyObservers(lane, true);
+		trigger(lane / 2 - 1);
 	}
 
 	/**
@@ -142,8 +151,9 @@ public class ChronoTimer
 	 * @param lane The lane to stop.
 	 */
 	public void stop(int lane) {
-		race.stop(lane);
-		notifyObservers(lane, false);
+//		race.stop(lane);
+//		notifyObservers(lane, false);
+		trigger(lane / 2);
 	}
 	
 	/**

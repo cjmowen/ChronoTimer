@@ -4,7 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -12,10 +13,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import com.google.appengine.api.xmpp.MessageType;
 
 import csmsquared.race.RaceType;
 
@@ -34,7 +38,6 @@ public class ChronoTimerUI {
 	private JCheckBox[] laneCheckBoxes;
 	
 	private JButton chronoTimerPowerBtn, newRunBtn, newRacerBtn, printBtn, exportBtn;
-	private JLabel runTypeLbl, exportLbl;
 	private JTextArea runDisplay, racerQueueDisplay;
 	private JTextField printField, exportField, newRacerField;
 	private JComboBox<RaceType> runTypeComboBox;
@@ -75,7 +78,7 @@ public class ChronoTimerUI {
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		initializeChronoTimerControls();
+		initializePowerControls();
 		initializeLaneControls();
 		initializeRunControls();
 		initializeDataOutputControls();
@@ -86,12 +89,33 @@ public class ChronoTimerUI {
 		setContentEnabled(false);
 	}
 
-	
+	/**
+	 * Enable/disable the UI controls.
+	 * @param enabled Whether or not the controls should be enabled.
+	 */
 	private void setContentEnabled(boolean enabled) {
-		// TODO: turn on/off content with the chrono timer
+		for(int i = 0; i < numLanes; ++i) {
+			laneButtons[i].setEnabled(enabled);
+			laneButtons[i].setText("Start");	// Reset the buttons
+			laneCheckBoxes[i].setEnabled(enabled);
+			laneCheckBoxes[i].setSelected(false);	// Reset the check boxes
+		}
+		
+		newRunBtn.setEnabled(enabled);
+		newRacerBtn.setEnabled(enabled);
+		printBtn.setEnabled(enabled);
+		exportBtn.setEnabled(enabled);
+		runDisplay.setEnabled(enabled);
+		racerQueueDisplay.setEnabled(enabled);
+		printField.setEnabled(enabled);
+		exportField.setEnabled(enabled);
+		newRacerField.setEnabled(enabled);
+		runTypeComboBox.setEnabled(enabled);
 	}
 	
-	
+	/**
+	 * Add components to the frame.
+	 */
 	private void addContents() {
 		frame.setLayout(new BorderLayout());
 		
@@ -112,13 +136,17 @@ public class ChronoTimerUI {
 		
 	}
 	
-	
-	private void initializeChronoTimerControls() {
+	/**
+	 * Initialize the power controls for the ChronoTimer system.
+	 */
+	private void initializePowerControls() {
 		chronoTimerPowerBtn = new JButton("On");
 		// TODO: add action listener
 	}
 	
-	
+	/**
+	 * Initialize the controls that govern the race lanes.
+	 */
 	private void initializeLaneControls() {
 		laneControls = new JPanel();
 		
@@ -135,23 +163,28 @@ public class ChronoTimerUI {
 			laneButtons[i] = new JButton("Start");
 			laneCheckBoxes[i] = new JCheckBox();
 			
+			laneButtons[i].addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					
+				}
+			});
+			
 			laneControlPanel.add(laneLabels[i]);
 			laneControlPanel.add(laneButtons[i]);
 			laneControlPanel.add(laneCheckBoxes[i]);
-			
-			// TODO: add listeners to lane controls
 			
 			laneControls.add(laneControlPanel);
 		}
 	}
 	
-	
+	/**
+	 * Initialize the controls for creating runs and adding racers.
+	 */
 	private void initializeRunControls() {
 		runControls = new JPanel();
 		runControls.setLayout(new BoxLayout(runControls, BoxLayout.Y_AXIS));
 		
-//		JPanel newRacerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-//		JPanel newRunPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		JPanel newRacerPanel = new JPanel();
 		newRacerPanel.setLayout(new BoxLayout(newRacerPanel, BoxLayout.X_AXIS));
 		JPanel newRunPanel = new JPanel();
@@ -187,7 +220,9 @@ public class ChronoTimerUI {
 		runControls.setMaximumSize(runControls.getPreferredSize());
 	}
 	
-	
+	/**
+	 * Initialize the controls for printing and exporting run data.
+	 */
 	private void initializeDataOutputControls() {
 		dataOutputControls = new JPanel();
 		dataOutputControls.setLayout(new BoxLayout(dataOutputControls, BoxLayout.Y_AXIS));
@@ -226,7 +261,9 @@ public class ChronoTimerUI {
 		dataOutputControls.setMaximumSize(dataOutputControls.getPreferredSize());
 	}
 	
-	
+	/**
+	 * Initialize the components that display information about the runs.
+	 */
 	private void initializeDataDisplays() {
 		dataDisplays = new JPanel();
 		
@@ -238,5 +275,33 @@ public class ChronoTimerUI {
 		
 		dataDisplays.add(runDisplayScrollPane);
 		dataDisplays.add(racerQueueDisplayScrollPane);
+	}
+	
+	
+	private class LaneButtonListener implements ActionListener{
+		private int lane;
+		private int startChannel;
+		private int stopChannel;
+		
+		public LaneButtonListener(int lane) {
+			this.lane = lane;
+			stopChannel = lane * 2;
+			startChannel = stopChannel - 1;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton source = (JButton) e.getSource();
+			
+			if(source.getText().equals("Start")) {
+				chrono.trigger(startChannel);
+			}
+			else if(source.getText().equals("Stop")) {
+				chrono.trigger(stopChannel);
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "Something's wrong with the lanes.\nTry resarting the application.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 }

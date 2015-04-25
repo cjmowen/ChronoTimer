@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 import csmsquared.channel.Channel;
 import csmsquared.channel.ChannelEvent;
 import csmsquared.channel.ChannelListener;
+import csmsquared.chronoEvents.ChronoEvent;
 import csmsquared.chronoEvents.ChronoListener;
 import csmsquared.chronoEvents.LaneEvent;
 import csmsquared.race.AbstractRace;
@@ -56,14 +57,12 @@ public class ChronoTimer
 //					if(channelNumber % 2 == 1) start(laneNumber);
 					if(channelNumber % 2 == 1) {
 						race.start(laneNumber);
-						notifyObservers(laneNumber, true);
 					}
 
 					// Even channels end timing
 //					else stop(laneNumber);
 					else {
 						race.stop(laneNumber);
-						notifyObservers(laneNumber, false);
 					}
 				}
 			});
@@ -116,7 +115,7 @@ public class ChronoTimer
 			currentRun.addRacer(racer);
 
 			currentRacers[i] = null;
-			notifyObservers(i + 1, false);	// Notify observers that the person has ended
+			notifyObservers(false, i + 1);	// Notify observers that the person has ended
 		}
 		currentRun.sendData();
 		currentRun = null;
@@ -136,7 +135,7 @@ public class ChronoTimer
 	public void start(int lane) {		
 //		race.start(lane);
 //		notifyObservers(lane, true);
-		trigger(lane / 2 - 1);
+		trigger(lane * 2 - 1);
 	}
 
 	/**
@@ -153,7 +152,7 @@ public class ChronoTimer
 	public void stop(int lane) {
 //		race.stop(lane);
 //		notifyObservers(lane, false);
-		trigger(lane / 2);
+		trigger(lane * 2);
 	}
 	
 	/**
@@ -375,8 +374,9 @@ public class ChronoTimer
 	}
 
 
-	private void notifyObservers(int lane, boolean isStartEvent) {
-		LaneEvent event = new LaneEvent(lane, isStartEvent);
+	private void notifyObservers(boolean isStartEvent, int lane) {
+		LaneEvent event = new LaneEvent(isStartEvent, lane);
+		
 		for(ChronoListener listener : listeners) {
 			listener.onLaneEvent(event);
 		}
@@ -457,6 +457,8 @@ public class ChronoTimer
 					!channels.get(1).isActive()) return;	// Don't start a racer if there is no way to stop them
 
 			startInLane(racerQueue.poll(), lane);	// We know that there is >= 1 racer in the queue because we passed the verifyStartConditions() method
+			
+			notifyObservers(true, 1);
 		}
 
 		public void stop(int lane) {
@@ -464,6 +466,7 @@ public class ChronoTimer
 			if(lane != 1) return;	// Only the first lane is used in an individual run
 
 			genericStop(lane);
+			notifyObservers(false, 1);
 		}
 	}
 
@@ -479,7 +482,7 @@ public class ChronoTimer
 		@Override
 		public void start(int lane) {
 			verifyStartConditions(lane);
-
+			
 			// Any start channel can kick off a group run
 			Racer racer;
 			for(lane = 1; lane <= currentRacers.length; ++lane) {
@@ -488,14 +491,17 @@ public class ChronoTimer
 				racer = racerQueue.poll();
 				if(racer == null) return;	// No more racers left in the queue
 				startInLane(racer, lane);
+				
+				notifyObservers(true, lane);
 			}
 		}
 
 		@Override
 		public void stop(int lane) {
 			verifyStopConditions(lane);
-
+			
 			genericStop(lane);
+			notifyObservers(false, lane);
 		}
 	}
 
@@ -513,6 +519,7 @@ public class ChronoTimer
 			verifyStartConditions(lane);
 
 			startInLane(racerQueue.poll(), lane);
+			notifyObservers(true, lane);
 		}
 
 		@Override
@@ -520,6 +527,7 @@ public class ChronoTimer
 			verifyStopConditions(lane);
 
 			genericStop(lane);
+			notifyObservers(false, lane);
 		}
 	}
 
@@ -545,6 +553,8 @@ public class ChronoTimer
 				racer = racerQueue.poll();
 				if(racer == null) return;	// No more racers in the queue
 				startInLane(racer, lane);
+				
+				notifyObservers(true, lane);
 			}
 		}
 
@@ -553,6 +563,7 @@ public class ChronoTimer
 			verifyStopConditions(lane);
 
 			genericStop(lane);
+			notifyObservers(false, lane);
 		}
 	}
 }

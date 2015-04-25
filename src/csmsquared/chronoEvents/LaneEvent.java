@@ -6,7 +6,7 @@ public class LaneEvent extends ChronoEvent{
 	private boolean isStart;
 	private int lane;
 
-	public LaneEvent(int lane, boolean isStart) {
+	public LaneEvent(boolean isStart, int lane) {
 		super(Time.getTime());
 		this.lane = lane;
 		this.isStart = isStart;

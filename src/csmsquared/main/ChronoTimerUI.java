@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -19,8 +21,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.google.appengine.api.xmpp.MessageType;
-
+import csmsquared.chronoEvents.ChronoListener;
+import csmsquared.chronoEvents.LaneEvent;
 import csmsquared.race.RaceType;
 
 public class ChronoTimerUI {
@@ -86,16 +88,16 @@ public class ChronoTimerUI {
 		
 		addContents();
 		
-		setContentEnabled(false);
+		setContentsEnabled(false);
 	}
 
 	/**
 	 * Enable/disable the UI controls.
 	 * @param enabled Whether or not the controls should be enabled.
 	 */
-	private void setContentEnabled(boolean enabled) {
+	private void setContentsEnabled(boolean enabled) {
 		for(int i = 0; i < numLanes; ++i) {
-			laneButtons[i].setEnabled(enabled);
+			laneButtons[i].setEnabled(enabled && laneCheckBoxes[i].isSelected());
 			laneButtons[i].setText("Start");	// Reset the buttons
 			laneCheckBoxes[i].setEnabled(enabled);
 			laneCheckBoxes[i].setSelected(false);	// Reset the check boxes
@@ -126,22 +128,49 @@ public class ChronoTimerUI {
 		runControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		dataOutputControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
+		mainControls.add(chronoTimerPowerBtn);
 		mainControls.add(runControls);
 		mainControls.add(dataOutputControls);
 
 		frame.add(mainControls, BorderLayout.EAST);
 		frame.add(laneControls, BorderLayout.SOUTH);
 		frame.add(dataDisplays, BorderLayout.CENTER);
-		
-		
 	}
 	
 	/**
 	 * Initialize the power controls for the ChronoTimer system.
 	 */
 	private void initializePowerControls() {
-		chronoTimerPowerBtn = new JButton("On");
-		// TODO: add action listener
+		chronoTimerPowerBtn = new JButton("Off");
+		chronoTimerPowerBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(chronoTimerPowerBtn.getText().equals("Off")) {
+					chrono = new ChronoTimer();
+					chrono.addActionListener(new ChronoListener() {
+						@Override
+						public void onLaneEvent(LaneEvent e) {
+							runTypeComboBox.setEnabled(false);	// Cannot change during a race
+							
+							if(e.isStart()) {
+								laneButtons[e.getLane() - 1].setText("Stop");
+							}
+							else {
+								laneButtons[e.getLane() - 1].setText("Start");
+							}
+						}
+					});
+					
+					chronoTimerPowerBtn.setText("On");
+					setContentsEnabled(true);
+				}
+				else {
+					chrono = null;
+					chronoTimerPowerBtn.setText("Off");;
+					setContentsEnabled(false);
+				}
+			}
+		});
 	}
 	
 	/**
@@ -163,12 +192,8 @@ public class ChronoTimerUI {
 			laneButtons[i] = new JButton("Start");
 			laneCheckBoxes[i] = new JCheckBox();
 			
-			laneButtons[i].addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					
-				}
-			});
+			laneButtons[i].addActionListener(new LaneButtonListener(i + 1));
+			laneCheckBoxes[i].addActionListener(new LaneCheckBoxListener(i + 1));
 			
 			laneControlPanel.add(laneLabels[i]);
 			laneControlPanel.add(laneButtons[i]);
@@ -201,7 +226,56 @@ public class ChronoTimerUI {
 		runTypeComboBox.setPreferredSize(FIELD_SIZE);
 		runTypeComboBox.setSelectedIndex(1);
 		
-		// TODO: add listeners
+		newRacerBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int id = Integer.parseInt(newRacerField.getText());
+					chrono.num(id);
+				}
+				catch(NumberFormatException ex) {
+					alert("Invalid ID", "Valid racer IDs are integers from 1 to 99999");
+				}
+				finally {
+					// Clear the field to allow the user to quickly enter another number
+					newRacerField.setText("");
+				}
+			}
+		});
+		
+		newRacerField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				newRacerBtn.doClick();
+			}
+		});
+		
+		newRunBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// This will end the run if it exists. If it doesn't exist, endRun()
+				// will throw an exception, but either way, newRun() gets called.
+				try {
+					chrono.endRun();
+				}
+				finally {
+					chrono.newRun();
+					runTypeComboBox.setEnabled(true);
+				}
+			}
+		});
+		
+		runTypeComboBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					chrono.setRaceType((RaceType) runTypeComboBox.getSelectedItem());
+				}
+				catch(IllegalStateException ex) {
+					alert("Cannot do that", "Cannot change the race type in the middle of a race");
+				}
+			}
+		});
 		
 		newRacerBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		newRacerField.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -278,30 +352,98 @@ public class ChronoTimerUI {
 	}
 	
 	
+	private void alert(String title, String message) {
+		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.ERROR_MESSAGE);
+	}
+	
+	
 	private class LaneButtonListener implements ActionListener{
 		private int lane;
-		private int startChannel;
-		private int stopChannel;
 		
 		public LaneButtonListener(int lane) {
 			this.lane = lane;
-			stopChannel = lane * 2;
-			startChannel = stopChannel - 1;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JButton source = (JButton) e.getSource();
 			
-			if(source.getText().equals("Start")) {
-				chrono.trigger(startChannel);
+			try {
+				if(source.getText().equals("Start")) {
+					chrono.start(lane);
+				}
+				else {
+					chrono.stop(lane);
+				}
 			}
-			else if(source.getText().equals("Stop")) {
-				chrono.trigger(stopChannel);
-			}
-			else {
-				JOptionPane.showMessageDialog(frame, "Something's wrong with the lanes.\nTry resarting the application.", "Error", JOptionPane.ERROR_MESSAGE);
+			catch(IllegalStateException ex) {
+				alert("Cannot " + source.getText(), ex.getMessage());
 			}
 		}
 	}
+	
+	
+	private class LaneCheckBoxListener implements ActionListener {
+		private int lane;
+		
+		public LaneCheckBoxListener(int lane) {
+			this.lane = lane;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JCheckBox checkBox = (JCheckBox) e.getSource();
+			
+			chrono.toggle(lane * 2 - 1);
+			chrono.toggle(lane * 2);
+			laneButtons[lane - 1].setEnabled(checkBox.isSelected());
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

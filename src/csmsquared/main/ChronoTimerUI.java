@@ -1,7 +1,10 @@
 package csmsquared.main;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,6 +20,9 @@ import javax.swing.JTextField;
 import csmsquared.race.RaceType;
 
 public class ChronoTimerUI {
+	private final Dimension DEFAULT_WINDOW_SIZE = new Dimension(800, 600);
+	private final Dimension BUTTON_SIZE = new Dimension(110, 25);
+	private final Dimension FIELD_SIZE = new Dimension(200, 25);
 	
 	private int numLanes;
 
@@ -65,7 +71,8 @@ public class ChronoTimerUI {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setSize(DEFAULT_WINDOW_SIZE);
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		initializeChronoTimerControls();
@@ -91,7 +98,10 @@ public class ChronoTimerUI {
 		JPanel mainControls = new JPanel();
 		mainControls.setLayout(new BoxLayout(mainControls, BoxLayout.Y_AXIS));
 		
-		mainControls.add(chronoTimerPowerBtn);
+		chronoTimerPowerBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		runControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		dataOutputControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		
 		mainControls.add(runControls);
 		mainControls.add(dataOutputControls);
 
@@ -140,17 +150,30 @@ public class ChronoTimerUI {
 		runControls = new JPanel();
 		runControls.setLayout(new BoxLayout(runControls, BoxLayout.Y_AXIS));
 		
+//		JPanel newRacerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+//		JPanel newRunPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		JPanel newRacerPanel = new JPanel();
+		newRacerPanel.setLayout(new BoxLayout(newRacerPanel, BoxLayout.X_AXIS));
 		JPanel newRunPanel = new JPanel();
+		newRunPanel.setLayout(new BoxLayout(newRunPanel, BoxLayout.X_AXIS));
 		
 		newRacerBtn = new JButton("Add Racer");
+		newRacerBtn.setPreferredSize(BUTTON_SIZE);
 		newRacerField = new JTextField("Enter racer id");
+		newRacerField.setPreferredSize(FIELD_SIZE);
 		
 		newRunBtn = new JButton("New Run");
+		newRunBtn.setPreferredSize(BUTTON_SIZE);
 		runTypeComboBox = new JComboBox<RaceType>(RaceType.values());
+		runTypeComboBox.setPreferredSize(FIELD_SIZE);
 		runTypeComboBox.setSelectedIndex(1);
 		
 		// TODO: add listeners
+		
+		newRacerBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		newRacerField.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		newRunBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		runTypeComboBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
 		newRacerPanel.add(newRacerField);
 		newRacerPanel.add(newRacerBtn);
@@ -160,6 +183,8 @@ public class ChronoTimerUI {
 		
 		runControls.add(newRacerPanel);
 		runControls.add(newRunPanel);
+		
+		runControls.setMaximumSize(runControls.getPreferredSize());
 	}
 	
 	
@@ -168,15 +193,26 @@ public class ChronoTimerUI {
 		dataOutputControls.setLayout(new BoxLayout(dataOutputControls, BoxLayout.Y_AXIS));
 		
 		JPanel printPanel = new JPanel();
+		printPanel.setLayout(new BoxLayout(printPanel, BoxLayout.X_AXIS));
 		JPanel exportPanel = new JPanel();
+		exportPanel.setLayout(new BoxLayout(exportPanel, BoxLayout.X_AXIS));
 		
 		printBtn = new JButton("Print Run");
+		printBtn.setPreferredSize(BUTTON_SIZE);
 		printField = new JTextField("Enter run number");
+		printField.setPreferredSize(FIELD_SIZE);
 		
 		exportBtn = new JButton("Export Run");
+		exportBtn.setPreferredSize(BUTTON_SIZE);
 		exportField = new JTextField("Enter run number");
+		exportField.setPreferredSize(FIELD_SIZE);
 		
 		// TODO: add listeners
+		
+		printField.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		printBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		exportField.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		exportBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
 		printPanel.add(printField);
 		printPanel.add(printBtn);
@@ -186,6 +222,8 @@ public class ChronoTimerUI {
 		
 		dataOutputControls.add(printPanel);
 		dataOutputControls.add(exportPanel);
+		
+		dataOutputControls.setMaximumSize(dataOutputControls.getPreferredSize());
 	}
 	
 	

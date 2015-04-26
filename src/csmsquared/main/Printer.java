@@ -18,9 +18,7 @@ public class Printer {
 			System.out.println(str);
 		}
 		else{
-			// TODO: print to the output file
 			pw.print(str);
-			//			pw.write(str);
 			pw.close();
 
 		}

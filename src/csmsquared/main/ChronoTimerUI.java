@@ -35,7 +35,9 @@ public class ChronoTimerUI {
 	private final Dimension DEFAULT_WINDOW_SIZE = new Dimension(800, 600);
 	private final Dimension BUTTON_SIZE = new Dimension(110, 25);
 	private final Dimension FIELD_SIZE = new Dimension(200, 25);
+	
 	private final Color HINT_TEXT_COLOR = Color.GRAY;
+	
 	private final String ENTER_RUN_TEXT = "Enter run number";
 	private final String ENTER_RACER_TEXT = "Enter racer ID";
 	
@@ -53,7 +55,6 @@ public class ChronoTimerUI {
 	private JTextArea runDisplay, racerQueueDisplay;
 	private JTextField printField, exportField, newRacerField;
 	private JComboBox<RaceType> runTypeComboBox;
-	JScrollPane runDisplayScrollPane, racerQueueDisplayScrollPane;
 	
 	private JPanel powerControls, laneControls, runControls, dataOutputControls, dataDisplays;
 
@@ -233,16 +234,21 @@ public class ChronoTimerUI {
 			JPanel laneControlPanel = new JPanel();
 			laneControlPanel.setLayout(new BoxLayout(laneControlPanel, BoxLayout.Y_AXIS));
 			
-			laneLabels[i] = new JLabel("Lane " + 1);
-			laneButtons[i] = new JButton("Start");
+			laneLabels[i] = new JLabel("Lane " + (i + 1));
 			laneCheckBoxes[i] = new JCheckBox();
+			laneButtons[i] = new JButton("Start");
 			
 			laneButtons[i].addActionListener(new LaneButtonListener(i + 1));
 			laneCheckBoxes[i].addActionListener(new LaneCheckBoxListener(i + 1));
 			
-			laneControlPanel.add(laneLabels[i]);
+			JPanel labelPanel = new JPanel();
+			labelPanel.add(laneCheckBoxes[i]);
+			labelPanel.add(laneLabels[i]);
+			
+			laneControlPanel.add(labelPanel);
+//			laneControlPanel.add(laneLabels[i]);
 			laneControlPanel.add(laneButtons[i]);
-			laneControlPanel.add(laneCheckBoxes[i]);
+//			laneControlPanel.add(laneCheckBoxes[i]);
 			
 			laneControls.add(laneControlPanel);
 		}
@@ -454,13 +460,13 @@ public class ChronoTimerUI {
 	 */
 	private void initializeDataDisplays() {
 		dataDisplays = new JPanel();
-		dataDisplays.setLayout(new GridLayout(1, 2));
+		dataDisplays.setLayout(new GridLayout(1, 2));	// This makes the contents stay full-size
 		
 		runDisplay = new JTextArea();
 		racerQueueDisplay = new JTextArea();
 		
-		runDisplayScrollPane = new JScrollPane(runDisplay);
-		racerQueueDisplayScrollPane = new JScrollPane(racerQueueDisplay);
+		JScrollPane runDisplayScrollPane = new JScrollPane(runDisplay);
+		JScrollPane racerQueueDisplayScrollPane = new JScrollPane(racerQueueDisplay);
 
 		dataDisplays.add(runDisplayScrollPane);
 		dataDisplays.add(racerQueueDisplayScrollPane);
@@ -474,23 +480,26 @@ public class ChronoTimerUI {
 	/**
 	 * Start a new thread that updates the text areas with information from the ChronoTimer.
 	 */
-	private void startUpdateLoop() {
-		Runnable updateLoop = new Runnable() {
+	private  void startUpdateLoop() {
+		Thread updateLoop = new Thread() {
 			@Override
 			public void run() {
 				while(chrono != null) {
 					try {
-						runDisplay.setText(chrono.print());
+						runDisplay.setText(chrono.toString());
+						sleep(10);	// This stops the terrible lag
 					}
 					catch(ConcurrentModificationException e) {
 						// Drive on
+					}
+					catch(InterruptedException ex) {
+						// Keep going
 					}
 				}
 			}
 		};
 		
-		Thread updateLoopThread = new Thread(updateLoop, "UpdateLoop");
-		updateLoopThread.start();
+		updateLoop.start();
 	}
 	
 	

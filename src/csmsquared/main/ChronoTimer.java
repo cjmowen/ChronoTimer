@@ -280,6 +280,27 @@ public class ChronoTimer
 		Printer.print(runString);
 		return runString;
 	}
+	
+	/**
+	 * Get the string representation for the most recent run.
+	 * @return The run's string.
+	 */
+	@Override
+	public String toString() {
+		return currentRun == null ? "No current run" : currentRun.toString();
+	}
+	
+	/**
+	 * Get the string representation of the specified run.
+	 * @param run The run to get the string for.
+	 * @return The string representation of the run.
+	 * @exception NoSuchElementException If the given run does not exist.
+	 */
+	public String getRunAsString(int run) {
+		run = run-1;
+		if(run >= runs.size() || run < 0) throw new NoSuchElementException("Run " + (run+1) + " does not exist.");
+		return  runs.get(run).toString();
+	}
 
 	/**
 	 * Export the data for the specified run to exportdata.txt. If exportdata.txt already exists,

@@ -117,11 +117,6 @@ public class Run {
 		String newline = System.getProperty("line.separator");
 		String result = raceType.toString() + newline;
 
-		//		for(int i=0; i < racers.size(); i++)
-		//		{
-		//			result += racers.get(i).toString() + newline;
-		//		}
-
 		for(Racer racer : racers) {
 			result += racer.toString() + (racer.getEndTime() <= 0 ? newline : " F" + newline);
 		}

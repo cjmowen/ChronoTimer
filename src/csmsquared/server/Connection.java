@@ -38,17 +38,6 @@ public class Connection {
 		
 		
 			JsonObject value = new JsonObject();
-	//		value.addProperty("runNumber", run.getRunNumber());
-	//		
-	//		JsonArray arr = new JsonArray();
-	//		for(Racer racer : run.getRacers())
-	//		{
-	//			JsonObject r = new JsonObject();
-	//			r.addProperty("id", racer.getElapsedTime());
-	//			arr.add(r);
-	//		}
-	//		
-	//		value.add("racers", arr);
 			
 			value.addProperty("num", num);
 			
@@ -78,7 +67,7 @@ public class Connection {
 			{
 				temp = reader.readLine();			
 			}while(temp == null || temp.equals(""));
-			System.out.println(temp);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

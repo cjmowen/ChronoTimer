@@ -1,13 +1,19 @@
 package csmsquared.main;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.IOException;
+import java.util.ConcurrentModificationException;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -29,8 +35,12 @@ public class ChronoTimerUI {
 	private final Dimension DEFAULT_WINDOW_SIZE = new Dimension(800, 600);
 	private final Dimension BUTTON_SIZE = new Dimension(110, 25);
 	private final Dimension FIELD_SIZE = new Dimension(200, 25);
+	private final Color HINT_TEXT_COLOR = Color.GRAY;
+	private final String ENTER_RUN_TEXT = "Enter run number";
+	private final String ENTER_RACER_TEXT = "Enter racer ID";
 	
 	private int numLanes;
+	private boolean resetInProgress; // This field helps with resetting the JComboBox without firing an event
 
 	private JFrame frame;
 	private ChronoTimer chrono;
@@ -43,8 +53,9 @@ public class ChronoTimerUI {
 	private JTextArea runDisplay, racerQueueDisplay;
 	private JTextField printField, exportField, newRacerField;
 	private JComboBox<RaceType> runTypeComboBox;
+	JScrollPane runDisplayScrollPane, racerQueueDisplayScrollPane;
 	
-	private JPanel laneControls, runControls, dataOutputControls, dataDisplays;
+	private JPanel powerControls, laneControls, runControls, dataOutputControls, dataDisplays;
 
 	/**
 	 * Launch the application.
@@ -67,6 +78,7 @@ public class ChronoTimerUI {
 	 */
 	public ChronoTimerUI() {
 		numLanes = ChronoTimer.NUM_CHANNELS / 2;
+		resetInProgress = false;
 		
 		initialize();
 	}
@@ -115,6 +127,28 @@ public class ChronoTimerUI {
 		runTypeComboBox.setEnabled(enabled);
 	}
 	
+	
+	private void resetContents() {
+		for(int i = 0; i < numLanes; ++i) {
+			laneButtons[i].setText("Start");
+			laneCheckBoxes[i].setSelected(false);
+		}
+		
+		resetInProgress = true;
+		{
+			newRacerField.setText(ENTER_RACER_TEXT);
+			newRacerField.setForeground(HINT_TEXT_COLOR);
+			runTypeComboBox.setSelectedIndex(0);
+			printField.setText(ENTER_RUN_TEXT);
+			printField.setForeground(HINT_TEXT_COLOR);
+			exportField.setText(ENTER_RUN_TEXT);
+			exportField.setForeground(HINT_TEXT_COLOR);
+		}
+		resetInProgress = false;
+		
+		setContentsEnabled(false);
+	}
+	
 	/**
 	 * Add components to the frame.
 	 */
@@ -124,11 +158,11 @@ public class ChronoTimerUI {
 		JPanel mainControls = new JPanel();
 		mainControls.setLayout(new BoxLayout(mainControls, BoxLayout.Y_AXIS));
 		
-		chronoTimerPowerBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		powerControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		runControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		dataOutputControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
-		mainControls.add(chronoTimerPowerBtn);
+		mainControls.add(powerControls);
 		mainControls.add(runControls);
 		mainControls.add(dataOutputControls);
 
@@ -141,6 +175,9 @@ public class ChronoTimerUI {
 	 * Initialize the power controls for the ChronoTimer system.
 	 */
 	private void initializePowerControls() {
+		powerControls = new JPanel();
+		powerControls.setLayout(new BoxLayout(powerControls, BoxLayout.Y_AXIS));
+		
 		chronoTimerPowerBtn = new JButton("Off");
 		chronoTimerPowerBtn.addActionListener(new ActionListener() {
 			@Override
@@ -163,14 +200,22 @@ public class ChronoTimerUI {
 					
 					chronoTimerPowerBtn.setText("On");
 					setContentsEnabled(true);
+					
+					startUpdateLoop();
 				}
 				else {
 					chrono = null;
-					chronoTimerPowerBtn.setText("Off");;
-					setContentsEnabled(false);
+					chronoTimerPowerBtn.setText("Off");
+					
+					resetContents();
 				}
 			}
 		});
+		
+		powerControls.add(chronoTimerPowerBtn);
+		powerControls.add(new JPanel());	// Provides spacing between rows
+		
+		powerControls.setMaximumSize(powerControls.getPreferredSize());
 	}
 	
 	/**
@@ -217,14 +262,15 @@ public class ChronoTimerUI {
 		
 		newRacerBtn = new JButton("Add Racer");
 		newRacerBtn.setPreferredSize(BUTTON_SIZE);
-		newRacerField = new JTextField("Enter racer id");
+		newRacerField = new JTextField(ENTER_RACER_TEXT);
 		newRacerField.setPreferredSize(FIELD_SIZE);
+		newRacerField.setForeground(HINT_TEXT_COLOR);
 		
 		newRunBtn = new JButton("New Run");
 		newRunBtn.setPreferredSize(BUTTON_SIZE);
 		runTypeComboBox = new JComboBox<RaceType>(RaceType.values());
 		runTypeComboBox.setPreferredSize(FIELD_SIZE);
-		runTypeComboBox.setSelectedIndex(1);
+		runTypeComboBox.setSelectedIndex(0);	// Default race type is Individual, at index 0
 		
 		newRacerBtn.addActionListener(new ActionListener() {
 			@Override
@@ -232,6 +278,7 @@ public class ChronoTimerUI {
 				try {
 					int id = Integer.parseInt(newRacerField.getText());
 					chrono.num(id);
+					updateRacerQueue();
 				}
 				catch(NumberFormatException ex) {
 					alert("Invalid ID", "Valid racer IDs are integers from 1 to 99999");
@@ -249,6 +296,8 @@ public class ChronoTimerUI {
 				newRacerBtn.doClick();
 			}
 		});
+		
+		newRacerField.addFocusListener(new TextFieldListener(newRacerField, ENTER_RACER_TEXT));
 		
 		newRunBtn.addActionListener(new ActionListener() {
 			@Override
@@ -268,6 +317,8 @@ public class ChronoTimerUI {
 		runTypeComboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if(resetInProgress) return; // Do nothing if the UI is resetting
+				
 				try {
 					chrono.setRaceType((RaceType) runTypeComboBox.getSelectedItem());
 				}
@@ -289,7 +340,9 @@ public class ChronoTimerUI {
 		newRunPanel.add(newRunBtn);
 		
 		runControls.add(newRacerPanel);
+		runControls.add(new JPanel());	// Provides spacing between rows
 		runControls.add(newRunPanel);
+		runControls.add(new JPanel());
 		
 		runControls.setMaximumSize(runControls.getPreferredSize());
 	}
@@ -308,15 +361,74 @@ public class ChronoTimerUI {
 		
 		printBtn = new JButton("Print Run");
 		printBtn.setPreferredSize(BUTTON_SIZE);
-		printField = new JTextField("Enter run number");
+		printField = new JTextField(ENTER_RUN_TEXT);
 		printField.setPreferredSize(FIELD_SIZE);
+		printField.setForeground(HINT_TEXT_COLOR);
 		
 		exportBtn = new JButton("Export Run");
 		exportBtn.setPreferredSize(BUTTON_SIZE);
-		exportField = new JTextField("Enter run number");
+		exportField = new JTextField(ENTER_RUN_TEXT);
 		exportField.setPreferredSize(FIELD_SIZE);
+		exportField.setForeground(HINT_TEXT_COLOR);
 		
-		// TODO: add listeners
+		printBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int runNumber = Integer.parseInt(printField.getText());
+					chrono.print(runNumber);
+				}
+				catch(NumberFormatException ex) {
+					alert("Invalid Entry", printField.getText() + " is not a valid run number.\nValid run numbers are integers greater than zero.");
+				}
+				catch(NoSuchElementException ex) {
+					alert("No Such Run", "Run " + printField.getText() + " does not exist.");
+				}
+				finally {
+					printField.setText("");
+				}
+			}
+		});
+		
+		printField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				printBtn.doClick();
+			}
+		});
+		
+		printField.addFocusListener(new TextFieldListener(printField, ENTER_RUN_TEXT));
+		
+		exportBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int runNumber = Integer.parseInt(exportField.getText());
+					chrono.export(runNumber);
+				}
+				catch(NumberFormatException ex) {
+					alert("Invalid Entry", exportField.getText() + " is not a valid run number.\nValid run numbers are integers greater than zero.");
+				}
+				catch(NoSuchElementException ex) {
+					alert("No Such Run", "Run " + exportField.getText() + " does not exist.");
+				}
+				catch (IOException e1) {
+					alert("File Error", "Could not export the run data.");
+				}
+				finally {
+					exportField.setText("");
+				}
+			}
+		});
+		
+		exportField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				exportBtn.doClick();
+			}
+		});
+		
+		exportField.addFocusListener(new TextFieldListener(exportField, ENTER_RUN_TEXT));
 		
 		printField.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		printBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -330,7 +442,9 @@ public class ChronoTimerUI {
 		exportPanel.add(exportBtn);
 		
 		dataOutputControls.add(printPanel);
+		dataOutputControls.add(new JPanel());	// Provides spacing between rows
 		dataOutputControls.add(exportPanel);
+		dataOutputControls.add(new JPanel());
 		
 		dataOutputControls.setMaximumSize(dataOutputControls.getPreferredSize());
 	}
@@ -340,13 +454,14 @@ public class ChronoTimerUI {
 	 */
 	private void initializeDataDisplays() {
 		dataDisplays = new JPanel();
+		dataDisplays.setLayout(new GridLayout(1, 2));
 		
 		runDisplay = new JTextArea();
 		racerQueueDisplay = new JTextArea();
 		
-		JScrollPane runDisplayScrollPane = new JScrollPane(runDisplay);
-		JScrollPane racerQueueDisplayScrollPane = new JScrollPane(racerQueueDisplay);
-		
+		runDisplayScrollPane = new JScrollPane(runDisplay);
+		racerQueueDisplayScrollPane = new JScrollPane(racerQueueDisplay);
+
 		dataDisplays.add(runDisplayScrollPane);
 		dataDisplays.add(racerQueueDisplayScrollPane);
 	}
@@ -354,6 +469,39 @@ public class ChronoTimerUI {
 	
 	private void alert(String title, String message) {
 		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.ERROR_MESSAGE);
+	}
+	
+	/**
+	 * Start a new thread that updates the text areas with information from the ChronoTimer.
+	 */
+	private void startUpdateLoop() {
+		Runnable updateLoop = new Runnable() {
+			@Override
+			public void run() {
+				while(chrono != null) {
+					try {
+						runDisplay.setText(chrono.print());
+					}
+					catch(ConcurrentModificationException e) {
+						// Drive on
+					}
+				}
+			}
+		};
+		
+		Thread updateLoopThread = new Thread(updateLoop, "UpdateLoop");
+		updateLoopThread.start();
+	}
+	
+	
+	private void updateRacerQueue() {
+		LinkedList<Integer> racers = chrono.getRacersInQueue();
+		StringBuilder racerQueue = new StringBuilder();
+		for(Integer racer : racers) {
+			racerQueue.append(racer + "\n");
+		}
+		
+		racerQueueDisplay.setText(racerQueue.toString());
 	}
 	
 	
@@ -379,6 +527,9 @@ public class ChronoTimerUI {
 			catch(IllegalStateException ex) {
 				alert("Cannot " + source.getText(), ex.getMessage());
 			}
+			finally {
+				updateRacerQueue();
+			}
 		}
 	}
 	
@@ -397,6 +548,33 @@ public class ChronoTimerUI {
 			chrono.toggle(lane * 2 - 1);
 			chrono.toggle(lane * 2);
 			laneButtons[lane - 1].setEnabled(checkBox.isSelected());
+		}
+	}
+	
+	
+	private class TextFieldListener implements FocusListener {
+		private JTextField textField;
+		private String defaultMessage;
+		
+		public TextFieldListener(JTextField textField, String defaultMessage) {
+			this.textField = textField;
+			this.defaultMessage = defaultMessage;
+		}
+		
+		@Override
+		public void focusGained(FocusEvent e) {
+			if(textField.getText().equals(defaultMessage)) {
+				textField.setText("");
+				textField.setForeground(Color.BLACK);
+			}
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			if(textField.getText().equals("")) {
+				textField.setText(defaultMessage);
+				textField.setForeground(HINT_TEXT_COLOR);
+			}
 		}
 	}
 }

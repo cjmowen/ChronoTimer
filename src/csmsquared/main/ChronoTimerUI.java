@@ -15,6 +15,7 @@ import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -40,6 +41,8 @@ public class ChronoTimerUI {
 	
 	private final String ENTER_RUN_TEXT = "Enter run number";
 	private final String ENTER_RACER_TEXT = "Enter racer ID";
+	
+	private final int COMPONENT_SPACING = 3;
 	
 	private int numLanes;
 	private boolean resetInProgress; // This field helps with resetting the JComboBox without firing an event
@@ -161,14 +164,17 @@ public class ChronoTimerUI {
 		JPanel mainControls = new JPanel();
 		mainControls.setLayout(new BoxLayout(mainControls, BoxLayout.Y_AXIS));
 		
-		powerControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		stateDisplay.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		runControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		dataOutputControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		powerControls.setAlignmentX(Component.LEFT_ALIGNMENT);
+		stateDisplay.setAlignmentX(Component.LEFT_ALIGNMENT);
+		runControls.setAlignmentX(Component.LEFT_ALIGNMENT);
+		dataOutputControls.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		mainControls.add(powerControls);
+		mainControls.add(Box.createVerticalStrut(COMPONENT_SPACING));
 		mainControls.add(stateDisplay);
+		mainControls.add(Box.createVerticalStrut(COMPONENT_SPACING));
 		mainControls.add(runControls);
+		mainControls.add(Box.createVerticalStrut(COMPONENT_SPACING));
 		mainControls.add(dataOutputControls);
 
 		frame.add(mainControls, BorderLayout.EAST);
@@ -225,7 +231,6 @@ public class ChronoTimerUI {
 		powerPanel.add(chronoTimerPowerBtn);
 		
 		powerControls.add(powerPanel);
-		powerControls.add(new JPanel());	// Provides spacing between rows
 		
 		powerControls.setMaximumSize(new Dimension(powerControls.getMaximumSize().width, powerControls.getPreferredSize().height));
 	}
@@ -236,6 +241,7 @@ public class ChronoTimerUI {
 		stateDisplay.setLayout(new BoxLayout(stateDisplay, BoxLayout.Y_AXIS));
 		
 		currentRunLbl = new JLabel();
+		currentRunLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 		updateCurrentRunLabel();
 		
 		stateDisplay.add(currentRunLbl);
@@ -274,8 +280,8 @@ public class ChronoTimerUI {
 					chrono.num(id);
 					updateRacerQueue();
 				}
-				catch(NumberFormatException ex) {
-					alert("Invalid ID", "Valid racer IDs are integers from 1 to 99999");
+				catch(IllegalArgumentException ex) {
+					alert("Invalid ID", newRacerField.getText() + " is not a valid ID.\nValid IDs are integers from 0 to 99,999");
 				}
 				finally {
 					// Clear the field to allow the user to quickly enter another number
@@ -330,15 +336,16 @@ public class ChronoTimerUI {
 		runTypeComboBox.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
 		newRacerPanel.add(newRacerField);
+		newRacerPanel.add(Box.createHorizontalStrut(COMPONENT_SPACING));
 		newRacerPanel.add(newRacerBtn);
 		
 		newRunPanel.add(runTypeComboBox);
+		newRunPanel.add(Box.createHorizontalStrut(COMPONENT_SPACING));
 		newRunPanel.add(newRunBtn);
 		
 		runControls.add(newRunPanel);
-		runControls.add(new JPanel());	// Provides spacing between rows
+		runControls.add(Box.createVerticalStrut(COMPONENT_SPACING));
 		runControls.add(newRacerPanel);
-		runControls.add(new JPanel());
 		
 		runControls.setMaximumSize(runControls.getPreferredSize());
 	}
@@ -432,15 +439,16 @@ public class ChronoTimerUI {
 		exportBtn.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
 		printPanel.add(printField);
+		printPanel.add(Box.createHorizontalStrut(COMPONENT_SPACING));
 		printPanel.add(printBtn);
 		
 		exportPanel.add(exportField);
+		exportPanel.add(Box.createHorizontalStrut(COMPONENT_SPACING));
 		exportPanel.add(exportBtn);
 		
 		dataOutputControls.add(printPanel);
-		dataOutputControls.add(new JPanel());	// Provides spacing between rows
+		dataOutputControls.add(Box.createVerticalStrut(COMPONENT_SPACING));
 		dataOutputControls.add(exportPanel);
-		dataOutputControls.add(new JPanel());
 		
 		dataOutputControls.setMaximumSize(dataOutputControls.getPreferredSize());
 	}
@@ -500,7 +508,7 @@ public class ChronoTimerUI {
 	
 	
 	private void alert(String title, String message) {
-		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(frame, message, title, JOptionPane.DEFAULT_OPTION);
 	}
 	
 	/**

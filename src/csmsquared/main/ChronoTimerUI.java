@@ -51,12 +51,13 @@ public class ChronoTimerUI {
 	private JButton[] laneButtons;
 	private JCheckBox[] laneCheckBoxes;
 	
+	private JLabel currentRunLbl;
 	private JButton chronoTimerPowerBtn, newRunBtn, newRacerBtn, printBtn, exportBtn;
 	private JTextArea runDisplay, racerQueueDisplay;
 	private JTextField printField, exportField, newRacerField;
 	private JComboBox<RaceType> runTypeComboBox;
 	
-	private JPanel powerControls, laneControls, runControls, dataOutputControls, dataDisplays;
+	private JPanel powerControls, stateDisplay, runControls, dataOutputControls, laneControls, dataDisplay;
 
 	/**
 	 * Launch the application.
@@ -94,10 +95,11 @@ public class ChronoTimerUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		initializePowerControls();
+		initializeStateDisplay();
 		initializeLaneControls();
 		initializeRunControls();
 		initializeDataOutputControls();
-		initializeDataDisplays();
+		initializeDataDisplay();
 		
 		addContents();
 		
@@ -160,16 +162,18 @@ public class ChronoTimerUI {
 		mainControls.setLayout(new BoxLayout(mainControls, BoxLayout.Y_AXIS));
 		
 		powerControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		stateDisplay.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		runControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		dataOutputControls.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		
 		mainControls.add(powerControls);
+		mainControls.add(stateDisplay);
 		mainControls.add(runControls);
 		mainControls.add(dataOutputControls);
 
 		frame.add(mainControls, BorderLayout.EAST);
 		frame.add(laneControls, BorderLayout.SOUTH);
-		frame.add(dataDisplays, BorderLayout.CENTER);
+		frame.add(dataDisplay, BorderLayout.CENTER);
 	}
 	
 	/**
@@ -210,48 +214,32 @@ public class ChronoTimerUI {
 					
 					resetContents();
 				}
+				
+				updateCurrentRunLabel();
 			}
 		});
 		
-		powerControls.add(chronoTimerPowerBtn);
+		// This nested grid layout allows the power button to stretch the full width of the control panel
+		JPanel powerPanel = new JPanel();
+		powerPanel.setLayout(new GridLayout());
+		powerPanel.add(chronoTimerPowerBtn);
+		
+		powerControls.add(powerPanel);
 		powerControls.add(new JPanel());	// Provides spacing between rows
 		
-		powerControls.setMaximumSize(powerControls.getPreferredSize());
+		powerControls.setMaximumSize(new Dimension(powerControls.getMaximumSize().width, powerControls.getPreferredSize().height));
 	}
 	
-	/**
-	 * Initialize the controls that govern the race lanes.
-	 */
-	private void initializeLaneControls() {
-		laneControls = new JPanel();
+	
+	private void initializeStateDisplay() {
+		stateDisplay = new JPanel();
+		stateDisplay.setLayout(new BoxLayout(stateDisplay, BoxLayout.Y_AXIS));
 		
-		laneLabels = new JLabel[numLanes];
-		laneButtons = new JButton[numLanes];
-		laneCheckBoxes = new JCheckBox[numLanes];
+		currentRunLbl = new JLabel();
+		updateCurrentRunLabel();
 		
-		// Build the control panel for each lane, and add them to the main panel
-		for(int i = 0; i < numLanes; ++i) {
-			JPanel laneControlPanel = new JPanel();
-			laneControlPanel.setLayout(new BoxLayout(laneControlPanel, BoxLayout.Y_AXIS));
-			
-			laneLabels[i] = new JLabel("Lane " + (i + 1));
-			laneCheckBoxes[i] = new JCheckBox();
-			laneButtons[i] = new JButton("Start");
-			
-			laneButtons[i].addActionListener(new LaneButtonListener(i + 1));
-			laneCheckBoxes[i].addActionListener(new LaneCheckBoxListener(i + 1));
-			
-			JPanel labelPanel = new JPanel();
-			labelPanel.add(laneCheckBoxes[i]);
-			labelPanel.add(laneLabels[i]);
-			
-			laneControlPanel.add(labelPanel);
-//			laneControlPanel.add(laneLabels[i]);
-			laneControlPanel.add(laneButtons[i]);
-//			laneControlPanel.add(laneCheckBoxes[i]);
-			
-			laneControls.add(laneControlPanel);
-		}
+		stateDisplay.add(currentRunLbl);
+		stateDisplay.setMaximumSize(stateDisplay.getPreferredSize());
 	}
 	
 	/**
@@ -316,6 +304,8 @@ public class ChronoTimerUI {
 				finally {
 					chrono.newRun();
 					runTypeComboBox.setEnabled(true);
+					
+					updateCurrentRunLabel();
 				}
 			}
 		});
@@ -345,9 +335,9 @@ public class ChronoTimerUI {
 		newRunPanel.add(runTypeComboBox);
 		newRunPanel.add(newRunBtn);
 		
-		runControls.add(newRacerPanel);
-		runControls.add(new JPanel());	// Provides spacing between rows
 		runControls.add(newRunPanel);
+		runControls.add(new JPanel());	// Provides spacing between rows
+		runControls.add(newRacerPanel);
 		runControls.add(new JPanel());
 		
 		runControls.setMaximumSize(runControls.getPreferredSize());
@@ -456,11 +446,47 @@ public class ChronoTimerUI {
 	}
 	
 	/**
+	 * Initialize the controls that govern the race lanes.
+	 */
+	private void initializeLaneControls() {
+		laneControls = new JPanel();
+		
+		laneLabels = new JLabel[numLanes];
+		laneButtons = new JButton[numLanes];
+		laneCheckBoxes = new JCheckBox[numLanes];
+		
+		// Build the control panel for each lane, and add them to the main panel
+		for(int i = 0; i < numLanes; ++i) {
+			JPanel laneControlPanel = new JPanel();
+			laneControlPanel.setLayout(new BoxLayout(laneControlPanel, BoxLayout.Y_AXIS));
+			
+			laneLabels[i] = new JLabel("Lane " + (i + 1));
+			laneCheckBoxes[i] = new JCheckBox();
+			laneButtons[i] = new JButton("Start");
+			
+			laneButtons[i].addActionListener(new LaneButtonListener(i + 1));
+			laneCheckBoxes[i].addActionListener(new LaneCheckBoxListener(i + 1));
+			
+			JPanel labelPanel = new JPanel();
+			labelPanel.add(laneCheckBoxes[i]);
+			labelPanel.add(laneLabels[i]);
+
+			labelPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+			laneButtons[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+			
+			laneControlPanel.add(labelPanel);
+			laneControlPanel.add(laneButtons[i]);
+			
+			laneControls.add(laneControlPanel);
+		}
+	}
+	
+	/**
 	 * Initialize the components that display information about the runs.
 	 */
-	private void initializeDataDisplays() {
-		dataDisplays = new JPanel();
-		dataDisplays.setLayout(new GridLayout(1, 2));	// This makes the contents stay full-size
+	private void initializeDataDisplay() {
+		dataDisplay = new JPanel();
+		dataDisplay.setLayout(new GridLayout(1, 2));	// This makes the contents stay full-size
 		
 		runDisplay = new JTextArea();
 		racerQueueDisplay = new JTextArea();
@@ -468,8 +494,8 @@ public class ChronoTimerUI {
 		JScrollPane runDisplayScrollPane = new JScrollPane(runDisplay);
 		JScrollPane racerQueueDisplayScrollPane = new JScrollPane(racerQueueDisplay);
 
-		dataDisplays.add(runDisplayScrollPane);
-		dataDisplays.add(racerQueueDisplayScrollPane);
+		dataDisplay.add(runDisplayScrollPane);
+		dataDisplay.add(racerQueueDisplayScrollPane);
 	}
 	
 	
@@ -500,6 +526,12 @@ public class ChronoTimerUI {
 		};
 		
 		updateLoop.start();
+	}
+	
+	
+	private void updateCurrentRunLabel() {
+		String run = chrono == null ? "N/A" : Integer.toString(chrono.getRunNumber());
+		currentRunLbl.setText("Current Run: " + run);
 	}
 	
 	

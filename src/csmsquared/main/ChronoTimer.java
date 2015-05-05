@@ -1,5 +1,6 @@
 package csmsquared.main;
 
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -484,7 +485,6 @@ public class ChronoTimer
 //		}
 //	}
 	private class IndividualRace extends AbstractRace {
-		int activeLane;
 		
 		public IndividualRace() {
 			super(RaceType.Individual);
@@ -493,14 +493,23 @@ public class ChronoTimer
 		public void start(int lane) {
 			verifyStartConditions(lane);
 
-			if(activeLane != 0) {
-				currentRacers[activeLane - 1].didNotFinish();
-				currentRacers[activeLane - 1] = null;
-				
-				notifyObservers(false, activeLane);
+			// Check to see if there are any racers currently running
+			for(int i = 0; i < NUM_CHANNELS / 2; ++i) {
+				if(currentRacers[i] != null) {
+					currentRacers[i].didNotFinish();	// Mark any racers found as DNF
+					currentRacers[i] = null;
+					notifyObservers(false, i + 1);	// Notify observers of the change
+				}
 			}
 			
-			activeLane = lane;
+//			if(activeLane != 0) {
+//				currentRacers[activeLane - 1].didNotFinish();
+//				currentRacers[activeLane - 1] = null;
+//				
+//				notifyObservers(false, activeLane);
+//			}
+			
+//			activeLane = lane;
 			startInLane(racerQueue.poll(), lane);	// We know that there is >= 1 racer in the queue because we passed the verifyStartConditions() method
 			
 			notifyObservers(true, lane);
@@ -508,7 +517,7 @@ public class ChronoTimer
 
 		public void stop(int lane) {
 			verifyStopConditions(lane);
-			if(lane != activeLane) return;	// We don't care about stop signals from other lanes
+			if(currentRacers[lane - 1] == null) return;	// Don't worry about stop signals from other lanes
 			
 			genericStop(lane);
 			notifyObservers(false, lane);

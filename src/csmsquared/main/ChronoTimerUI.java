@@ -97,6 +97,7 @@ public class ChronoTimerUI {
 		frame.setSize(DEFAULT_WINDOW_SIZE);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setMinimumSize(new Dimension(750, 300));
 		
 		initializePowerControls();
 		initializeStateDisplay();
@@ -223,6 +224,8 @@ public class ChronoTimerUI {
 				else {
 					chrono = null;
 					chronoTimerPowerBtn.setText("Off");
+					runDisplay.setText("");
+					racerQueueDisplay.setText("");
 					
 					resetContents();
 				}

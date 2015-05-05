@@ -3,20 +3,20 @@ import java.lang.Math;
 
 public class Time 
 {
-	private static long CURRENT_TIME = -1;
+	private static long currentTime = -1;
 
 	public static void setTime(String time){
 		if(time.equalsIgnoreCase("reset")){
-			CURRENT_TIME = -1;
+			currentTime = -1;
 		}
 		else{
-			CURRENT_TIME = toMillis(time);
+			currentTime = toMillis(time);
 		}
 	}
 
 	public static long getTime(){
-		if(CURRENT_TIME < 0) return System.currentTimeMillis();
-		return CURRENT_TIME;
+		if(currentTime < 0) return System.currentTimeMillis();
+		return currentTime;
 	}
 
 

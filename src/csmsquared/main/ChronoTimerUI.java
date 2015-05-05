@@ -51,7 +51,8 @@ public class ChronoTimerUI {
 	private ChronoTimer chrono;
 	
 	private JLabel[] laneLabels;
-	private JButton[] laneButtons;
+	private JButton[] laneStartButtons;
+	private JButton[] laneCancelButtons;
 	private JCheckBox[] laneCheckBoxes;
 	
 	private JLabel currentRunLbl;
@@ -115,8 +116,8 @@ public class ChronoTimerUI {
 	 */
 	private void setContentsEnabled(boolean enabled) {
 		for(int i = 0; i < numLanes; ++i) {
-			laneButtons[i].setEnabled(enabled && laneCheckBoxes[i].isSelected());
-			laneButtons[i].setText("Start");	// Reset the buttons
+			laneStartButtons[i].setEnabled(enabled && laneCheckBoxes[i].isSelected());
+			laneStartButtons[i].setText("Start");	// Reset the buttons
 			laneCheckBoxes[i].setEnabled(enabled);
 			laneCheckBoxes[i].setSelected(false);	// Reset the check boxes
 		}
@@ -136,7 +137,7 @@ public class ChronoTimerUI {
 	
 	private void resetContents() {
 		for(int i = 0; i < numLanes; ++i) {
-			laneButtons[i].setText("Start");
+			laneStartButtons[i].setText("Start");
 			laneCheckBoxes[i].setSelected(false);
 		}
 		
@@ -201,10 +202,10 @@ public class ChronoTimerUI {
 							runTypeComboBox.setEnabled(false);	// Cannot change during a race
 							
 							if(e.isStart()) {
-								laneButtons[e.getLane() - 1].setText("Stop");
+								laneStartButtons[e.getLane() - 1].setText("Stop");
 							}
 							else {
-								laneButtons[e.getLane() - 1].setText("Start");
+								laneStartButtons[e.getLane() - 1].setText("Start");
 							}
 						}
 					});
@@ -460,7 +461,8 @@ public class ChronoTimerUI {
 		laneControls = new JPanel();
 		
 		laneLabels = new JLabel[numLanes];
-		laneButtons = new JButton[numLanes];
+		laneStartButtons = new JButton[numLanes];
+		laneCancelButtons = new JButton[numLanes];
 		laneCheckBoxes = new JCheckBox[numLanes];
 		
 		// Build the control panel for each lane, and add them to the main panel
@@ -470,9 +472,11 @@ public class ChronoTimerUI {
 			
 			laneLabels[i] = new JLabel("Lane " + (i + 1));
 			laneCheckBoxes[i] = new JCheckBox();
-			laneButtons[i] = new JButton("Start");
+			laneStartButtons[i] = new JButton("Start");
+			laneCancelButtons[i] = new JButton("Cancel");
 			
-			laneButtons[i].addActionListener(new LaneButtonListener(i + 1));
+			laneStartButtons[i].addActionListener(new LaneStartButtonListener(i + 1));
+			laneCancelButtons[i].addActionListener(new LaneCancelButtonListener(i + 1));
 			laneCheckBoxes[i].addActionListener(new LaneCheckBoxListener(i + 1));
 			
 			JPanel labelPanel = new JPanel();
@@ -480,10 +484,21 @@ public class ChronoTimerUI {
 			labelPanel.add(laneLabels[i]);
 
 			labelPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-			laneButtons[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+			laneStartButtons[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+			laneCancelButtons[i].setAlignmentX(Component.CENTER_ALIGNMENT);
+
+			// Need to set all in order to get the buttons to stay at the right size
+			laneStartButtons[i].setPreferredSize(BUTTON_SIZE);
+			laneCancelButtons[i].setPreferredSize(BUTTON_SIZE);
+			laneStartButtons[i].setMinimumSize(BUTTON_SIZE);
+			laneCancelButtons[i].setMinimumSize(BUTTON_SIZE);
+			laneStartButtons[i].setMaximumSize(BUTTON_SIZE);
+			laneCancelButtons[i].setMaximumSize(BUTTON_SIZE);
 			
 			laneControlPanel.add(labelPanel);
-			laneControlPanel.add(laneButtons[i]);
+			laneControlPanel.add(laneStartButtons[i]);
+			laneControlPanel.add(Box.createVerticalStrut(COMPONENT_SPACING));
+			laneControlPanel.add(laneCancelButtons[i]);
 			
 			laneControls.add(laneControlPanel);
 		}
@@ -554,10 +569,10 @@ public class ChronoTimerUI {
 	}
 	
 	
-	private class LaneButtonListener implements ActionListener{
+	private class LaneStartButtonListener implements ActionListener{
 		private int lane;
 		
-		public LaneButtonListener(int lane) {
+		public LaneStartButtonListener(int lane) {
 			this.lane = lane;
 		}
 		
@@ -583,6 +598,23 @@ public class ChronoTimerUI {
 	}
 	
 	
+	private class LaneCancelButtonListener implements ActionListener {
+		private int lane;
+		
+		public LaneCancelButtonListener(int lane) {
+			this.lane = lane;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			chrono.cancel(lane);
+			laneStartButtons[lane - 1].setText("Start");
+			
+			updateRacerQueue();
+		}
+	}
+	
+	
 	private class LaneCheckBoxListener implements ActionListener {
 		private int lane;
 		
@@ -596,7 +628,7 @@ public class ChronoTimerUI {
 			
 			chrono.toggle(lane * 2 - 1);
 			chrono.toggle(lane * 2);
-			laneButtons[lane - 1].setEnabled(checkBox.isSelected());
+			laneStartButtons[lane - 1].setEnabled(checkBox.isSelected());
 		}
 	}
 	

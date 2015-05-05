@@ -44,7 +44,52 @@ public class TestChronoTimer extends TestCase {
 			assertTrue(e instanceof IllegalArgumentException);
 		}
 		
-	}s
+	}
+	
+	public void testRaceTypes()
+	{
+		chrono = new ChronoTimer();
+		chrono.endRun();
+		chrono.newRun();
+		try{
+			chrono.newRun();
+		}catch(Exception e)
+		{
+			assertTrue(e instanceof IllegalStateException);
+			chrono.endRun();
+		}
+		try{
+		chrono.endRun();
+		}
+		catch(Exception e)
+		{
+			assertTrue(e instanceof IllegalStateException);
+		}
+	}
+	
+	public void testRacerQueue()
+	{
+		chrono = new ChronoTimer();
+		chrono.endRun();
+		for(int i=0; i < 155; i++)
+		{
+			chrono.num(i);
+		}
+		
+		chrono.setRaceType(RaceType.Group);
+		chrono.newRun();
+		
+		for(int i=0; i<6;i++)
+		{
+			chrono.toggle(i+1);
+		}
+			chrono.trigger(1);
+		
+		LinkedList<String> racers = chrono.getCurrentRacers();
+		
+	}
+	
+	
 	
 	
 	

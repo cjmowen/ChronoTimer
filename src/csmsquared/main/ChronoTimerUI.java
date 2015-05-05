@@ -118,6 +118,7 @@ public class ChronoTimerUI {
 		for(int i = 0; i < numLanes; ++i) {
 			laneStartButtons[i].setEnabled(enabled && laneCheckBoxes[i].isSelected());
 			laneStartButtons[i].setText("Start");	// Reset the buttons
+			laneCancelButtons[i].setEnabled(false);
 			laneCheckBoxes[i].setEnabled(enabled);
 			laneCheckBoxes[i].setSelected(false);	// Reset the check boxes
 		}
@@ -202,10 +203,14 @@ public class ChronoTimerUI {
 							runTypeComboBox.setEnabled(false);	// Cannot change during a race
 							
 							if(e.isStart()) {
+								// A racer started
 								laneStartButtons[e.getLane() - 1].setText("Stop");
+								laneCancelButtons[e.getLane() - 1].setEnabled(true);
 							}
 							else {
+								// A racer finished
 								laneStartButtons[e.getLane() - 1].setText("Start");
+								laneCancelButtons[e.getLane() - 1].setEnabled(false);
 							}
 						}
 					});
@@ -609,6 +614,7 @@ public class ChronoTimerUI {
 		public void actionPerformed(ActionEvent e) {
 			chrono.cancel(lane);
 			laneStartButtons[lane - 1].setText("Start");
+			laneCancelButtons[lane - 1].setEnabled(false);
 			
 			updateRacerQueue();
 		}

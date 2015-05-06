@@ -476,31 +476,6 @@ public class ChronoTimer
 	/**
 	 * Represents a race where only one person is competing at a time.
 	 */
-//	private class IndividualRace extends AbstractRace {
-//
-//		public IndividualRace() {
-//			super(RaceType.Individual);
-//		}
-//
-//		public void start(int lane) {
-//			verifyStartConditions(lane);
-//
-//			if(lane != 1 ||	// Only the first lane is used for an individual run
-//					!channels.get(1).isActive()) return;	// Don't start a racer if there is no way to stop them
-//
-//			startInLane(racerQueue.poll(), lane);	// We know that there is >= 1 racer in the queue because we passed the verifyStartConditions() method
-//			
-//			notifyObservers(true, 1);
-//		}
-//
-//		public void stop(int lane) {
-//			verifyStopConditions(lane);
-//			if(lane != 1) return;	// Only the first lane is used in an individual run
-//
-//			genericStop(lane);
-//			notifyObservers(false, 1);
-//		}
-//	}
 	private class IndividualRace extends AbstractRace {
 		
 		public IndividualRace() {

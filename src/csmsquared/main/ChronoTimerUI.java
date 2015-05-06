@@ -638,9 +638,17 @@ public class ChronoTimerUI {
 		public void actionPerformed(ActionEvent e) {
 			JCheckBox checkBox = (JCheckBox) e.getSource();
 			
-			chrono.toggle(lane * 2 - 1);
-			chrono.toggle(lane * 2);
-			laneStartButtons[lane - 1].setEnabled(checkBox.isSelected());
+			// Don't allow the user to disable to lane if somebody is running in it
+			if(!checkBox.isSelected() && laneStartButtons[lane - 1].getText().equals("Stop")) {
+				checkBox.setSelected(true);
+				alert("Racer Running", "There is somebody running in this lane.\n"
+						+ "Wait until they are finished to disable the lane.");
+			}
+			else {
+				chrono.toggle(lane * 2 - 1);
+				chrono.toggle(lane * 2);
+				laneStartButtons[lane - 1].setEnabled(checkBox.isSelected());
+			}
 		}
 	}
 	

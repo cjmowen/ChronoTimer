@@ -11,7 +11,7 @@ public class Racer
 
 	public Racer(int id) throws IllegalArgumentException
 	{
-		if(id > 99999 || id<0) throw new IllegalArgumentException("id must be <0 and >=99999");
+		if(id > 99999 || id<0) throw new IllegalArgumentException("Valid racer IDs are integers from 0 to 99,999.");
 		this.id = id;
 	}
 

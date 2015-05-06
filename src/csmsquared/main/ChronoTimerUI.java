@@ -289,8 +289,11 @@ public class ChronoTimerUI {
 					chrono.num(id);
 					updateRacerQueue();
 				}
+				catch(NumberFormatException ex) {
+					alert("Invalid ID", "Valid racer IDs are integers from 0 to 99,999.");
+				}
 				catch(IllegalArgumentException ex) {
-					alert("Invalid ID", newRacerField.getText() + " is not a valid ID.\nValid IDs are integers from 0 to 99,999");
+					alert("Invalid Racer", ex.getMessage());
 				}
 				finally {
 					// Clear the field to allow the user to quickly enter another number

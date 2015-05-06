@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.swing.JOptionPane;
+
 import csmsquared.channel.Channel;
 import csmsquared.channel.ChannelEvent;
 import csmsquared.channel.ChannelListener;
@@ -84,6 +86,21 @@ public class ChronoTimer
 	 * @param id The ID of the racer to add.
 	 */
 	public void num(int id) {
+		// Check if the racer is already running
+		for(int i=0; i < currentRacers.length ;i++) {
+			if(currentRacers[i]!=null && currentRacers[i].getId()==id){
+				throw new IllegalArgumentException("Racer " + id + " is already running.");
+			}
+		}
+		
+		// Check if the racer is already in the queue
+		for(int i=0; i< racerQueue.size(); i++) {
+			if(racerQueue.get(i).getId()==id){
+				throw new IllegalArgumentException("Racer " + id + " is already in the racer queue.");
+			}
+		}
+		
+		// Add the racer to the queue
 		racerQueue.add(new Racer(id));
 	}
 
@@ -537,7 +554,17 @@ public class ChronoTimer
 		public void start(int lane) {
 			verifyStartConditions(lane);
 			
-			// Any start channel can kick off a group run
+			// Any currently running racers get marked as DNF
+			for(int i = 0; i < currentRacers.length; ++i) {
+				if(currentRacers[i] != null) {
+					currentRacers[i].didNotFinish();
+					currentRacers[i] = null;
+					
+					notifyObservers(false, i + 1);
+				}
+			}
+			
+			// Start racers in all active lanes
 			Racer racer;
 			for(lane = 1; lane <= currentRacers.length; ++lane) {
 				if(!channels.get(lane * 2 - 1).isActive()) continue;	// Do not start a racer in a lane if there is no way to stop them (i.e. the finish channel is inactive)

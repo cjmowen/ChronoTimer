@@ -519,14 +519,6 @@ public class ChronoTimer
 				}
 			}
 			
-//			if(activeLane != 0) {
-//				currentRacers[activeLane - 1].didNotFinish();
-//				currentRacers[activeLane - 1] = null;
-//				
-//				notifyObservers(false, activeLane);
-//			}
-			
-//			activeLane = lane;
 			startInLane(racerQueue.poll(), lane);	// We know that there is >= 1 racer in the queue because we passed the verifyStartConditions() method
 			
 			notifyObservers(true, lane);

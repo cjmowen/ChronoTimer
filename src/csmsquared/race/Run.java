@@ -48,10 +48,8 @@ public class Run {
 	public void addRacer(Racer r){
 		for(int i = 0; i<racers.size(); i++){
 			if(racers.get(i).getId() == r.getId()){
-				if(racers.get(i).getElapsedTime() > r.getElapsedTime()){
-					racers.set(i, r);
-				}
-				return;
+				// If the racer already has a time, overwrite it
+				racers.remove(i);
 			}
 		}
 		racers.add(r);

@@ -31,24 +31,22 @@ import javax.swing.JTextField;
 import csmsquared.chronoEvents.ChronoListener;
 import csmsquared.chronoEvents.LaneEvent;
 import csmsquared.race.RaceType;
+import csmsquared.test.Shell;
 
 public class ChronoTimerUI {
 	private final Dimension DEFAULT_WINDOW_SIZE = new Dimension(800, 600);
 	private final Dimension BUTTON_SIZE = new Dimension(110, 25);
 	private final Dimension FIELD_SIZE = new Dimension(200, 25);
-	
 	private final Color HINT_TEXT_COLOR = Color.GRAY;
-	
 	private final String ENTER_RUN_TEXT = "Enter run number";
 	private final String ENTER_RACER_TEXT = "Enter racer ID";
-	
 	private final int COMPONENT_SPACING = 3;
 	
+	private ChronoTimer chrono;
 	private int numLanes;
 	private boolean resetInProgress; // This field helps with resetting the JComboBox without firing an event
 
 	private JFrame frame;
-	private ChronoTimer chrono;
 	
 	private JLabel[] laneLabels;
 	private JButton[] laneStartButtons;
@@ -71,7 +69,7 @@ public class ChronoTimerUI {
 			public void run() {
 				try {
 					ChronoTimerUI window = new ChronoTimerUI();
-					window.frame.setVisible(true);
+//					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -87,6 +85,14 @@ public class ChronoTimerUI {
 		resetInProgress = false;
 		
 		initialize();
+	}
+	
+	/**
+	 * Get the ChronoTimer the UI is using.
+	 * @return The ChronoTimer.
+	 */
+	public ChronoTimer getChronoTimer() {
+		return chrono;
 	}
 
 	/**
@@ -109,6 +115,8 @@ public class ChronoTimerUI {
 		addContents();
 		
 		setContentsEnabled(false);
+		
+		frame.setVisible(true);
 	}
 
 	/**
@@ -669,6 +677,26 @@ public class ChronoTimerUI {
 				textField.setForeground(HINT_TEXT_COLOR);
 			}
 		}
+	}
+	
+	/**
+	 * Used to test the UI with sensors. 
+	 * Certain operations will not work well through
+	 * the shell when testing the UI.
+	 * DO NOT:
+	 * 		create/end runs
+	 * 		turn on/off the chrono timer
+	 * 		toggle channels
+	 * 
+	 * When adding racers to the queue through the shell,
+	 * the queue display in the UI will not update until
+	 * some other action takes place, such as a start/stop
+	 * signal being received, or adding a racer through
+	 * the UI.
+	 */
+	public void testUI() {
+		Shell shell = new Shell();
+		shell.runUITest(this);
 	}
 }
 

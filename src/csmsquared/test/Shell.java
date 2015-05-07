@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import csmsquared.main.ChronoTimer;
+import csmsquared.main.ChronoTimerUI;
 import csmsquared.main.Time;
 import csmsquared.race.RaceType;
 import csmsquared.sensor.EyeSensor;
@@ -16,20 +17,23 @@ public class Shell {
 	private static final String INPUT_LINE_INDICATOR = ">> ";
 	private static final String SYSTEM_OFF_ALERT = "ChronoTimer system is OFF";
 
-	private ChronoTimer chrono;
-	//	private List<Sensor> sensors;
+	private static ChronoTimer chrono;
 	private Sensor[] sensors;
-
 	private String[] args;
-
 	private boolean running;
+	
+	private static ChronoTimerUI ui;	// This exists for testing the UI using the static runUITest method
 
 	public Shell(){
 		// The ChronoTimer is considered off if it is null
 		chrono = null;
-
-		//		sensors = new ArrayList<Sensor>(ChronoTimer.NUM_CHANNELS);
 		sensors = new Sensor[ChronoTimer.NUM_CHANNELS];
+	}
+	
+	public void runUITest(ChronoTimerUI chronoTimerUI) {
+//		ui = new ChronoTimerUI();
+		ui = chronoTimerUI;
+		run();
 	}
 
 	public void run() {
@@ -41,6 +45,11 @@ public class Shell {
 			System.out.print(INPUT_LINE_INDICATOR);
 			args = in.nextLine().split(" ");
 
+			// If testing the UI, get the UI's chrono timer
+			if(ui != null) {
+				chrono = ui.getChronoTimer();
+			}
+			
 			execute(args);
 		}
 
@@ -263,20 +272,14 @@ public class Shell {
 
 			break;
 
-		case "CLR":	// Clears the specified competitor number as the next competitor
-			// TODO: Command 'CLR'
-
-			break;
-
-		case "SWAP":	// Exchange the next two competitors to finish
-			// TODO: Command 'SWAP'
-
-			break;
-
-		case "RCL":	// Recalls the last triggered event
-			// TODO: Command 'RCL'
-
-			break;
+//		case "CLR":	// Clears the specified competitor number as the next competitor
+//			break;
+//
+//		case "SWAP":	// Exchange the next two competitors to finish
+//			break;
+//
+//		case "RCL":	// Recalls the last triggered event
+//			break;
 			
 		case "CANCEL":	// Cancel the specified racer
 			int lane;
@@ -343,6 +346,22 @@ public class Shell {
 				}
 			}
 			break;
+			
+		case "SENS":
+		case "SENSOR":
+			if(arg.length > 1) {
+				if(isNum(arg[1])) {
+					int sensorNumber = Integer.parseInt(arg[1]);
+					if(sensors[sensorNumber - 1] != null) {
+						sensors[sensorNumber - 1].trip();
+					}
+				}
+				else {
+					System.out.println(arg[1] + " is not an integer.");
+				}
+			}
+			break;
+			
 		default:
 			System.out.println("Unknown command: " + arg[0].toUpperCase());
 		}
